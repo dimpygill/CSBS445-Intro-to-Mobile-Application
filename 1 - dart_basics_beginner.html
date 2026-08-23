@@ -1,0 +1,1240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dart Basics — Before Your First Flutter Project</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #F8F9FC;
+  --white: #FFFFFF;
+  --border: #E4E8F0;
+  --surface: #F0F3FA;
+  --text: #1C2333;
+  --muted: #5C6880;
+  --light: #8E99B0;
+  --blue: #3B6EF5;
+  --blue-bg: #EBF0FE;
+  --green: #16A36A;
+  --green-bg: #E3F6EE;
+  --amber: #C97D10;
+  --amber-bg: #FEF3E2;
+  --purple: #6C48D4;
+  --purple-bg: #F0EAFC;
+  --red: #D03030;
+  --red-bg: #FDEAEA;
+  --teal: #0899A8;
+  --teal-bg: #E0F5F7;
+  --font: 'DM Sans', sans-serif;
+  --mono: 'DM Mono', monospace;
+  --r: 12px; --rs: 8px;
+}
+html { scroll-behavior: smooth; }
+body { font-family: var(--font); background: var(--bg); color: var(--text); font-size: 16px; line-height: 1.75; }
+
+/* LAYOUT */
+.shell { display: flex; min-height: 100vh; }
+
+/* SIDEBAR */
+.sidebar { width: 255px; flex-shrink: 0; background: var(--white); border-right: 1px solid var(--border); position: fixed; top: 0; left: 0; height: 100vh; overflow-y: auto; z-index: 100; }
+.sb-head { padding: 20px 18px 14px; border-bottom: 1px solid var(--border); }
+.sb-badge { display: inline-block; background: var(--amber-bg); color: var(--amber); font-size: 10px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; border-radius: 20px; padding: 3px 10px; margin-bottom: 7px; }
+.sb-head h2 { font-size: 13px; font-weight: 700; line-height: 1.4; }
+.sb-head p { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.prog-wrap { padding: 10px 18px 0; }
+.prog-bar { height: 4px; background: var(--surface); border-radius: 2px; overflow: hidden; }
+.prog-fill { height: 100%; background: var(--amber); border-radius: 2px; transition: width .4s; width: 0%; }
+.prog-lbl { font-size: 11px; color: var(--light); margin-top: 4px; padding-bottom: 8px; }
+.sb-nav { padding: 4px 0 24px; }
+.sb-grp { font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--light); padding: 12px 18px 4px; }
+.sb-item { display: flex; align-items: center; gap: 9px; padding: 8px 18px; font-size: 13px; font-weight: 500; color: var(--muted); cursor: pointer; border-left: 3px solid transparent; transition: all .15s; }
+.sb-item:hover { background: var(--surface); color: var(--text); }
+.sb-item.active { background: var(--amber-bg); color: var(--amber); border-left-color: var(--amber); }
+.sb-item.done { color: var(--muted); }
+.sb-num { width: 22px; height: 22px; border-radius: 50%; background: var(--surface); color: var(--light); font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all .15s; }
+.sb-item.active .sb-num { background: var(--amber); color: #fff; }
+.sb-item.done .sb-num { background: var(--green); color: #fff; }
+
+/* MAIN */
+.main { margin-left: 255px; flex: 1; }
+.topbar { background: var(--white); border-bottom: 1px solid var(--border); padding: 13px 44px; position: sticky; top: 0; z-index: 50; }
+.topbar-title { font-size: 13px; color: var(--muted); }
+.topbar-title strong { color: var(--text); font-weight: 700; }
+
+/* CONTENT */
+.content { padding: 40px 44px; max-width: 820px; }
+.page { display: none; }
+.page.active { display: block; }
+
+/* DOTS */
+.dots { display: flex; gap: 5px; margin-bottom: 22px; flex-wrap: wrap; }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); cursor: pointer; transition: background .2s; }
+.dot.active { background: var(--amber); }
+.dot.done { background: var(--green); }
+
+/* HERO */
+.hero { border-radius: var(--r); padding: 28px 32px; margin-bottom: 30px; }
+.hero.amber  { background: linear-gradient(135deg,#FEF3E2,#FDEBD0); border: 1px solid #F0CCA0; }
+.hero.blue   { background: linear-gradient(135deg,#EBF0FE,#E2EBFD); border: 1px solid #BED0F8; }
+.hero.green  { background: linear-gradient(135deg,#E3F6EE,#D6F1E5); border: 1px solid #A8DEC8; }
+.hero.purple { background: linear-gradient(135deg,#F0EAFC,#E8E0FA); border: 1px solid #C2AEF0; }
+.hero.teal   { background: linear-gradient(135deg,#E0F5F7,#D2EFF2); border: 1px solid #9ED4DA; }
+.hero.red    { background: linear-gradient(135deg,#FDEAEA,#FBDFDF); border: 1px solid #F2B4B4; }
+.hero-tag { display: inline-block; background: #fff; border-radius: 20px; padding: 3px 12px; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,.07); }
+.hero h1 { font-size: 22px; font-weight: 700; line-height: 1.3; margin-bottom: 8px; }
+.hero .hero-sub { font-size: 14px; color: var(--muted); max-width: 540px; line-height: 1.6; }
+
+/* PROSE */
+.prose h2 { font-size: 17px; font-weight: 700; margin: 28px 0 10px; color: var(--text); }
+.prose h2:first-child { margin-top: 0; }
+.prose h3 { font-size: 14.5px; font-weight: 700; margin: 22px 0 7px; }
+.prose p { margin-bottom: 13px; color: #2A3344; line-height: 1.75; }
+.prose ul, .prose ol { padding-left: 20px; margin-bottom: 13px; }
+.prose li { margin-bottom: 6px; color: #2A3344; line-height: 1.65; }
+.prose strong { font-weight: 600; color: var(--text); }
+code { font-family: var(--mono); font-size: 12.5px; background: var(--surface); color: var(--blue); border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px; }
+
+/* BIG ANALOGY CARD */
+.analogy { background: var(--white); border: 2px solid var(--border); border-radius: var(--r); padding: 18px 20px; margin: 16px 0; display: flex; gap: 14px; }
+.analogy .a-icon { font-size: 36px; flex-shrink: 0; }
+.analogy .a-body { flex: 1; }
+.analogy .a-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--amber); margin-bottom: 4px; }
+.analogy .a-title { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+.analogy .a-desc { font-size: 13.5px; color: var(--muted); line-height: 1.6; }
+
+/* CODE BOX — light */
+.code-lbl { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--blue); margin-bottom: 5px; display: flex; align-items: center; gap: 5px; }
+.code-box { background: #F0F4FF; border: 1.5px solid #C5D3F8; border-radius: var(--rs); padding: 16px 18px; margin: 10px 0 4px; font-family: var(--mono); font-size: 13px; line-height: 1.9; color: #1C2333; overflow-x: auto; white-space: pre; }
+.kw  { color: #2550CC; font-weight: 700; }
+.str { color: #167A4A; }
+.val { color: #C97D10; font-weight: 600; }
+.fn  { color: #6C48D4; }
+.cm  { color: #8EA0C8; font-style: italic; }
+.out { color: #16A36A; font-style: italic; }
+
+/* OUTPUT BOX */
+.output-box { background: #F0FBF4; border: 1.5px solid #A8DEC8; border-radius: var(--rs); padding: 10px 18px; margin: 0 0 14px; font-family: var(--mono); font-size: 13px; color: #0D5535; line-height: 1.8; white-space: pre; }
+.out-lbl { font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--green); margin-bottom: 4px; }
+
+/* EXPLAIN TABLE */
+.explain { width: 100%; border-collapse: collapse; margin: 6px 0 18px; font-size: 13.5px; }
+.explain th { background: var(--surface); padding: 8px 12px; font-weight: 700; text-align: left; border: 1px solid var(--border); font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+.explain td { padding: 9px 12px; border: 1px solid var(--border); color: #2A3344; line-height: 1.55; vertical-align: top; }
+.explain tr:nth-child(even) td { background: #FAFBFD; }
+.explain td:first-child { font-family: var(--mono); font-size: 12px; color: var(--blue); background: #F5F7FF; white-space: nowrap; }
+
+/* CALLOUTS */
+.callout { border-radius: var(--rs); padding: 12px 15px; margin: 14px 0; display: flex; gap: 11px; font-size: 13.5px; line-height: 1.6; }
+.callout .ico { font-size: 17px; flex-shrink: 0; }
+.callout-body { flex: 1; }
+.callout-body strong { display: block; margin-bottom: 2px; }
+.callout.tip  { background: var(--green-bg);  border-left: 3px solid var(--green); }
+.callout.info { background: var(--blue-bg);   border-left: 3px solid var(--blue); }
+.callout.warn { background: var(--amber-bg);  border-left: 3px solid var(--amber); }
+.callout.note { background: var(--purple-bg); border-left: 3px solid var(--purple); }
+
+/* CARDS */
+.card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 13px 0; }
+.card { background: var(--white); border: 1px solid var(--border); border-radius: var(--rs); padding: 14px 15px; }
+.card .ci { font-size: 22px; margin-bottom: 5px; }
+.card .ct { font-size: 13px; font-weight: 700; margin-bottom: 3px; }
+.card .cd { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+/* QUIZ */
+.quiz { background: var(--white); border: 2px solid var(--border); border-radius: var(--r); padding: 18px 20px; margin: 20px 0; }
+.quiz-badge { display: inline-block; background: var(--purple-bg); color: var(--purple); border-radius: 20px; padding: 3px 11px; font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 9px; }
+.quiz-q { font-size: 14.5px; font-weight: 600; margin-bottom: 11px; line-height: 1.5; }
+.quiz-opts { display: flex; flex-direction: column; gap: 6px; }
+.opt { display: flex; align-items: center; gap: 9px; padding: 9px 12px; border: 1.5px solid var(--border); border-radius: var(--rs); cursor: pointer; font-size: 13.5px; background: var(--white); text-align: left; width: 100%; font-family: var(--font); transition: all .15s; }
+.opt:hover { border-color: var(--blue); background: var(--blue-bg); }
+.opt .let { width: 22px; height: 22px; border-radius: 50%; background: var(--surface); color: var(--muted); font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.opt.correct { border-color: var(--green); background: var(--green-bg); }
+.opt.correct .let { background: var(--green); color: #fff; }
+.opt.wrong { border-color: var(--red); background: var(--red-bg); }
+.opt.wrong .let { background: var(--red); color: #fff; }
+.opt:disabled { cursor: not-allowed; }
+.qfb { margin-top: 10px; padding: 9px 12px; border-radius: var(--rs); font-size: 13px; display: none; }
+.qfb.show { display: block; }
+.qfb.ok { background: var(--green-bg); color: #0D5535; border: 1px solid #A0D8C0; }
+.qfb.no { background: var(--red-bg); color: #7A1A1A; border: 1px solid #F5B4B4; }
+
+/* TRY IT */
+.tryit { background: #EBF4FE; border: 1.5px dashed #90BAF5; border-radius: var(--r); padding: 16px 18px; margin: 18px 0; }
+.tryit-lbl { font-size: 10px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--blue); margin-bottom: 7px; }
+.tryit h4 { font-size: 14px; font-weight: 700; margin-bottom: 5px; }
+.tryit p, .tryit ol, .tryit ul { font-size: 13px; color: var(--muted); }
+.tryit ol, .tryit ul { padding-left: 17px; margin-top: 5px; }
+.tryit li { margin-bottom: 4px; }
+
+/* INTERACTIVE SANDBOX */
+.sandbox { background: var(--white); border: 1.5px solid var(--border); border-radius: var(--r); overflow: hidden; margin: 16px 0; }
+.sandbox-head { background: var(--surface); border-bottom: 1px solid var(--border); padding: 9px 15px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); display: flex; align-items: center; justify-content: space-between; }
+.sandbox-body { display: flex; flex-direction: column; gap: 0; }
+.sandbox textarea { width: 100%; min-height: 110px; background: #F0F4FF; border: none; border-bottom: 1px solid var(--border); font-family: var(--mono); font-size: 13px; color: #1C2333; padding: 14px 16px; resize: vertical; outline: none; line-height: 1.8; }
+.sandbox-run { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: var(--surface); border-bottom: 1px solid var(--border); }
+.run-btn { background: var(--green); color: #fff; border: none; border-radius: var(--rs); padding: 6px 16px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: var(--font); display: flex; align-items: center; gap: 5px; }
+.run-btn:hover { background: #118A58; }
+.sandbox-out { padding: 12px 16px; font-family: var(--mono); font-size: 13px; min-height: 50px; color: #0D5535; line-height: 1.8; background: #F0FBF4; }
+.sandbox-out.err { color: var(--red); background: var(--red-bg); }
+.sandbox-hint { font-size: 11px; color: var(--light); }
+
+/* CONCEPT BADGE */
+.concept-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--amber-bg); color: var(--amber); border-radius: 20px; padding: 4px 12px; font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; margin-bottom: 12px; }
+
+/* DART CONCEPT MAP */
+.concept-map { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 14px 0; }
+.cm-box { background: var(--white); border: 2px solid var(--border); border-radius: var(--rs); padding: 12px 14px; text-align: center; cursor: pointer; transition: all .15s; }
+.cm-box:hover { border-color: var(--amber); background: var(--amber-bg); }
+.cm-box.done-box { border-color: var(--green); background: var(--green-bg); }
+.cm-box .cm-num { font-size: 10px; font-weight: 700; color: var(--light); margin-bottom: 2px; text-transform: uppercase; letter-spacing: .05em; }
+.cm-box .cm-name { font-size: 13px; font-weight: 700; }
+.cm-box .cm-emoji { font-size: 20px; margin-bottom: 3px; }
+
+/* NAV */
+.page-nav { display: flex; gap: 10px; margin-top: 40px; padding-top: 18px; border-top: 1px solid var(--border); }
+.btn { display: inline-flex; align-items: center; gap: 6px; border-radius: var(--rs); padding: 9px 18px; font-size: 13.5px; font-weight: 600; cursor: pointer; border: none; font-family: var(--font); transition: all .15s; }
+.btn-primary { background: var(--blue); color: white; }
+.btn-primary:hover { background: #2550CC; }
+.btn-amber { background: var(--amber); color: white; }
+.btn-amber:hover { background: #A86808; }
+.btn-green { background: var(--green); color: white; }
+.btn-green:hover { background: #118A58; }
+.btn-ghost { background: var(--white); color: var(--muted); border: 1.5px solid var(--border); }
+.btn-ghost:hover { background: var(--surface); color: var(--text); }
+.btn-ghost:disabled { opacity: .4; cursor: not-allowed; }
+
+hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+.tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0; }
+.tag { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 4px 11px; font-size: 12px; font-weight: 500; color: var(--muted); }
+
+/* MOBILE */
+.mob-btn { display: none; position: fixed; bottom: 18px; right: 18px; width: 44px; height: 44px; border-radius: 50%; background: var(--amber); color: #fff; border: none; font-size: 18px; box-shadow: 0 4px 14px rgba(201,125,16,.4); cursor: pointer; z-index: 200; align-items: center; justify-content: center; }
+@media (max-width: 800px) {
+  .sidebar { transform: translateX(-100%); transition: transform .25s; }
+  .sidebar.open { transform: translateX(0); }
+  .main { margin-left: 0; }
+  .content { padding: 20px 16px; }
+  .topbar { padding: 12px 16px; }
+  .mob-btn { display: flex; }
+  .card-grid, .concept-map { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <div class="sb-badge">💻 Dart Basics</div>
+    <h2>Dart Before Your Project</h2>
+    <p>Complete beginner — no experience needed</p>
+  </div>
+  <div class="prog-wrap">
+    <div class="prog-bar"><div class="prog-fill" id="progFill"></div></div>
+    <div class="prog-lbl" id="progLbl">0 of 8 lessons complete</div>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-grp">Start Here</div>
+    <div class="sb-item" onclick="go(0)" id="n0"><div class="sb-num">1</div> What Is Code?</div>
+    <div class="sb-item" onclick="go(1)" id="n1"><div class="sb-num">2</div> Variables</div>
+    <div class="sb-item" onclick="go(2)" id="n2"><div class="sb-num">3</div> Types of Data</div>
+
+    <div class="sb-grp">Logic</div>
+    <div class="sb-item" onclick="go(3)" id="n3"><div class="sb-num">4</div> If / Else</div>
+    <div class="sb-item" onclick="go(4)" id="n4"><div class="sb-num">5</div> Lists</div>
+    <div class="sb-item" onclick="go(5)" id="n5"><div class="sb-num">6</div> Functions</div>
+
+    <div class="sb-grp">Flutter Specific</div>
+    <div class="sb-item" onclick="go(6)" id="n6"><div class="sb-num">7</div> Classes &amp; Objects</div>
+    <div class="sb-item" onclick="go(7)" id="n7"><div class="sb-num">8</div> Ready to Code!</div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="topTitle"><strong>Lesson 1 — What Is Code?</strong></div>
+  </div>
+  <div class="content">
+    <div class="dots" id="dots"></div>
+
+    <!-- ═══════════════════════════
+         PAGE 0 — WHAT IS CODE?
+    ═══════════════════════════ -->
+    <div class="page active" id="p0">
+      <div class="hero amber">
+        <div class="hero-tag" style="color:var(--amber)">💻 Lesson 1</div>
+        <h1>What Is Code — and Why Does Dart Exist?</h1>
+        <p class="hero-sub">Before you write a single line, let's make sure you understand what code actually is and why Dart is the language Flutter uses.</p>
+      </div>
+
+      <div class="prose">
+        <h2>What Is Code?</h2>
+        <p>Code is simply <strong>a set of instructions you give to a computer</strong>, written in a language the computer understands.</p>
+        <p>Think of it like a recipe. A recipe tells a cook: "first do this, then do that, if the oven is hot enough do this." Code works exactly the same way — you write instructions, the computer follows them in order.</p>
+      </div>
+
+      <div class="analogy">
+        <div class="a-icon">🍳</div>
+        <div class="a-body">
+          <div class="a-label">Real-world analogy</div>
+          <div class="a-title">Code is like a recipe</div>
+          <div class="a-desc">A recipe says: "boil water, add pasta, wait 10 minutes, drain." Code says: "show a text box, wait for the user to type, when they tap Save, add it to the list." Both are just instructions — written in a language the reader understands.</div>
+        </div>
+      </div>
+
+      <div class="prose">
+        <h2>What Is Dart?</h2>
+        <p>Dart is the <strong>language</strong> Flutter uses. Think of it as the language you use to write your instructions in. Just like you can write a recipe in English or French, you can write app instructions in different programming languages. Flutter chose Dart.</p>
+
+        <h2>Do I Need to Know All of Dart?</h2>
+        <p><strong>No.</strong> You only need to understand 6 simple concepts to build your first Flutter project:</p>
+      </div>
+
+      <div class="concept-map">
+        <div class="cm-box" onclick="go(1)"><div class="cm-emoji">📦</div><div class="cm-num">Lesson 2</div><div class="cm-name">Variables</div></div>
+        <div class="cm-box" onclick="go(2)"><div class="cm-emoji">🏷️</div><div class="cm-num">Lesson 3</div><div class="cm-name">Data Types</div></div>
+        <div class="cm-box" onclick="go(3)"><div class="cm-emoji">🚦</div><div class="cm-num">Lesson 4</div><div class="cm-name">If / Else</div></div>
+        <div class="cm-box" onclick="go(4)"><div class="cm-emoji">📋</div><div class="cm-num">Lesson 5</div><div class="cm-name">Lists</div></div>
+        <div class="cm-box" onclick="go(5)"><div class="cm-emoji">🔧</div><div class="cm-num">Lesson 6</div><div class="cm-name">Functions</div></div>
+        <div class="cm-box" onclick="go(6)"><div class="cm-emoji">🏗️</div><div class="cm-num">Lesson 7</div><div class="cm-name">Classes</div></div>
+      </div>
+
+      <div class="callout info">
+        <div class="ico">🌐</div>
+        <div class="callout-body"><strong>Practice tool:</strong> Go to <strong>dartpad.dev</strong> — it's a free website where you can type Dart code and run it instantly. No installation needed. Open it in another tab and try every example in this tutorial.</div>
+      </div>
+
+      <div class="prose">
+        <h2>What Does "Running Code" Mean?</h2>
+        <p>When you "run" code, the computer reads your instructions from top to bottom and does what you said. If you said <code>print("Hello")</code>, it prints the word Hello. That's it.</p>
+        <p><code>print()</code> is the simplest thing in Dart — it just shows a message. You'll use it a lot while learning to check what your code is doing.</p>
+      </div>
+
+      <div class="code-lbl">📄 The simplest Dart program</div>
+      <div class="code-box"><span class="fn">print</span>(<span class="str">"Hello, world!"</span>);</div>
+
+      <div class="out-lbl">Output</div>
+      <div class="output-box">Hello, world!</div>
+
+      <div class="prose">
+        <p>That's your first line of Dart. It tells the computer: <em>show the words "Hello, world!" on the screen.</em></p>
+        <p>Notice the <strong>semicolon <code>;</code></strong> at the end. In Dart, every instruction ends with a semicolon — it's like a full stop at the end of a sentence. Forgetting it is the most common beginner mistake.</p>
+      </div>
+
+      <div class="callout warn">
+        <div class="ico">⚠️</div>
+        <div class="callout-body"><strong>The semicolon rule:</strong> Every line of code in Dart ends with <code>;</code> — just like every English sentence ends with a full stop. If you forget it, Dart will show an error.</div>
+      </div>
+
+      <div class="quiz">
+        <div class="quiz-badge">🧠 Quick Check</div>
+        <div class="quiz-q">What does <code>print("Good morning!");</code> do?</div>
+        <div class="quiz-opts" id="q0">
+          <button class="opt" onclick="ans('q0','a','b')"><span class="let">A</span> Sends an email</button>
+          <button class="opt" onclick="ans('q0','b','b')"><span class="let">B</span> Shows the words "Good morning!" on screen</button>
+          <button class="opt" onclick="ans('q0','c','b')"><span class="let">C</span> Prints a document on a printer</button>
+        </div>
+        <div class="qfb" id="q0-fb"></div>
+      </div>
+
+      <div class="tryit">
+        <div class="tryit-lbl">🛠️ Try It on DartPad</div>
+        <h4>Write your first line of Dart</h4>
+        <ol>
+          <li>Open <strong>dartpad.dev</strong></li>
+          <li>Delete everything that's already there</li>
+          <li>Type: <code>void main() { print("My name is [your name]"); }</code></li>
+          <li>Click the Run button — you should see your name appear</li>
+        </ol>
+        <p style="margin-top:8px"><em>Don't worry about <code>void main()</code> yet — it just tells Dart where to start. You'll understand it fully by Lesson 7.</em></p>
+      </div>
+
+      <div class="page-nav">
+        <button class="btn btn-ghost" disabled>← Previous</button>
+        <button class="btn btn-primary" onclick="go(1)">Next: Variables →</button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════
+         PAGE 1 — VARIABLES
+    ═══════════════════════════ -->
+    <div class="page" id="p1">
+      <div class="hero blue">
+        <div class="hero-tag" style="color:var(--blue)">📦 Lesson 2</div>
+        <h1>Variables — Storing Information</h1>
+        <p class="hero-sub">A variable is a labelled box that holds a piece of information. It's one of the most important concepts in all of programming.</p>
+      </div>
+
+      <div class="analogy">
+        <div class="a-icon">📦</div>
+        <div class="a-body">
+          <div class="a-label">Real-world analogy</div>
+          <div class="a-title">A variable is a labelled box</div>
+          <div class="a-desc">Imagine a box with a label "Student Name" stuck on it. You put the name "Alex" inside. Any time you need the name, you look in that box. If the name changes to "Jordan", you put a new name in the same box. That's exactly what a variable does.</div>
+        </div>
+      </div>
+
+      <div class="prose">
+        <h2>Creating a Variable in Dart</h2>
+        <p>Here's how you create a variable and put something in it:</p>
+      </div>
+
+      <div class="code-lbl">📄 Creating variables</div>
+      <div class="code-box"><span class="kw">String</span> studentName = <span class="str">"Alex"</span>;
+<span class="fn">print</span>(studentName);</div>
+
+      <div class="out-lbl">Output</div>
+      <div class="output-box">Alex</div>
+
+      <table class="explain">
+        <thead><tr><th>Part</th><th>Plain English Meaning</th></tr></thead>
+        <tbody>
+          <tr><td>String</td><td>The <strong>type</strong> of the box — this box holds text. (More on types in the next lesson.)</td></tr>
+          <tr><td>studentName</td><td>The <strong>name</strong> of the box — what you call it. You choose this name.</td></tr>
+          <tr><td>=</td><td>The <strong>equals sign</strong> puts something into the box. Read it as "is set to".</td></tr>
+          <tr><td>"Alex"</td><td>The <strong>value</strong> — what's inside the box. Text always goes inside quote marks.</td></tr>
+          <tr><td>;</td><td>The <strong>semicolon</strong> — the full stop at the end of every Dart instruction.</td></tr>
+          <tr><td>print(studentName)</td><td>Shows what's inside the <code>studentName</code> box on screen.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="prose">
+        <h2>Changing a Variable</h2>
+        <p>Once you've created a variable, you can change what's inside it:</p>
+      </div>
+
+      <div class="code-lbl">📄 Changing a variable's value</div>
+      <div class="code-box"><span class="kw">String</span> studentName = <span class="str">"Alex"</span>;
+<span class="fn">print</span>(studentName);    <span class="cm">← prints Alex</span>
+
+studentName = <span class="str">"Jordan"</span>;   <span class="cm">← put a new value in the box</span>
+<span class="fn">print</span>(studentName);    <span class="cm">← now prints Jordan</span></div>
+
+      <div class="out-lbl">Output</div>
+      <div class="output-box">Alex
+Jordan</div>
+
+      <div class="callout tip">
+        <div class="ico">💡</div>
+        <div class="callout-body">When you change a variable, you <strong>don't write the type again</strong>. You only write <code>String</code> (or whatever type) the very first time you create the variable.</div>
+      </div>
+
+      <div class="prose">
+        <h2>Why Are Variables Useful in Your App?</h2>
+        <p>In your Student Task Manager project, you'll use variables to remember things like:</p>
+        <ul>
+          <li>The text the user typed in the task name field</li>
+          <li>Which priority button they selected (High / Medium / Low)</li>
+          <li>Whether a task is marked done or not</li>
+        </ul>
+        <p>Without variables, the app couldn't remember anything the user does.</p>
+      </div>
+
+      <div class="quiz">
+        <div class="quiz-badge">🧠 Quick Check</div>
+        <div class="quiz-q">What does the <code>=</code> sign do when creating a variable?</div>
+        <div class="quiz-opts" id="q1">
+          <button class="opt" onclick="ans('q1','a','c')"><span class="let">A</span> Checks if two things are equal</button>
+          <button class="opt" onclick="ans('q1','b','c')"><span class="let">B</span> Adds two numbers together</button>
+          <button class="opt" onclick="ans('q1','c','c')"><span class="let">C</span> Puts a value into the variable (the box)</button>
+        </div>
+        <div class="qfb" id="q1-fb"></div>
+      </div>
+
+      <div class="tryit">
+        <div class="tryit-lbl">🛠️ Try It on DartPad</div>
+        <h4>Create your own variables</h4>
+        <ol>
+          <li>Create a variable called <code>myName</code> and put your name in it</li>
+          <li>Create a variable called <code>myCourse</code> and put "Mobile App Development" in it</li>
+          <li>Print both variables</li>
+          <li>Then change <code>myName</code> to a friend's name and print it again</li>
+        </ol>
+      </div>
+
+      <div class="page-nav">
+        <button class="btn btn-ghost" onclick="go(0)">← Previous</button>
+        <button class="btn btn-primary" onclick="go(2)">Next: Types of Data →</button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════
+         PAGE 2 — DATA TYPES
+    ═══════════════════════════ -->
+    <div class="page" id="p2">
+      <div class="hero purple">
+        <div class="hero-tag" style="color:var(--purple)">🏷️ Lesson 3</div>
+        <h1>Types of Data</h1>
+        <p class="hero-sub">Not all information is the same. A name is different from a number. A yes/no answer is different from both. Dart needs to know which type of data goes in each box.</p>
+      </div>
+
+      <div class="analogy">
+        <div class="a-icon">🗃️</div>
+        <div class="a-body">
+          <div class="a-label">Real-world analogy</div>
+          <div class="a-title">Different boxes for different things</div>
+          <div class="a-desc">You wouldn't store soup in a paper bag or a book in a fish tank. Different things need the right kind of container. In Dart, different types of data need the right type of variable.</div>
+        </div>
+      </div>
+
+      <div class="prose">
+        <h2>The 4 Types You Need to Know</h2>
+      </div>
+
+      <div class="card-grid">
+        <div class="card"><div class="ci">📝</div><div class="ct">String — Text</div><div class="cd">Any words, sentences, or characters. Always inside quote marks. <br><br>Example: <code>"Alex"</code>, <code>"High"</code>, <code>"Submit project"</code></div></div>
+        <div class="card"><div class="ci">🔢</div><div class="ct">int — Whole Number</div><div class="cd">Any number without a decimal point. No quotes.<br><br>Example: <code>5</code>, <code>20</code>, <code>100</code>, <code>-3</code></div></div>
+        <div class="card"><div class="ci">💰</div><div class="ct">double — Decimal Number</div><div class="cd">Any number with a decimal point.<br><br>Example: <code>3.7</code>, <code>9.99</code>, <code>0.5</code></div></div>
+        <div class="card"><div class="ci">🔘</div><div class="ct">bool — True or False</div><div class="cd">Only two possible values: <code>true</code> or <code>false</code>. Like a light switch — on or off.<br><br>Example: <code>true</code>, <code>false</code></div></div>
+      </div>
+
+      <div class="code-lbl">📄 All four types in use</div>
+      <div class="code-box"><span class="kw">String</span>  taskName   = <span class="str">"Submit homework"</span>;
+<span class="kw">int</span>     taskCount  = <span class="val">3</span>;
+<span class="kw">double</span>  progress   = <span class="val">0.75</span>;    <span class="cm">← 75% done</span>
+<span class="kw">bool</span>    isDone     = <span class="val">false</span>;   <span class="cm">← not done yet</span>
+
+<span class="fn">print</span>(taskName);    <span class="cm">← Submit homework</span>
+<span class="fn">print</span>(taskCount);   <span class="cm">← 3</span>
+<span class="fn">print</span>(isDone);      <span class="cm">← false</span></div>
+
+      <div class="out-lbl">Output</div>
+      <div class="output-box">Submit homework
+3
+false</div>
+
+      <div class="prose">
+        <h2>Which Types Will You Use in the Project?</h2>
+        <p>In your Student Task Manager you'll use:</p>
+        <ul>
+          <li><strong>String</strong> — the task name the user types, and the priority ("High", "Medium", "Low")</li>
+          <li><strong>bool</strong> — whether each task is done or not (<code>true</code> = done, <code>false</code> = not done)</li>
+        </ul>
+
+        <h2>One Important Rule — Types Must Match</h2>
+        <p>You can't put text into a number box. Dart will refuse and show an error.</p>
+      </div>
+
+      <div class="code-lbl">📄 ❌ This will cause an error</div>
+      <div class="code-box"><span class="kw">int</span> age = <span class="str">"twenty"</span>;   <span class="cm">← ERROR! "twenty" is text, not a number</span></div>
+
+      <div class="code-lbl">📄 ✅ This is correct</div>
+      <div class="code-box"><span class="kw">int</span>    age  = <span class="val">20</span>;         <span class="cm">← correct: number in number box</span>
+<span class="kw">String</span> word = <span class="str">"twenty"</span>;   <span class="cm">← correct: text in text box</span></div>
+
+      <div class="quiz">
+        <div class="quiz-badge">🧠 Quick Check</div>
+        <div class="quiz-q">In the Task Manager project, the task "done or not done" is stored as which type?</div>
+        <div class="quiz-opts" id="q2">
+          <button class="opt" onclick="ans('q2','a','c')"><span class="let">A</span> String — because "done" is a word</button>
+          <button class="opt" onclick="ans('q2','b','c')"><span class="let">B</span> int — because it can be 0 or 1</button>
+          <button class="opt" onclick="ans('q2','c','c')"><span class="let">C</span> bool — because it's either true (done) or false (not done)</button>
+        </div>
+        <div class="qfb" id="q2-fb"></div>
+      </div>
+
+      <div class="tryit">
+        <div class="tryit-lbl">🛠️ Try It on DartPad</div>
+        <h4>Create variables for a task</h4>
+        <p>Create these four variables to represent one task and print them all:</p>
+        <ol>
+          <li><code>String taskName</code> — set it to any homework task</li>
+          <li><code>String priority</code> — set it to "High"</li>
+          <li><code>bool isDone</code> — set it to false</li>
+          <li>Print all three variables</li>
+        </ol>
+      </div>
+
+      <div class="page-nav">
+        <button class="btn btn-ghost" onclick="go(1)">← Previous</button>
+        <button class="btn btn-primary" onclick="go(3)">Next: If / Else →</button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════
+         PAGE 3 — IF / ELSE
+    ═══════════════════════════ -->
+    <div class="page" id="p3">
+      <div class="hero green">
+        <div class="hero-tag" style="color:var(--green)">🚦 Lesson 4</div>
+        <h1>If / Else — Making Decisions</h1>
+        <p class="hero-sub">Your app needs to do different things depending on what happens. If the task is done — show a tick. If not — show an empty box. That's if/else.</p>
+      </div>
+
+      <div class="analogy">
+        <div class="a-icon">🚦</div>
+        <div class="a-body">
+          <div class="a-label">Real-world analogy</div>
+          <div class="a-title">If/else is like a traffic light decision</div>
+          <div class="a-desc">"If the light is green, drive. Otherwise (else), stop." Your code works exactly the same way — "if this condition is true, do this. Otherwise, do that."</div>
+        </div>
+      </div>
+
+      <div class="prose">
+        <h2>If / Else in Dart</h2>
+      </div>
+
+      <div class="code-lbl">📄 Basic if/else</div>
+      <div class="code-box"><span class="kw">bool</span> taskDone = <span class="val">true</span>;
+
+<span class="kw">if</span> (taskDone) {
+  <span class="fn">print</span>(<span class="str">"✅ Task is complete!"</span>);
+} <span class="kw">else</span> {
+  <span class="fn">print</span>(<span class="str">"⬜ Task is not done yet."</span>);
+}</div>
+
+      <div class="out-lbl">Output (because taskDone is true)</div>
+      <div class="output-box">✅ Task is complete!</div>
+
+      <table class="explain">
+        <thead><tr><th>Part</th><th>Plain English Meaning</th></tr></thead>
+        <tbody>
+          <tr><td>if (taskDone)</td><td>"If taskDone is true…" — check the condition inside the brackets.</td></tr>
+          <tr><td>{ ... }</td><td>The curly brackets hold the code to run <strong>if the condition is true</strong>.</td></tr>
+          <tr><td>else</td><td>"Otherwise…" — runs if the condition was false.</td></tr>
+          <tr><td>{ ... } after else</td><td>The code to run <strong>if the condition was false</strong>.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="prose">
+        <h2>Comparing Values</h2>
+        <p>You can also compare two values using <code>==</code> (double equals — means "is equal to"):</p>
+      </div>
+
+      <div class="code-lbl">📄 Checking a specific value</div>
+      <div class="code-box"><span class="kw">String</span> priority = <span class="str">"High"</span>;
+
+<span class="kw">if</span> (priority == <span class="str">"High"</span>) {
+  <span class="fn">print</span>(<span class="str">"🔴 This task is urgent!"</span>);
+} <span class="kw">else</span> {
+  <span class="fn">print</span>(<span class="str">"This task can wait."</span>);
+}</div>
+
+      <div class="out-lbl">Output</div>
+      <div class="output-box">🔴 This task is urgent!</div>
+
+      <div class="callout warn">
+        <div class="ico">⚠️</div>
+        <div class="callout-body"><strong>Single = vs double ==</strong><br>
+        <code>=</code> puts a value INTO a variable. (assignment)<br>
+        <code>==</code> COMPARES two values. (question: "are these equal?")<br>
+        This is one of the most common beginner mistakes — using <code>=</code> when you meant <code>==</code>.</div>
+      </div>
+
+      <div class="prose">
+        <h2>Where You'll See This in the Project</h2>
+        <p>In your Task Manager, if/else appears in two places:</p>
+        <ul>
+          <li>Checking if the task name is empty before saving: <code>if (name.isEmpty) return;</code></li>
+          <li>Deciding whether to cross out a task name: if <code>isDone == true</code>, show a strikethrough</li>
+        </ul>
+      </div>
+
+      <!-- Interactive if/else demo -->
+      <div class="sandbox">
+        <div class="sandbox-head">
+          <span>⚡ Interactive — change the value and see what happens</span>
+        </div>
+        <div class="sandbox-body">
+          <div style="padding:14px 16px;background:#F0F4FF;border-bottom:1px solid var(--border)">
+            <div style="font-size:13px;color:var(--muted);margin-bottom:10px">Change <code>taskDone</code> to <code>false</code> and click Run to see the else branch:</div>
+            <textarea id="ifelseCode" spellcheck="false">bool taskDone = true;
+
+if (taskDone) {
+  print("✅ Task is complete!");
+} else {
+  print("⬜ Task not done yet.");
+}</textarea>
+          </div>
+          <div class="sandbox-run">
+            <span class="sandbox-hint">Edit the code above, then run it</span>
+            <button class="run-btn" onclick="runIfElse()">▶ Run</button>
+          </div>
+          <div class="sandbox-out" id="ifelseOut">Output appears here...</div>
+        </div>
+      </div>
+
+      <div class="quiz">
+        <div class="quiz-badge">🧠 Quick Check</div>
+        <div class="quiz-q">What is the difference between <code>=</code> and <code>==</code> in Dart?</div>
+        <div class="quiz-opts" id="q3">
+          <button class="opt" onclick="ans('q3','a','b')"><span class="let">A</span> There is no difference — they do the same thing</button>
+          <button class="opt" onclick="ans('q3','b','b')"><span class="let">B</span> <code>=</code> sets a value; <code>==</code> checks if two values are equal</button>
+          <button class="opt" onclick="ans('q3','c','b')"><span class="let">C</span> <code>==</code> sets a value; <code>=</code> checks if two values are equal</button>
+        </div>
+        <div class="qfb" id="q3-fb"></div>
+      </div>
+
+      <div class="tryit">
+        <div class="tryit-lbl">🛠️ Try It on DartPad</div>
+        <h4>Write an if/else for a task</h4>
+        <ol>
+          <li>Create a variable: <code>bool isDone = false;</code></li>
+          <li>Write an if/else: if isDone is true, print "Completed ✅". Otherwise print "Still to do ⬜"</li>
+          <li>Change <code>isDone</code> to <code>true</code> and run again — does the output change?</li>
+        </ol>
+      </div>
+
+      <div class="page-nav">
+        <button class="btn btn-ghost" onclick="go(2)">← Previous</button>
+        <button class="btn btn-primary" onclick="go(4)">Next: Lists →</button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════
+         PAGE 4 — LISTS
+    ═══════════════════════════ -->
+    <div class="page" id="p4">
+      <div class="hero teal">
+        <div class="hero-tag" style="color:var(--teal)">📋 Lesson 5</div>
+        <h1>Lists — Storing Multiple Items</h1>
+        <p class="hero-sub">A variable holds one thing. But what if you need to store 10 tasks? That's what a List is for — it holds many items in one place.</p>
+      </div>
+
+      <div class="analogy">
+        <div class="a-icon">📋</div>
+        <div class="a-body">
+          <div class="a-label">Real-world analogy</div>
+          <div class="a-title">A List is like a shopping list</div>
+          <div class="a-desc">Instead of writing each item on a separate piece of paper, you write them all on one list. You can add items, remove items, or look up any item by its position. A Dart List works exactly the same way.</div>
+        </div>
+      </div>
+
+      <div class="prose">
+        <h2>Creating a List</h2>
+      </div>
+
+      <div class="code-lbl">📄 A list of tasks</div>
+      <div class="code-box">List&lt;<span class="kw">String</span>&gt; tasks = [
+  <span class="str">"Math homework"</span>,
+  <span class="str">"Read Chapter 4"</span>,
+  <span class="str">"Submit project"</span>,
+];</div>
+
+      <table class="explain">
+        <thead><tr><th>Part</th><th>Plain English Meaning</th></tr></thead>
+        <tbody>
+          <tr><td>List&lt;String&gt;</td><td>A list where every item is a String (text). The type inside <code>&lt; &gt;</code> tells Dart what kind of items the list holds.</td></tr>
+          <tr><td>tasks</td><td>The name of the list. You choose this name.</td></tr>
+          <tr><td>[ ... ]</td><td>Square brackets hold all the items. Items are separated by commas.</td></tr>
+          <tr><td>"Math homework"</td><td>The first item in the list (at position 0).</td></tr>
+        </tbody>
+      </table>
+
+      <div class="prose">
+        <h2>Getting Items From a List</h2>
+        <p>Every item has a <strong>position number</strong> — called an <strong>index</strong>. The first item is at position <strong>0</strong> (not 1!).</p>
+      </div>
+
+      <div class="code-lbl">📄 Accessing list items</div>
+      <div class="code-box"><span class="fn">print</span>(tasks[<span class="val">0</span>]);   <span class="cm">← first item</span>
+<span class="fn">print</span>(tasks[<span class="val">1</span>]);   <span class="cm">← second item</span>
+<span class="fn">print</span>(tasks[<span class="val">2</span>]);   <span class="cm">← third item</span></div>
+
+      <div class="out-lbl">Output</div>
+      <div class="output-box">Math homework
+Read Chapter 4
+Submit project</div>
+
+      <div class="callout warn">
+        <div class="ico">⚠️</div>
+        <div class="callout-body"><strong>Lists start at 0, not 1.</strong> This confuses almost every beginner. If you have 3 items, their positions are 0, 1, and 2. There is no position 3 — asking for it will crash the app!</div>
+      </div>
+
+      <div class="prose">
+        <h2>Adding and Removing Items</h2>
+      </div>
+
+      <div class="code-lbl">📄 Changing the list</div>
+      <div class="code-box"><span class="cm">// Add a new item to the end</span>
+tasks.<span class="fn">add</span>(<span class="str">"Study for exam"</span>);
+
+<span class="cm">// Remove an item by position</span>
+tasks.<span class="fn">removeAt</span>(<span class="val">0</span>);   <span class="cm">← removes "Math homework"</span>
+
+<span class="cm">// How many items are in the list?</span>
+<span class="fn">print</span>(tasks.length);   <span class="cm">← prints 3</span></div>
+
+      <div class="prose">
+        <h2>Where You'll See This in the Project</h2>
+        <p>Your entire Task Manager is built around a list. Every time the user adds a task, it goes into the list with <code>.add()</code>. The screen shows all items in the list. That's it.</p>
+      </div>
+
+      <div class="quiz">
+        <div class="quiz-badge">🧠 Quick Check</div>
+        <div class="quiz-q">You have a list with 3 tasks. What position (index) is the very first task?</div>
+        <div class="quiz-opts" id="q4">
+          <button class="opt" onclick="ans('q4','a','b')"><span class="let">A</span> Position 1</button>
+          <button class="opt" onclick="ans('q4','b','b')"><span class="let">B</span> Position 0</button>
+          <button class="opt" onclick="ans('q4','c','b')"><span class="let">C</span> Position -1</button>
+        </div>
+        <div class="qfb" id="q4-fb"></div>
+      </div>
+
+      <div class="tryit">
+        <div class="tryit-lbl">🛠️ Try It on DartPad</div>
+        <h4>Build your own task list</h4>
+        <ol>
+          <li>Create a List of 3 tasks (your own homework)</li>
+          <li>Print the first item using <code>[0]</code></li>
+          <li>Add a fourth task using <code>.add()</code></li>
+          <li>Print <code>tasks.length</code> — it should say 4</li>
+        </ol>
+      </div>
+
+      <div class="page-nav">
+        <button class="btn btn-ghost" onclick="go(3)">← Previous</button>
+        <button class="btn btn-primary" onclick="go(5)">Next: Functions →</button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════
+         PAGE 5 — FUNCTIONS
+    ═══════════════════════════ -->
+    <div class="page" id="p5">
+      <div class="hero amber">
+        <div class="hero-tag" style="color:var(--amber)">🔧 Lesson 6</div>
+        <h1>Functions — Reusable Instructions</h1>
+        <p class="hero-sub">Instead of writing the same code over and over, you put it in a function and give it a name. Call the name whenever you need it.</p>
+      </div>
+
+      <div class="analogy">
+        <div class="a-icon">🎰</div>
+        <div class="a-body">
+          <div class="a-label">Real-world analogy</div>
+          <div class="a-title">A function is like a vending machine</div>
+          <div class="a-desc">You press a button (call the function), put in a coin (pass in a value), and get a snack out (receive a result). The machine does the same job every time, but you don't need to know how it works inside — you just use it.</div>
+        </div>
+      </div>
+
+      <div class="prose">
+        <h2>A Simple Function</h2>
+      </div>
+
+      <div class="code-lbl">📄 Creating and calling a function</div>
+      <div class="code-box"><span class="cm">// Create the function</span>
+<span class="kw">void</span> <span class="fn">sayHello</span>() {
+  <span class="fn">print</span>(<span class="str">"Hello! Welcome to the app."</span>);
+}
+
+<span class="cm">// Call (use) the function</span>
+<span class="fn">sayHello</span>();    <span class="cm">← runs the code inside</span>
+<span class="fn">sayHello</span>();    <span class="cm">← runs it again</span></div>
+
+      <div class="out-lbl">Output</div>
+      <div class="output-box">Hello! Welcome to the app.
+Hello! Welcome to the app.</div>
+
+      <table class="explain">
+        <thead><tr><th>Part</th><th>Plain English Meaning</th></tr></thead>
+        <tbody>
+          <tr><td>void</td><td>This function doesn't give anything back — it just does something (prints). "void" means "returns nothing".</td></tr>
+          <tr><td>sayHello</td><td>The name of the function. You choose this.</td></tr>
+          <tr><td>( )</td><td>The brackets are where you put inputs (called parameters). Empty here means no inputs needed.</td></tr>
+          <tr><td>{ ... }</td><td>The code the function runs when called.</td></tr>
+          <tr><td>sayHello();</td><td>This is how you <strong>call</strong> (run) the function — write the name followed by ().</td></tr>
+        </tbody>
+      </table>
+
+      <div class="prose">
+        <h2>A Function That Takes Input</h2>
+        <p>You can pass information into a function. The placeholder is called a <strong>parameter</strong>.</p>
+      </div>
+
+      <div class="code-lbl">📄 Function with a parameter</div>
+      <div class="code-box"><span class="kw">void</span> <span class="fn">greetStudent</span>(<span class="kw">String</span> name) {
+  <span class="fn">print</span>(<span class="str">"Welcome, "</span> + name + <span class="str">"!"</span>);
+}
+
+<span class="fn">greetStudent</span>(<span class="str">"Alex"</span>);     <span class="cm">← prints:  Welcome, Alex!</span>
+<span class="fn">greetStudent</span>(<span class="str">"Jordan"</span>);   <span class="cm">← prints:  Welcome, Jordan!</span></div>
+
+      <div class="out-lbl">Output</div>
+      <div class="output-box">Welcome, Alex!
+Welcome, Jordan!</div>
+
+      <div class="prose">
+        <h2>Where You'll See This in the Project</h2>
+        <p>In your Task Manager, functions are used constantly — Flutter calls them automatically for you. For example:</p>
+        <ul>
+          <li>When the user taps the checkbox, Flutter calls a function you wrote that changes <code>isDone</code></li>
+          <li>When the user taps Save, a function runs that adds the task to the list</li>
+          <li>When the user taps Cancel, a function runs that closes the screen</li>
+        </ul>
+      </div>
+
+      <div class="quiz">
+        <div class="quiz-badge">🧠 Quick Check</div>
+        <div class="quiz-q">What does calling a function mean?</div>
+        <div class="quiz-opts" id="q5">
+          <button class="opt" onclick="ans('q5','a','b')"><span class="let">A</span> Creating the function for the first time</button>
+          <button class="opt" onclick="ans('q5','b','b')"><span class="let">B</span> Running the function — telling the code inside it to execute</button>
+          <button class="opt" onclick="ans('q5','c','b')"><span class="let">C</span> Deleting the function</button>
+        </div>
+        <div class="qfb" id="q5-fb"></div>
+      </div>
+
+      <div class="tryit">
+        <div class="tryit-lbl">🛠️ Try It on DartPad</div>
+        <h4>Write your own function</h4>
+        <ol>
+          <li>Create a function called <code>showTask</code> that takes a <code>String</code> parameter called <code>taskName</code></li>
+          <li>Inside the function, print: <code>"Task: " + taskName</code></li>
+          <li>Call the function 3 times with 3 different task names</li>
+        </ol>
+      </div>
+
+      <div class="page-nav">
+        <button class="btn btn-ghost" onclick="go(4)">← Previous</button>
+        <button class="btn btn-primary" onclick="go(6)">Next: Classes →</button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════
+         PAGE 6 — CLASSES
+    ═══════════════════════════ -->
+    <div class="page" id="p6">
+      <div class="hero red">
+        <div class="hero-tag" style="color:var(--red)">🏗️ Lesson 7</div>
+        <h1>Classes &amp; Objects — Grouping Things Together</h1>
+        <p class="hero-sub">A class is a blueprint. From one blueprint you can create many objects. In Flutter, every widget — every button, every text box, every screen — is built from a class.</p>
+      </div>
+
+      <div class="analogy">
+        <div class="a-icon">🏠</div>
+        <div class="a-body">
+          <div class="a-label">Real-world analogy</div>
+          <div class="a-title">A class is like a house blueprint</div>
+          <div class="a-desc">A blueprint describes what a house looks like — how many rooms, where the doors are. From one blueprint, you can build many houses. Each house is its own separate building (object), but they all share the same structure. In Dart, a class is the blueprint; an object is one house built from it.</div>
+        </div>
+      </div>
+
+      <div class="prose">
+        <h2>Why Do You Need to Know This?</h2>
+        <p>In Flutter, every screen you create is a class. Every button is created from a class. When you write <code>Scaffold(...)</code> or <code>Text("Hello")</code>, you are using classes that Flutter built for you. You also create your own classes for screens.</p>
+
+        <h2>A Simple Class</h2>
+      </div>
+
+      <div class="code-lbl">📄 A basic class</div>
+      <div class="code-box"><span class="kw">class</span> Task {
+  <span class="kw">String</span> name;
+  <span class="kw">bool</span>   isDone;
+
+  Task(<span class="kw">this</span>.name, <span class="kw">this</span>.isDone);
+}</div>
+
+      <table class="explain">
+        <thead><tr><th>Part</th><th>Plain English Meaning</th></tr></thead>
+        <tbody>
+          <tr><td>class Task</td><td>We're defining a blueprint called "Task".</td></tr>
+          <tr><td>String name</td><td>Every task has a name (text).</td></tr>
+          <tr><td>bool isDone</td><td>Every task has a done flag (true or false).</td></tr>
+          <tr><td>Task(this.name, this.isDone)</td><td>The constructor — the instructions for building one task. You provide the name and done status when creating it.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="prose">
+        <h2>Creating Objects From a Class</h2>
+        <p>Once you have the blueprint, you can create as many tasks as you want:</p>
+      </div>
+
+      <div class="code-lbl">📄 Creating objects from the Task class</div>
+      <div class="code-box"><span class="cm">// Create two task objects from the Task blueprint</span>
+Task task1 = Task(<span class="str">"Math homework"</span>, <span class="val">false</span>);
+Task task2 = Task(<span class="str">"Read Chapter 4"</span>, <span class="val">true</span>);
+
+<span class="fn">print</span>(task1.name);     <span class="cm">← Math homework</span>
+<span class="fn">print</span>(task2.isDone);   <span class="cm">← true</span></div>
+
+      <div class="out-lbl">Output</div>
+      <div class="output-box">Math homework
+true</div>
+
+      <div class="prose">
+        <h2>Flutter Screens Are Classes Too</h2>
+        <p>When you write a Flutter screen, it looks like this — and now you understand what it means:</p>
+      </div>
+
+      <div class="code-lbl">📄 A Flutter screen is a class</div>
+      <div class="code-box"><span class="kw">class</span> HomeScreen <span class="kw">extends</span> StatefulWidget {
+  <span class="cm">// This is a blueprint for the Home screen</span>
+  <span class="cm">// "extends StatefulWidget" means it can change over time</span>
+}</div>
+
+      <div class="callout tip">
+        <div class="ico">💡</div>
+        <div class="callout-body"><strong>extends</strong> means "is a type of". <code>HomeScreen extends StatefulWidget</code> means "HomeScreen is a type of StatefulWidget". Flutter knows how to work with StatefulWidgets — so by extending it, your screen gets all of Flutter's screen-management features for free.</div>
+      </div>
+
+      <div class="quiz">
+        <div class="quiz-badge">🧠 Quick Check</div>
+        <div class="quiz-q">If a class is a blueprint, what is an object?</div>
+        <div class="quiz-opts" id="q6">
+          <button class="opt" onclick="ans('q6','a','c')"><span class="let">A</span> Another name for a variable</button>
+          <button class="opt" onclick="ans('q6','b','c')"><span class="let">B</span> The same thing as a class</button>
+          <button class="opt" onclick="ans('q6','c','c')"><span class="let">C</span> One specific thing created from the blueprint</button>
+        </div>
+        <div class="qfb" id="q6-fb"></div>
+      </div>
+
+      <div class="page-nav">
+        <button class="btn btn-ghost" onclick="go(5)">← Previous</button>
+        <button class="btn btn-primary" onclick="go(7)">Next: You're Ready! →</button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════
+         PAGE 7 — READY!
+    ═══════════════════════════ -->
+    <div class="page" id="p7">
+      <div class="hero green">
+        <div class="hero-tag" style="color:var(--green)">🎉 You're Ready!</div>
+        <h1>You Now Know Enough Dart</h1>
+        <p class="hero-sub">Let's quickly recap everything you've learned — then decode the exact code from your project so nothing is a mystery.</p>
+      </div>
+
+      <div class="prose">
+        <h2>What You Learned</h2>
+      </div>
+
+      <div class="card-grid">
+        <div class="card"><div class="ci">📦</div><div class="ct">Variables</div><div class="cd">Labelled boxes that store information. <code>String name = "Alex";</code></div></div>
+        <div class="card"><div class="ci">🏷️</div><div class="ct">Data Types</div><div class="cd">String (text), int (number), double (decimal), bool (true/false).</div></div>
+        <div class="card"><div class="ci">🚦</div><div class="ct">If / Else</div><div class="cd">Make decisions. "If done, show tick. Otherwise show empty box."</div></div>
+        <div class="card"><div class="ci">📋</div><div class="ct">Lists</div><div class="cd">Hold many items. Add with <code>.add()</code>. Access with <code>[0]</code>, <code>[1]</code>…</div></div>
+        <div class="card"><div class="ci">🔧</div><div class="ct">Functions</div><div class="cd">Named reusable blocks of code. Create once, call many times.</div></div>
+        <div class="card"><div class="ci">🏗️</div><div class="ct">Classes</div><div class="cd">Blueprints for things. Flutter screens are classes.</div></div>
+      </div>
+
+      <hr>
+
+      <div class="prose">
+        <h2>Decoding Your Project Code</h2>
+        <p>Now let's look at each line from your Task Manager project and explain it using only what you've just learned. No surprises.</p>
+      </div>
+
+      <!-- Decoded snippet 1 -->
+      <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--rs);overflow:hidden;margin:14px 0">
+        <div style="background:var(--surface);padding:9px 14px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);border-bottom:1px solid var(--border)">📄 From home_screen.dart — the task list</div>
+        <div style="padding:14px 16px">
+          <div class="code-box" style="margin:0 0 12px">List&lt;<span class="kw">String</span>&gt; tasks = [
+  {<span class="str">'name'</span>: <span class="str">'Math homework'</span>, <span class="str">'priority'</span>: <span class="str">'High'</span>, <span class="str">'done'</span>: <span class="val">false</span>},
+  {<span class="str">'name'</span>: <span class="str">'Read Chapter 4'</span>, <span class="str">'priority'</span>: <span class="str">'Medium'</span>, <span class="str">'done'</span>: <span class="val">false</span>},
+];</div>
+          <table class="explain" style="margin:0">
+            <thead><tr><th>Part</th><th>What You Know</th></tr></thead>
+            <tbody>
+              <tr><td>List</td><td><strong>List (Lesson 5)</strong> — holds multiple items.</td></tr>
+              <tr><td>{ 'name': ..., 'done': false }</td><td>Each item is a <strong>Map</strong> — like a mini group of variables, holding the name, priority, and done status of one task together.</td></tr>
+              <tr><td>'done': false</td><td><strong>bool variable (Lesson 3)</strong> — every task starts as not done.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Decoded snippet 2 -->
+      <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--rs);overflow:hidden;margin:14px 0">
+        <div style="background:var(--surface);padding:9px 14px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);border-bottom:1px solid var(--border)">📄 From home_screen.dart — checkbox tapped</div>
+        <div style="padding:14px 16px">
+          <div class="code-box" style="margin:0 0 12px">onChanged: (val) {
+  setState(() {
+    task[<span class="str">'done'</span>] = val;
+  });
+},</div>
+          <table class="explain" style="margin:0">
+            <thead><tr><th>Part</th><th>What You Know</th></tr></thead>
+            <tbody>
+              <tr><td>onChanged: (val) { }</td><td><strong>Function (Lesson 6)</strong> — runs when the checkbox is tapped. <code>val</code> is the new true/false value.</td></tr>
+              <tr><td>task['done'] = val</td><td><strong>Variable assignment (Lesson 2)</strong> — puts the new value into the done box.</td></tr>
+              <tr><td>setState()</td><td>A special Flutter function that tells the screen "data changed — please redraw."</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Decoded snippet 3 -->
+      <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--rs);overflow:hidden;margin:14px 0">
+        <div style="background:var(--surface);padding:9px 14px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);border-bottom:1px solid var(--border)">📄 From add_task_screen.dart — Save button validation</div>
+        <div style="padding:14px 16px">
+          <div class="code-box" style="margin:0 0 12px">onPressed: () {
+  <span class="kw">if</span> (_nameController.text.trim().isEmpty) <span class="kw">return</span>;
+  <span class="cm">// ... add the task</span>
+}</div>
+          <table class="explain" style="margin:0">
+            <thead><tr><th>Part</th><th>What You Know</th></tr></thead>
+            <tbody>
+              <tr><td>onPressed: () { }</td><td><strong>Function (Lesson 6)</strong> — runs when the Save button is tapped.</td></tr>
+              <tr><td>if ( ... ) return</td><td><strong>If / else (Lesson 4)</strong> — if the task name is empty, stop here. Don't save anything.</td></tr>
+              <tr><td>.isEmpty</td><td>A property that checks if a String has no characters. Returns true or false — a <strong>bool (Lesson 3)</strong>.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="callout tip">
+        <div class="ico">🎓</div>
+        <div class="callout-body"><strong>You know enough!</strong> Every piece of code in the project uses only the concepts you just learned: variables, types, if/else, lists, functions, and classes. Nothing is magic — it's all built from these basics.</div>
+      </div>
+
+      <hr>
+
+      <div class="prose">
+        <h2>Your Learning Order</h2>
+        <p>Here's the recommended order now that you've finished this tutorial:</p>
+      </div>
+
+      <div class="step-list">
+        <div class="step-row">
+          <div class="step-circle done">✓</div>
+          <div class="step-body"><strong>Dart Basics (this tutorial)</strong><p>Variables, types, if/else, lists, functions, classes. ✅ Done!</p></div>
+        </div>
+        <div class="step-row">
+          <div class="step-circle">2</div>
+          <div class="step-body"><strong>Intro to Flutter Tutorial</strong><p>Learn about widgets, layouts, state, and navigation before touching code.</p></div>
+        </div>
+        <div class="step-row">
+          <div class="step-circle">3</div>
+          <div class="step-body"><strong>Student Task Manager Project</strong><p>Build the app step by step — now every line will make sense.</p></div>
+        </div>
+      </div>
+
+      <div class="callout info">
+        <div class="ico">💡</div>
+        <div class="callout-body"><strong>You'll learn by doing.</strong> Don't worry about memorising every detail. Open the project tutorial, and when you see a line of code you don't understand, come back here and look it up. That's how all developers learn.</div>
+      </div>
+
+      <div class="page-nav">
+        <button class="btn btn-ghost" onclick="go(6)">← Previous</button>
+        <button class="btn btn-green" onclick="go(0)">🔄 Review from start</button>
+      </div>
+    </div>
+
+  </div><!-- .content -->
+</main>
+</div>
+
+<button class="mob-btn" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+
+<!-- step list style -->
+<style>
+.step-list { display:flex; flex-direction:column; gap:13px; margin:14px 0; }
+.step-row  { display:flex; gap:13px; align-items:flex-start; }
+.step-circle { width:30px; height:30px; border-radius:50%; background:var(--blue); color:#fff; font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px; }
+.step-circle.done { background:var(--green); }
+.step-body { flex:1; padding-top:3px; }
+.step-body strong { display:block; font-size:14px; margin-bottom:2px; }
+.step-body p { font-size:13px; color:var(--muted); margin:0; }
+</style>
+
+<script>
+// ── NAVIGATION ──
+const titles = [
+  'Lesson 1 — What Is Code?',
+  'Lesson 2 — Variables',
+  'Lesson 3 — Types of Data',
+  'Lesson 4 — If / Else',
+  'Lesson 5 — Lists',
+  'Lesson 6 — Functions',
+  'Lesson 7 — Classes & Objects',
+  'Lesson 8 — You\'re Ready!',
+];
+const total = titles.length;
+let visited = new Set();
+
+function go(idx) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('p' + idx).classList.add('active');
+  const nav = document.getElementById('n' + idx);
+  if (nav) nav.classList.add('active');
+  visited.add(idx);
+  for (let i of visited) {
+    const n = document.getElementById('n' + i);
+    if (n && i !== idx) n.classList.add('done');
+  }
+  // concept map done boxes
+  document.querySelectorAll('.cm-box').forEach((box, i) => {
+    if (visited.has(i + 1)) box.classList.add('done-box');
+  });
+  document.getElementById('topTitle').innerHTML = '<strong>' + titles[idx] + '</strong>';
+  const pct = Math.round(visited.size / total * 100);
+  document.getElementById('progFill').style.width = pct + '%';
+  document.getElementById('progLbl').textContent = visited.size + ' of ' + total + ' lessons complete';
+  const dotsEl = document.getElementById('dots');
+  dotsEl.innerHTML = titles.map((t, i) => {
+    let c = 'dot';
+    if (i === idx) c += ' active';
+    else if (visited.has(i)) c += ' done';
+    return '<div class="' + c + '" onclick="go(' + i + ')" title="' + t + '"></div>';
+  }).join('');
+  window.scrollTo(0, 0);
+  if (window.innerWidth < 800) document.getElementById('sidebar').classList.remove('open');
+}
+
+// ── QUIZ ──
+const answers = {
+  q0: { c: 'b', e: 'print() shows whatever you put inside the brackets on the screen — in this case the words "Good morning!".' },
+  q1: { c: 'c', e: 'The = sign is assignment — it puts a value into the variable. Think of it as filling the labelled box.' },
+  q2: { c: 'c', e: 'bool is perfect for done/not-done because it can only be true or false — exactly like a task being complete or incomplete.' },
+  q3: { c: 'b', e: '= is assignment (put a value in a box). == is comparison (is the box equal to this?). Mixing them up is one of the most common beginner mistakes.' },
+  q4: { c: 'b', e: 'Lists always start at index 0. The first item is [0], the second is [1], and so on. This trips up almost every new programmer!' },
+  q5: { c: 'b', e: 'Calling a function means running it — telling the computer to execute the instructions inside it.' },
+  q6: { c: 'c', e: 'A class is the blueprint. An object is one specific thing created from that blueprint — like a house built from architectural plans.' },
+};
+function ans(id, chosen, correct) {
+  const btns = document.getElementById(id).querySelectorAll('.opt');
+  btns.forEach(b => { b.disabled = true; b.onclick = null; });
+  btns.forEach((b, i) => {
+    const l = ['a','b','c'][i];
+    if (l === correct) b.classList.add('correct');
+    else if (l === chosen && chosen !== correct) b.classList.add('wrong');
+  });
+  const fb = document.getElementById(id + '-fb');
+  const ok = chosen === correct;
+  fb.className = 'qfb show ' + (ok ? 'ok' : 'no');
+  fb.textContent = (ok ? '✅ Correct! ' : '❌ Not quite. ') + answers[id].e;
+}
+
+// ── INTERACTIVE IF/ELSE SANDBOX ──
+function runIfElse() {
+  const code = document.getElementById('ifelseCode').value;
+  const out = document.getElementById('ifelseOut');
+  const results = [];
+  // Simple simulation: look for taskDone value and run logic
+  try {
+    const trueMatch  = code.match(/taskDone\s*=\s*true/);
+    const falseMatch = code.match(/taskDone\s*=\s*false/);
+    const printMatches = [...code.matchAll(/print\(["'`](.+?)["'`]\)/g)];
+    if (falseMatch) {
+      // find else branch prints
+      const elseIdx = code.indexOf('else');
+      const afterElse = code.slice(elseIdx);
+      const elseP = [...afterElse.matchAll(/print\(["'`](.+?)["'`]\)/g)];
+      results.push(elseP.length > 0 ? elseP[0][1] : '(no output found)');
+    } else if (trueMatch) {
+      const ifIdx = code.indexOf('if');
+      const firstBrace = code.indexOf('{', ifIdx);
+      const secondBrace = code.indexOf('}', firstBrace);
+      const ifBlock = code.slice(firstBrace, secondBrace);
+      const ifP = [...ifBlock.matchAll(/print\(["'`](.+?)["'`]\)/g)];
+      results.push(ifP.length > 0 ? ifP[0][1] : '(no output found)');
+    } else {
+      results.push('Could not determine taskDone value. Make sure it says: bool taskDone = true; or bool taskDone = false;');
+    }
+    out.className = 'sandbox-out';
+    out.textContent = results.join('\n');
+  } catch (e) {
+    out.className = 'sandbox-out err';
+    out.textContent = 'Error: ' + e.message;
+  }
+}
+
+go(0);
+</script>
+</body>
+</html>
