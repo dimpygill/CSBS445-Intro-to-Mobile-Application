@@ -1,0 +1,1605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSBS445 – Introduction to Mobile Application Development</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ── Reset & Base ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --white:      #ffffff;
+    --off-white:  #f7f8fa;
+    --surface:    #eef0f5;
+    --border:     #d8dce8;
+    --text:       #1a1d2e;
+    --text-mid:   #4a4f6a;
+    --text-light: #7a7f9a;
+    --accent:     #3d5af1;       /* strong blue */
+    --accent-2:   #00b4a6;       /* teal */
+    --accent-3:   #f59e0b;       /* amber */
+    --dart:       #00b4d8;
+    --flutter:    #54c5f8;
+    --android:    #3ddc84;
+    --ios:        #555f7e;
+    --radius:     12px;
+    --radius-sm:  6px;
+    --shadow:     0 2px 12px rgba(26,29,46,.08);
+    --shadow-md:  0 4px 24px rgba(26,29,46,.12);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.75;
+    color: var(--text);
+    background: var(--white);
+  }
+
+  /* ── Layout ── */
+  .page-wrap { max-width: 860px; margin: 0 auto; padding: 0 24px 80px; }
+
+  /* ── Hero ── */
+  .hero {
+    background: linear-gradient(135deg, #1a1d2e 0%, #2a3080 60%, #3d5af1 100%);
+    padding: 64px 24px 56px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 60% 80% at 50% 100%, rgba(0,180,166,.18), transparent);
+  }
+  .hero-badge {
+    display: inline-block;
+    background: rgba(255,255,255,.12);
+    border: 1px solid rgba(255,255,255,.2);
+    color: #c8d0ff;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border-radius: 20px;
+    margin-bottom: 22px;
+  }
+  .hero h1 {
+    font-size: clamp(28px, 5vw, 46px);
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.2;
+    margin-bottom: 16px;
+    position: relative;
+  }
+  .hero h1 span { color: #7dd3fc; }
+  .hero-sub {
+    font-size: 17px;
+    color: rgba(255,255,255,.75);
+    max-width: 560px;
+    margin: 0 auto 32px;
+    position: relative;
+  }
+  .hero-pills {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    justify-content: center; position: relative;
+  }
+  .hero-pill {
+    background: rgba(255,255,255,.1);
+    border: 1px solid rgba(255,255,255,.18);
+    color: rgba(255,255,255,.9);
+    font-size: 13px; font-weight: 500;
+    padding: 5px 14px; border-radius: 20px;
+  }
+
+  /* ── TOC ── */
+  .toc-card {
+    background: var(--off-white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px 32px;
+    margin: 40px 0;
+  }
+  .toc-card h2 {
+    font-size: 13px; font-weight: 700;
+    letter-spacing: .08em; text-transform: uppercase;
+    color: var(--text-light); margin-bottom: 16px;
+  }
+  .toc-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 6px 24px;
+  }
+  .toc-grid a {
+    color: var(--accent); text-decoration: none;
+    font-size: 14px; font-weight: 500;
+    display: flex; align-items: baseline; gap: 6px;
+  }
+  .toc-grid a:hover { text-decoration: underline; }
+  .toc-num { color: var(--text-light); font-size: 12px; font-family: 'DM Mono', monospace; }
+
+  /* ── Section headings ── */
+  .section { padding-top: 56px; }
+  .section-label {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 12px; font-weight: 700; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--accent);
+    margin-bottom: 10px;
+  }
+  .section-label .num {
+    background: var(--accent);
+    color: #fff; width: 22px; height: 22px;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; flex-shrink: 0;
+  }
+  .section > h2 {
+    font-size: clamp(22px, 3.5vw, 30px);
+    font-weight: 700; color: var(--text);
+    line-height: 1.25; margin-bottom: 12px;
+  }
+  .section-intro {
+    font-size: 16px; color: var(--text-mid);
+    margin-bottom: 28px; max-width: 700px;
+  }
+  h3 {
+    font-size: 18px; font-weight: 600;
+    color: var(--text); margin: 28px 0 10px;
+  }
+  h4 {
+    font-size: 15px; font-weight: 600;
+    color: var(--text); margin: 18px 0 6px;
+  }
+  p { margin-bottom: 14px; }
+  ul, ol { padding-left: 22px; margin-bottom: 14px; }
+  li { margin-bottom: 5px; }
+  strong { font-weight: 600; }
+
+  hr.divider {
+    border: none; border-top: 1px solid var(--border);
+    margin: 48px 0;
+  }
+
+  /* ── Callout boxes ── */
+  .callout {
+    border-radius: var(--radius);
+    padding: 18px 22px;
+    margin: 22px 0;
+    display: flex; gap: 14px; align-items: flex-start;
+    border: 1px solid transparent;
+  }
+  .callout-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+  .callout-body { flex: 1; }
+  .callout-body p:last-child { margin-bottom: 0; }
+  .callout.blue   { background: #eff4ff; border-color: #c0cfff; }
+  .callout.teal   { background: #f0fdfb; border-color: #99e6e0; }
+  .callout.amber  { background: #fffbeb; border-color: #fcd34d; }
+  .callout.green  { background: #f0fdf4; border-color: #86efac; }
+  .callout.purple { background: #faf5ff; border-color: #d8b4fe; }
+
+  /* ── App type cards ── */
+  .app-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px; margin: 24px 0;
+  }
+  .app-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: var(--shadow);
+  }
+  .app-card-header {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
+  }
+  .app-icon {
+    width: 36px; height: 36px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+  }
+  .app-card h4 { margin: 0; font-size: 14px; }
+  .app-card p { font-size: 13px; color: var(--text-mid); margin: 0 0 8px; }
+  .app-card .examples {
+    font-size: 12px; color: var(--text-light);
+    font-style: italic;
+  }
+  .app-card .pros-cons {
+    display: flex; gap: 10px; margin-top: 10px;
+  }
+  .app-card .pro, .app-card .con {
+    font-size: 12px; padding: 3px 8px; border-radius: 4px;
+  }
+  .app-card .pro { background: #f0fdf4; color: #166534; }
+  .app-card .con { background: #fff1f2; color: #9f1239; }
+
+  /* ── Tables ── */
+  .table-wrap { overflow-x: auto; margin: 24px 0; border-radius: var(--radius); border: 1px solid var(--border); }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  thead { background: var(--off-white); }
+  th {
+    text-align: left; padding: 12px 16px;
+    font-weight: 600; font-size: 13px;
+    color: var(--text); border-bottom: 1px solid var(--border);
+  }
+  td { padding: 11px 16px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: var(--off-white); }
+
+  /* ── Flow diagram ── */
+  .flow {
+    display: flex; flex-wrap: wrap;
+    align-items: center; gap: 4px;
+    margin: 24px 0; padding: 20px 24px;
+    background: var(--off-white);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+  }
+  .flow-step {
+    background: var(--white);
+    border: 1.5px solid var(--accent);
+    border-radius: 8px;
+    padding: 7px 14px;
+    font-size: 13px; font-weight: 600;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+  .flow-arrow { color: var(--text-light); font-size: 18px; font-weight: 300; }
+
+  /* ── Lifecycle steps ── */
+  .lifecycle { margin: 28px 0; }
+  .lc-step {
+    display: flex; gap: 18px;
+    margin-bottom: 0;
+    position: relative;
+  }
+  .lc-step:not(:last-child) .lc-line { display: block; }
+  .lc-left { display: flex; flex-direction: column; align-items: center; width: 44px; flex-shrink: 0; }
+  .lc-num {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--accent); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 15px; flex-shrink: 0;
+    position: relative; z-index: 1;
+  }
+  .lc-line {
+    width: 2px; flex: 1; background: var(--border);
+    margin: 4px 0; min-height: 20px;
+  }
+  .lc-body {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin-bottom: 12px;
+    flex: 1;
+    box-shadow: var(--shadow);
+  }
+  .lc-body h4 { margin: 0 0 6px; font-size: 16px; color: var(--text); }
+  .lc-body p { font-size: 14px; margin-bottom: 8px; }
+  .lc-body .meta {
+    display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px;
+  }
+  .meta-tag {
+    font-size: 12px; font-weight: 500;
+    padding: 3px 10px; border-radius: 20px;
+  }
+  .tag-tool { background: #eff4ff; color: #3730a3; }
+  .tag-out  { background: #f0fdf4; color: #166534; }
+
+  /* ── Tech cards ── */
+  .tech-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 14px; margin: 20px 0;
+  }
+  .tech-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    box-shadow: var(--shadow);
+  }
+  .tech-badge {
+    display: inline-block;
+    font-size: 11px; font-weight: 600; font-family: 'DM Mono', monospace;
+    padding: 2px 8px; border-radius: 4px; margin-bottom: 8px;
+  }
+  .tech-card h4 { font-size: 15px; margin: 0 0 4px; }
+  .tech-card p { font-size: 13px; color: var(--text-mid); margin: 0; }
+
+  /* ── Analogy box ── */
+  .analogy {
+    background: linear-gradient(135deg, #f5f3ff, #eff4ff);
+    border: 1px solid #c4b5fd;
+    border-radius: var(--radius);
+    padding: 24px 28px;
+    margin: 24px 0;
+  }
+  .analogy-label {
+    font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .1em;
+    color: #7c3aed; margin-bottom: 10px;
+  }
+  .analogy p { margin-bottom: 0; font-size: 15px; }
+
+  /* ── Dart/Flutter big callout ── */
+  .df-box {
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 1px solid var(--border);
+    margin: 28px 0;
+    box-shadow: var(--shadow-md);
+  }
+  .df-row {
+    display: grid; grid-template-columns: 1fr 1fr;
+  }
+  .df-dart {
+    background: #e0f7fd;
+    padding: 24px 26px;
+    border-right: 1px solid var(--border);
+  }
+  .df-flutter {
+    background: #e8f7ff;
+    padding: 24px 26px;
+  }
+  .df-head {
+    font-size: 12px; font-weight: 700; letter-spacing: .1em;
+    text-transform: uppercase; margin-bottom: 8px;
+  }
+  .df-dart .df-head { color: #0277bd; }
+  .df-flutter .df-head { color: #0288d1; }
+  .df-title { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+  .df-dart .df-title { color: #01579b; }
+  .df-flutter .df-title { color: #0277bd; }
+  .df-desc { font-size: 14px; color: var(--text-mid); }
+
+  /* ── Code/path display ── */
+  .code-block {
+    background: #f4f6fb;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px 18px;
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    overflow-x: auto;
+    margin: 16px 0;
+    color: var(--text);
+  }
+  .code-block .kw { color: #7c3aed; font-weight: 500; }
+  .code-block .cm { color: var(--text-light); }
+
+  /* ── Vertical code flow ── */
+  .vflow {
+    margin: 24px 0;
+    display: flex; flex-direction: column; align-items: flex-start; gap: 0;
+  }
+  .vflow-step {
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 18px;
+    font-size: 14px; font-weight: 500;
+    color: var(--text);
+    display: flex; align-items: center; gap: 10px;
+    min-width: 280px;
+  }
+  .vflow-icon { font-size: 16px; }
+  .vflow-arrow-v {
+    color: var(--text-light); font-size: 20px;
+    padding-left: 20px; line-height: 1;
+    margin: 2px 0;
+  }
+
+  /* ── Glossary ── */
+  .glossary {
+    columns: 2; column-gap: 28px;
+    margin: 20px 0;
+  }
+  .gloss-item {
+    break-inside: avoid;
+    margin-bottom: 14px;
+  }
+  .gloss-term {
+    font-weight: 600; font-size: 14px;
+    color: var(--accent);
+  }
+  .gloss-def {
+    font-size: 13px; color: var(--text-mid); margin-top: 1px;
+  }
+
+  /* ── Big picture checklist ── */
+  .checklist {
+    list-style: none; padding: 0; margin: 20px 0;
+  }
+  .checklist li {
+    display: flex; gap: 12px; align-items: flex-start;
+    padding: 12px 0; border-bottom: 1px solid var(--border);
+    font-size: 15px;
+  }
+  .checklist li:last-child { border-bottom: none; }
+  .checklist .ck-num {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--accent); color: #fff;
+    font-size: 12px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 1px;
+  }
+
+  /* ── Example app section ── */
+  .example-bar {
+    background: linear-gradient(90deg, #1a1d2e, #2a3080);
+    border-radius: var(--radius) var(--radius) 0 0;
+    padding: 14px 22px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .example-bar span { color: #fff; font-weight: 600; font-size: 15px; }
+  .example-bar .badge {
+    background: rgba(255,255,255,.15); color: #c8d0ff;
+    font-size: 11px; font-weight: 600; padding: 2px 10px;
+    border-radius: 20px; letter-spacing: .05em;
+  }
+  .example-body {
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 var(--radius) var(--radius);
+    padding: 24px;
+    margin-bottom: 28px;
+  }
+
+  /* ── Screen mockup ── */
+  .screens {
+    display: flex; gap: 14px; flex-wrap: wrap; margin: 18px 0;
+  }
+  .screen-card {
+    background: var(--off-white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    min-width: 150px;
+    font-size: 13px;
+  }
+  .screen-card .screen-title {
+    font-weight: 600; font-size: 12px;
+    color: var(--text-light); text-transform: uppercase;
+    letter-spacing: .06em; margin-bottom: 8px;
+  }
+  .screen-card ul { padding-left: 16px; margin: 0; }
+  .screen-card li { font-size: 12px; color: var(--text-mid); margin-bottom: 3px; }
+
+  /* ── Tool chain ── */
+  .toolchain {
+    display: flex; flex-wrap: wrap; align-items: center;
+    gap: 8px; margin: 22px 0;
+    padding: 20px 24px;
+    background: var(--off-white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+  .tool-node {
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 13px; font-weight: 600;
+    color: var(--text);
+    display: flex; align-items: center; gap: 6px;
+    white-space: nowrap;
+  }
+  .tool-arrow { color: var(--text-light); font-size: 20px; }
+
+  /* ── Responsive ── */
+  @media (max-width: 600px) {
+    .toc-grid { grid-template-columns: 1fr; }
+    .df-row   { grid-template-columns: 1fr; }
+    .df-dart  { border-right: none; border-bottom: 1px solid var(--border); }
+    .glossary { columns: 1; }
+    .app-grid { grid-template-columns: 1fr; }
+    .tech-grid{ grid-template-columns: 1fr 1fr; }
+    .vflow-step { min-width: unset; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<div class="hero">
+  <div class="hero-badge">CSBS445 — Introductory Reading</div>
+  <h1>Introduction to<br><span>Mobile Application Development</span></h1>
+  <p class="hero-sub">Everything you need to understand before writing a single line of code — what apps are, how they're built, and why this course uses Dart and Flutter.</p>
+  <div class="hero-pills">
+    <span class="hero-pill">📱 Mobile Dev</span>
+    <span class="hero-pill">🐦 Flutter</span>
+    <span class="hero-pill">🎯 Dart</span>
+    <span class="hero-pill">🤖 Android</span>
+    <span class="hero-pill">🍎 iOS</span>
+    <span class="hero-pill">🛠️ Dev Tools</span>
+  </div>
+</div>
+
+<div class="page-wrap">
+
+<!-- ═══════════════ TOC ═══════════════ -->
+<div class="toc-card">
+  <h2>What's Inside</h2>
+  <div class="toc-grid">
+    <a href="#s1"><span class="toc-num">01</span> What Is an Application?</a>
+    <a href="#s7"><span class="toc-num">07</span> Dart & Flutter Together</a>
+    <a href="#s2"><span class="toc-num">02</span> Mobile App Development</a>
+    <a href="#s8"><span class="toc-num">08</span> Development Tools</a>
+    <a href="#s3"><span class="toc-num">03</span> Development Life Cycle</a>
+    <a href="#s9"><span class="toc-num">09</span> From Code to App</a>
+    <a href="#s4"><span class="toc-num">04</span> Technologies Overview</a>
+    <a href="#s10"><span class="toc-num">10</span> Complete Example</a>
+    <a href="#s5"><span class="toc-num">05</span> Native vs Cross-Platform</a>
+    <a href="#s11"><span class="toc-num">11</span> Glossary</a>
+    <a href="#s6"><span class="toc-num">06</span> Why Dart & Flutter?</a>
+    <a href="#s12"><span class="toc-num">12</span> The Big Picture</a>
+  </div>
+</div>
+
+<!-- ═══════════════ SECTION 1 ═══════════════ -->
+<div class="section" id="s1">
+  <div class="section-label"><span class="num">1</span> What Is an Application?</div>
+  <h2>Understanding Applications</h2>
+  <p class="section-intro">Before we talk about mobile app development, let's make sure we understand what an application actually <em>is</em> — and why so many different kinds exist.</p>
+
+  <div class="callout blue">
+    <span class="callout-icon">💡</span>
+    <div class="callout-body">
+      <strong>Plain-English definition:</strong> A software application (or "app") is a program that runs on a computing device and helps a user accomplish a specific task — whether that's writing a document, browsing social media, or checking a bank balance.
+    </div>
+  </div>
+
+  <p>Think of applications the way you think of physical tools. A hammer is designed specifically for driving nails. A measuring tape has a different job. In the same way, different types of software applications are built for different environments and purposes.</p>
+
+  <h3>Types of Applications</h3>
+
+  <!-- Desktop -->
+  <h4>🖥️ Desktop Applications</h4>
+  <p>Desktop applications are programs you download and install directly onto a computer. They live on your machine and run using that machine's processing power.</p>
+  <ul>
+    <li><strong>Where it runs:</strong> On a personal computer (Windows, macOS, Linux)</li>
+    <li><strong>How users access it:</strong> Install once, launch from the desktop or Start menu</li>
+    <li><strong>Examples:</strong> Microsoft Word, Adobe Photoshop, VLC Media Player</li>
+    <li><strong>Advantages:</strong> Fast, works without internet, full access to system hardware</li>
+    <li><strong>Disadvantages:</strong> Must be installed, updates require manual downloads, tied to one machine</li>
+    <li><strong>Technologies:</strong> C++, C#, Java, Python, Electron</li>
+  </ul>
+
+  <!-- Web -->
+  <h4>🌐 Web Applications</h4>
+  <p>Web applications run inside a web browser. You don't install them — you just open a URL and they load. Everything runs on a remote server, and your browser displays the result.</p>
+  <ul>
+    <li><strong>Where it runs:</strong> On a web server; displayed in a browser</li>
+    <li><strong>How users access it:</strong> Open a browser, go to a URL</li>
+    <li><strong>Examples:</strong> Gmail, Google Docs, YouTube, your university's student portal</li>
+    <li><strong>Advantages:</strong> No installation, works on any device with a browser, easy to update</li>
+    <li><strong>Disadvantages:</strong> Requires internet, slower than native, limited device feature access</li>
+    <li><strong>Technologies:</strong> HTML, CSS, JavaScript, React, Angular, Vue</li>
+  </ul>
+
+  <!-- Mobile -->
+  <h4>📱 Mobile Applications</h4>
+  <p>Mobile applications are built specifically for smartphones and tablets. They are installed from an app store and take full advantage of mobile hardware — camera, GPS, touch screen, and more.</p>
+  <ul>
+    <li><strong>Where it runs:</strong> On iOS (iPhone/iPad) or Android devices</li>
+    <li><strong>How users access it:</strong> Download from App Store or Google Play</li>
+    <li><strong>Examples:</strong> Instagram, WhatsApp, your bank's mobile app</li>
+    <li><strong>Advantages:</strong> Deep hardware access, optimized for touch, works offline</li>
+    <li><strong>Disadvantages:</strong> Must target each platform (Android/iOS) separately (unless using cross-platform tools)</li>
+    <li><strong>Technologies:</strong> Swift, Kotlin, Flutter, React Native</li>
+  </ul>
+
+  <!-- PWA -->
+  <h4>⚡ Progressive Web Apps (PWA)</h4>
+  <p>A PWA is a web application that's been enhanced to behave more like a mobile app. You can "install" it to your home screen, and it can even work offline. Think of it as a web app trying its best to feel like a native app.</p>
+  <ul>
+    <li><strong>Examples:</strong> Twitter Lite, Starbucks web app, Spotify (web version)</li>
+    <li><strong>Advantages:</strong> No app store needed, works across platforms, can work offline</li>
+    <li><strong>Disadvantages:</strong> Limited access to device hardware, not available on all app stores</li>
+  </ul>
+
+  <!-- Native -->
+  <h4>🏆 Native Applications</h4>
+  <p>A native app is built specifically for one platform using that platform's official tools. An Android native app is written in Kotlin or Java. An iOS native app is written in Swift. They give the best performance but require separate codebases for each platform.</p>
+
+  <!-- Cross-platform -->
+  <h4>🔀 Cross-Platform Applications</h4>
+  <p>A cross-platform app is written once and deployed to multiple platforms (Android, iOS, sometimes also web and desktop). Tools like Flutter and React Native make this possible. You write one codebase and it runs everywhere.</p>
+
+  <!-- Hybrid -->
+  <h4>🔧 Hybrid Applications</h4>
+  <p>A hybrid app wraps a web application inside a native "shell." The app store sees it as a native app, but inside, it's running web technologies (HTML, CSS, JavaScript) inside an embedded browser view. Technologies like Apache Cordova and Ionic are used for this approach.</p>
+
+  <h3>Comparison at a Glance</h3>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Runs On</th>
+          <th>Internet Required?</th>
+          <th>Device Hardware?</th>
+          <th>Performance</th>
+          <th>Common Technologies</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Desktop</strong></td><td>PC / Mac</td><td>Optional</td><td>Yes</td><td>⭐⭐⭐⭐⭐</td><td>C++, C#, Java, Python</td></tr>
+        <tr><td><strong>Web</strong></td><td>Any browser</td><td>Yes</td><td>Limited</td><td>⭐⭐⭐</td><td>HTML, CSS, JavaScript, React</td></tr>
+        <tr><td><strong>Mobile</strong></td><td>Phone / Tablet</td><td>Optional</td><td>Full</td><td>⭐⭐⭐⭐⭐</td><td>Swift, Kotlin, Flutter</td></tr>
+        <tr><td><strong>PWA</strong></td><td>Browser + Home Screen</td><td>Mostly</td><td>Limited</td><td>⭐⭐⭐</td><td>HTML, CSS, JS, Service Workers</td></tr>
+        <tr><td><strong>Native</strong></td><td>One OS only</td><td>Optional</td><td>Full</td><td>⭐⭐⭐⭐⭐</td><td>Swift (iOS), Kotlin (Android)</td></tr>
+        <tr><td><strong>Cross-Platform</strong></td><td>Multiple OSes</td><td>Optional</td><td>Full</td><td>⭐⭐⭐⭐</td><td>Flutter, React Native</td></tr>
+        <tr><td><strong>Hybrid</strong></td><td>Multiple OSes</td><td>Optional</td><td>Partial</td><td>⭐⭐⭐</td><td>Ionic, Cordova</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ═══════════════ SECTION 2 ═══════════════ -->
+<div class="section" id="s2">
+  <div class="section-label"><span class="num">2</span> Mobile Application Development</div>
+  <h2>What Makes Mobile Development Different?</h2>
+  <p class="section-intro">Developing for mobile isn't the same as building a website or a desktop program. Mobile devices have unique characteristics that change how we design, build, and test our applications.</p>
+
+  <h3>Characteristics of Mobile Devices</h3>
+
+  <div class="app-grid">
+    <div class="app-card">
+      <div class="app-card-header">
+        <div class="app-icon" style="background:#e0f7fd;">👆</div>
+        <h4>Touch Interface</h4>
+      </div>
+      <p>No mouse. Users tap, swipe, pinch, and long-press. Buttons must be large enough to touch accurately. You design for fingers, not cursors.</p>
+    </div>
+    <div class="app-card">
+      <div class="app-card-header">
+        <div class="app-icon" style="background:#f0fdf4;">📐</div>
+        <h4>Screen Sizes</h4>
+      </div>
+      <p>Phones range from compact (360px wide) to large tablets (1200px+). Your layout must work across all sizes without breaking.</p>
+    </div>
+    <div class="app-card">
+      <div class="app-card-header">
+        <div class="app-icon" style="background:#faf5ff;">🔋</div>
+        <h4>Battery Life</h4>
+      </div>
+      <p>Poorly written apps drain batteries fast. Developers must be conscious of background processes, network calls, and animation efficiency.</p>
+    </div>
+    <div class="app-card">
+      <div class="app-card-header">
+        <div class="app-icon" style="background:#fffbeb;">📡</div>
+        <h4>Connectivity</h4>
+      </div>
+      <p>Mobile users move between WiFi and cellular networks — or lose connection entirely. Apps must handle offline states gracefully.</p>
+    </div>
+    <div class="app-card">
+      <div class="app-card-header">
+        <div class="app-icon" style="background:#fff1f2;">📷</div>
+        <h4>Hardware Sensors</h4>
+      </div>
+      <p>Phones include GPS, camera, accelerometer, gyroscope, microphone, Bluetooth, and NFC — all available to your app (with permission).</p>
+    </div>
+    <div class="app-card">
+      <div class="app-card-header">
+        <div class="app-icon" style="background:#eff4ff;">🔐</div>
+        <h4>App Permissions</h4>
+      </div>
+      <p>To access the camera or location, your app must request permission. Users can grant or deny access at any time — you must handle both cases.</p>
+    </div>
+  </div>
+
+  <h3>Android vs. iOS: The Two Major Platforms</h3>
+  <p>Mobile development today means two main operating systems dominate the market:</p>
+
+  <div class="df-box">
+    <div class="df-row">
+      <div class="df-dart">
+        <div class="df-head">🤖 Google</div>
+        <div class="df-title">Android</div>
+        <div class="df-desc">
+          Created by Google. Used on devices from Samsung, Google, OnePlus, and many others. Largest market share globally (~72%). Apps distributed via <strong>Google Play Store</strong>. Native development uses <strong>Kotlin</strong> or <strong>Java</strong>. More open ecosystem — devices vary in hardware significantly.
+        </div>
+      </div>
+      <div class="df-flutter">
+        <div class="df-head">🍎 Apple</div>
+        <div class="df-title">iOS</div>
+        <div class="df-desc">
+          Created by Apple. Only runs on iPhones and iPads. Apps distributed via <strong>Apple App Store</strong>. Native development uses <strong>Swift</strong>. More closed ecosystem — tightly controlled hardware and software. Dominant in North America, Western Europe, Japan. Requires a Mac to build iOS apps.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout amber">
+    <span class="callout-icon">⚠️</span>
+    <div class="callout-body">
+      <strong>Why does this matter?</strong> If you build a native Android app, it will not run on iOS, and vice versa. This is one of the biggest challenges in mobile development — and one of the main reasons cross-platform tools like Flutter exist.
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ═══════════════ SECTION 3 ═══════════════ -->
+<div class="section" id="s3">
+  <div class="section-label"><span class="num">3</span> Development Life Cycle</div>
+  <h2>How a Mobile App Gets Built</h2>
+  <p class="section-intro">Writing code is only one part of building an application. Here's the complete journey — from idea to live product — using a real example throughout: a <strong>Student Study Planner</strong> app.</p>
+
+  <div class="callout blue">
+    <span class="callout-icon">🎯</span>
+    <div class="callout-body"><strong>Our example:</strong> A team wants to build a mobile app called <em>StudyMap</em> — a Student Study Planner that helps students track assignments, set reminders, and organize their study sessions.</div>
+  </div>
+
+  <div class="flow">
+    <span class="flow-step">Idea</span>
+    <span class="flow-arrow">→</span>
+    <span class="flow-step">Requirements</span>
+    <span class="flow-arrow">→</span>
+    <span class="flow-step">Planning</span>
+    <span class="flow-arrow">→</span>
+    <span class="flow-step">UI/UX Design</span>
+    <span class="flow-arrow">→</span>
+    <span class="flow-step">Technology</span>
+    <span class="flow-arrow">→</span>
+    <span class="flow-step">Development</span>
+    <span class="flow-arrow">→</span>
+    <span class="flow-step">Testing</span>
+    <span class="flow-arrow">→</span>
+    <span class="flow-step">Debugging</span>
+    <span class="flow-arrow">→</span>
+    <span class="flow-step">Release</span>
+    <span class="flow-arrow">→</span>
+    <span class="flow-step">Deployment</span>
+    <span class="flow-arrow">→</span>
+    <span class="flow-step">Maintenance</span>
+  </div>
+
+  <div class="lifecycle">
+
+    <div class="lc-step">
+      <div class="lc-left"><div class="lc-num">1</div><div class="lc-line"></div></div>
+      <div class="lc-body">
+        <h4>Idea / Problem Identification</h4>
+        <p><strong>What happens:</strong> Someone identifies a problem worth solving. This is where the app concept is born.</p>
+        <p><strong>StudyMap example:</strong> Students are missing deadlines because they're juggling multiple classes with no central tool. A physical planner is cumbersome. Could a mobile app help?</p>
+        <p><strong>Why it matters:</strong> Building the wrong thing wastes months of work. A clear problem statement keeps the team aligned.</p>
+        <div class="meta">
+          <span class="meta-tag tag-out">Output: A clearly defined problem statement</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="lc-step">
+      <div class="lc-left"><div class="lc-num">2</div><div class="lc-line"></div></div>
+      <div class="lc-body">
+        <h4>Requirements Gathering</h4>
+        <p><strong>What happens:</strong> The team talks to potential users and stakeholders to determine exactly what the app needs to do.</p>
+        <p><strong>StudyMap example:</strong> After interviewing 30 students: "We need to add assignments, set due dates, receive reminders, and see a calendar view."</p>
+        <p><strong>Tools:</strong> Surveys, interviews, user story workshops</p>
+        <div class="meta">
+          <span class="meta-tag tag-out">Output: Functional requirements list</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="lc-step">
+      <div class="lc-left"><div class="lc-num">3</div><div class="lc-line"></div></div>
+      <div class="lc-body">
+        <h4>Planning</h4>
+        <p><strong>What happens:</strong> The team estimates how long the project will take, who will do what, and what the budget looks like.</p>
+        <p><strong>StudyMap example:</strong> "Phase 1 (core features) will take 8 weeks with a team of 3 developers. Phase 2 (reminders, calendar) follows."</p>
+        <div class="meta">
+          <span class="meta-tag tag-tool">Tools: Jira, Trello, Notion, GitHub Projects</span>
+          <span class="meta-tag tag-out">Output: Project timeline and task breakdown</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="lc-step">
+      <div class="lc-left"><div class="lc-num">4</div><div class="lc-line"></div></div>
+      <div class="lc-body">
+        <h4>UI/UX Design</h4>
+        <p><strong>What happens:</strong> Designers create visual mockups of every screen. UX (User Experience) focuses on how the app flows and feels. UI (User Interface) focuses on how it looks.</p>
+        <p><strong>StudyMap example:</strong> Designers sketch the home screen (today's assignments), the add-assignment form, and the calendar view. Colors, fonts, and spacing are all decided here — before writing a single line of code.</p>
+        <div class="meta">
+          <span class="meta-tag tag-tool">Tools: Figma, Adobe XD, Sketch</span>
+          <span class="meta-tag tag-out">Output: Screen mockups and interactive prototypes</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="lc-step">
+      <div class="lc-left"><div class="lc-num">5</div><div class="lc-line"></div></div>
+      <div class="lc-body">
+        <h4>Choosing Technology</h4>
+        <p><strong>What happens:</strong> The team decides which programming language, framework, and tools to use based on their requirements, budget, and team skills.</p>
+        <p><strong>StudyMap example:</strong> "We have one team. We need to support both Android and iOS. We'll use Flutter — one codebase, two platforms, fast development cycle."</p>
+        <div class="meta">
+          <span class="meta-tag tag-out">Output: Technology stack decision document</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="lc-step">
+      <div class="lc-left"><div class="lc-num">6</div><div class="lc-line"></div></div>
+      <div class="lc-body">
+        <h4>Development</h4>
+        <p><strong>What happens:</strong> Developers write code. Features are built one by one, usually in priority order.</p>
+        <p><strong>StudyMap example:</strong> A developer builds the assignment list screen first, then the add-assignment form, then the calendar view. Each feature is built, reviewed, and merged before the next begins.</p>
+        <div class="meta">
+          <span class="meta-tag tag-tool">Tools: VS Code, Android Studio, Git, Flutter SDK</span>
+          <span class="meta-tag tag-out">Output: Working code (committed to version control)</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="lc-step">
+      <div class="lc-left"><div class="lc-num">7</div><div class="lc-line"></div></div>
+      <div class="lc-body">
+        <h4>Testing</h4>
+        <p><strong>What happens:</strong> The app is tested to make sure it works correctly and handles unexpected situations. Testing includes unit tests (individual functions), integration tests (how features work together), and user acceptance testing (real users try it out).</p>
+        <p><strong>StudyMap example:</strong> "What happens if a student enters a due date in the past? What if they have 200 assignments? What happens when there's no internet?"</p>
+        <div class="meta">
+          <span class="meta-tag tag-tool">Tools: Flutter test framework, Firebase Test Lab</span>
+          <span class="meta-tag tag-out">Output: Test results and bug reports</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="lc-step">
+      <div class="lc-left"><div class="lc-num">8</div><div class="lc-line"></div></div>
+      <div class="lc-body">
+        <h4>Debugging</h4>
+        <p><strong>What happens:</strong> When tests reveal problems, developers track down the exact cause and fix it. Debugging is a normal, expected part of software development — not a sign that something went wrong.</p>
+        <p><strong>StudyMap example:</strong> "The calendar view crashes when a student has assignments on the same day. Found the issue — array index error. Fixed and re-tested."</p>
+        <div class="meta">
+          <span class="meta-tag tag-tool">Tools: Flutter DevTools, VS Code debugger</span>
+          <span class="meta-tag tag-out">Output: Fixed code, updated tests</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="lc-step">
+      <div class="lc-left"><div class="lc-num">9</div><div class="lc-line"></div></div>
+      <div class="lc-body">
+        <h4>Build and Release Preparation</h4>
+        <p><strong>What happens:</strong> The app is packaged into an installable file. For Android, this creates an <code>.apk</code> or <code>.aab</code> file. For iOS, this creates an <code>.ipa</code> file. The app is signed with a developer certificate.</p>
+        <p><strong>StudyMap example:</strong> <code>flutter build apk --release</code> — this produces a file ready to be uploaded to the Play Store.</p>
+        <div class="meta">
+          <span class="meta-tag tag-tool">Tools: Flutter CLI, Xcode, Google Play Console</span>
+          <span class="meta-tag tag-out">Output: Signed release build files</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="lc-step">
+      <div class="lc-left"><div class="lc-num">10</div><div class="lc-line"></div></div>
+      <div class="lc-body">
+        <h4>Deployment to App Stores</h4>
+        <p><strong>What happens:</strong> The release build is submitted to Google Play Store and/or Apple App Store. Both stores have a review process that checks for policy violations, security issues, and technical problems. Approval can take hours (Google) to days (Apple).</p>
+        <div class="meta">
+          <span class="meta-tag tag-tool">Tools: Google Play Console, Apple App Store Connect</span>
+          <span class="meta-tag tag-out">Output: Publicly available app listing</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="lc-step">
+      <div class="lc-left"><div class="lc-num">11</div><div class="lc-line"></div></div>
+      <div class="lc-body">
+        <h4>Maintenance and Updates</h4>
+        <p><strong>What happens:</strong> After launch, users report bugs, request features, and operating system updates can break existing functionality. Real apps are never "done" — they're continuously improved.</p>
+        <p><strong>StudyMap example:</strong> "Android 15 released last month. Some notification features need to be updated to comply with new permission requirements."</p>
+        <div class="meta">
+          <span class="meta-tag tag-out">Output: Version updates, patch releases</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="callout green">
+    <span class="callout-icon">✅</span>
+    <div class="callout-body">
+      <strong>Key takeaway:</strong> Writing code happens at step 6. Ten other critical stages happen before, around, and after it. Professional developers spend as much time planning, designing, testing, and maintaining as they do coding.
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ═══════════════ SECTION 4 ═══════════════ -->
+<div class="section" id="s4">
+  <div class="section-label"><span class="num">4</span> Technologies Overview</div>
+  <h2>What Technologies Are Used?</h2>
+  <p class="section-intro">There's no single "right" technology for building apps. Different tools exist for different needs. Here's a high-level overview of the major options.</p>
+
+  <h3>Web Application Technologies</h3>
+  <p>These are primarily used for building things that run in a web browser. You'll encounter them if you ever work on a web app or web-based backend.</p>
+
+  <div class="tech-grid">
+    <div class="tech-card">
+      <span class="tech-badge" style="background:#fff3e0;color:#e65100;">HTML</span>
+      <h4>HyperText Markup Language</h4>
+      <p>The structure of a web page — headings, paragraphs, buttons, images.</p>
+    </div>
+    <div class="tech-card">
+      <span class="tech-badge" style="background:#e3f2fd;color:#1565c0;">CSS</span>
+      <h4>Cascading Style Sheets</h4>
+      <p>Defines how web pages look — colors, fonts, layout, spacing.</p>
+    </div>
+    <div class="tech-card">
+      <span class="tech-badge" style="background:#fffde7;color:#f57f17;">JavaScript</span>
+      <h4>JavaScript</h4>
+      <p>Makes web pages interactive — buttons that do things, forms that validate.</p>
+    </div>
+    <div class="tech-card">
+      <span class="tech-badge" style="background:#e8eaf6;color:#3949ab;">TypeScript</span>
+      <h4>TypeScript</h4>
+      <p>JavaScript with strict type checking — catches bugs before runtime.</p>
+    </div>
+    <div class="tech-card">
+      <span class="tech-badge" style="background:#e3f2fd;color:#0277bd;">React</span>
+      <h4>React</h4>
+      <p>Facebook's UI library for building fast, component-based web apps.</p>
+    </div>
+    <div class="tech-card">
+      <span class="tech-badge" style="background:#fce4ec;color:#c62828;">Angular</span>
+      <h4>Angular</h4>
+      <p>Google's full-featured web framework for large, complex applications.</p>
+    </div>
+    <div class="tech-card">
+      <span class="tech-badge" style="background:#e8f5e9;color:#2e7d32;">Vue</span>
+      <h4>Vue.js</h4>
+      <p>A beginner-friendly progressive framework for building web UIs.</p>
+    </div>
+  </div>
+
+  <h3>Native Android Development</h3>
+  <p>Building an app that runs only on Android using Google's official tools:</p>
+  <div class="tech-grid">
+    <div class="tech-card">
+      <span class="tech-badge" style="background:#e8f5e9;color:#1b5e20;">Kotlin</span>
+      <h4>Kotlin</h4>
+      <p>The modern, preferred language for Android development. Concise and expressive.</p>
+    </div>
+    <div class="tech-card">
+      <span class="tech-badge" style="background:#fff3e0;color:#bf360c;">Java</span>
+      <h4>Java</h4>
+      <p>The original Android language, still widely used in existing codebases.</p>
+    </div>
+    <div class="tech-card">
+      <span class="tech-badge" style="background:#f3e5f5;color:#4a148c;">Android Studio</span>
+      <h4>Android Studio</h4>
+      <p>Google's official IDE for Android development. Includes an emulator for testing.</p>
+    </div>
+  </div>
+
+  <h3>Native iOS Development</h3>
+  <p>Building an app that runs only on iPhones and iPads using Apple's official tools:</p>
+  <div class="tech-grid">
+    <div class="tech-card">
+      <span class="tech-badge" style="background:#fff8e1;color:#ff6f00;">Swift</span>
+      <h4>Swift</h4>
+      <p>Apple's modern programming language for iOS, macOS, and more. Fast and safe.</p>
+    </div>
+    <div class="tech-card">
+      <span class="tech-badge" style="background:#e0f7fa;color:#006064;">SwiftUI</span>
+      <h4>SwiftUI</h4>
+      <p>Apple's declarative UI framework — describe what you want, and it builds it.</p>
+    </div>
+    <div class="tech-card">
+      <span class="tech-badge" style="background:#fce4ec;color:#880e4f;">Xcode</span>
+      <h4>Xcode</h4>
+      <p>Apple's official IDE. Required for building and submitting iOS apps. macOS only.</p>
+    </div>
+  </div>
+
+  <div class="callout amber">
+    <span class="callout-icon">📌</span>
+    <div class="callout-body"><strong>The native problem:</strong> If you go native, you build the same app twice — once in Kotlin for Android, once in Swift for iOS. Two codebases, two teams, twice the work, twice the maintenance. This is where cross-platform tools step in.</div>
+  </div>
+
+  <h3>Cross-Platform Development Tools</h3>
+  <p>These tools let you write code once and deploy to multiple platforms.</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Tool</th><th>Language</th><th>Platforms</th><th>Advantages</th><th>Disadvantages</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Flutter</strong></td>
+          <td>Dart</td>
+          <td>Android, iOS, Web, Desktop</td>
+          <td>Best-in-class UI, fast development, huge widget library, strong performance</td>
+          <td>Dart is less common outside Flutter; larger app size</td>
+        </tr>
+        <tr>
+          <td><strong>React Native</strong></td>
+          <td>JavaScript / TypeScript</td>
+          <td>Android, iOS</td>
+          <td>Web developers can reuse skills; large community</td>
+          <td>Performance can lag behind native; JS bridge overhead</td>
+        </tr>
+        <tr>
+          <td><strong>.NET MAUI</strong></td>
+          <td>C#</td>
+          <td>Android, iOS, Windows, macOS</td>
+          <td>Excellent for .NET/Microsoft developers; full desktop support</td>
+          <td>Smaller community; fewer mobile-specific resources</td>
+        </tr>
+        <tr>
+          <td><strong>Kotlin Multiplatform</strong></td>
+          <td>Kotlin</td>
+          <td>Android, iOS (shared logic)</td>
+          <td>Share business logic; keep native UI on each platform</td>
+          <td>UI is still separate; more complex setup</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ═══════════════ SECTION 5 ═══════════════ -->
+<div class="section" id="s5">
+  <div class="section-label"><span class="num">5</span> Native vs Cross-Platform vs Hybrid</div>
+  <h2>Three Approaches, One Decision</h2>
+  <p class="section-intro">Beginners often confuse these terms. Let's sort them out clearly, starting with an everyday analogy.</p>
+
+  <div class="analogy">
+    <div class="analogy-label">🏠 Analogy</div>
+    <p>Imagine you want to open a restaurant in three cities. <strong>Native</strong> means you design and build a completely unique restaurant in each city, customized to local taste. <strong>Cross-platform</strong> means you design one restaurant concept that works in all cities using a standard structure — same kitchen equipment, same menu, but it feels right at home everywhere. <strong>Hybrid</strong> means you open a pop-up shop inside existing local cafés — you use their space and infrastructure, but with your own branding on top.</p>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Aspect</th>
+          <th>🏆 Native</th>
+          <th>🔀 Cross-Platform</th>
+          <th>🔧 Hybrid</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Codebase</strong></td><td>One per platform</td><td>Single shared codebase</td><td>One codebase (web tech)</td></tr>
+        <tr><td><strong>Platforms</strong></td><td>One (Android or iOS)</td><td>Android + iOS (+ more)</td><td>Android + iOS</td></tr>
+        <tr><td><strong>Performance</strong></td><td>⭐⭐⭐⭐⭐ Best</td><td>⭐⭐⭐⭐ Very good</td><td>⭐⭐⭐ Acceptable</td></tr>
+        <tr><td><strong>Dev Time</strong></td><td>Longest (×2 teams)</td><td>Fastest</td><td>Moderate</td></tr>
+        <tr><td><strong>Cost</strong></td><td>Highest</td><td>Moderate</td><td>Low to moderate</td></tr>
+        <tr><td><strong>Device Features</strong></td><td>Full access</td><td>Full access</td><td>Partial access</td></tr>
+        <tr><td><strong>Look & Feel</strong></td><td>Perfectly native</td><td>Consistent custom UI</td><td>May feel "web-like"</td></tr>
+        <tr><td><strong>Technologies</strong></td><td>Swift, Kotlin</td><td>Flutter, React Native</td><td>Ionic, Cordova</td></tr>
+        <tr><td><strong>Best For</strong></td><td>High-performance apps, large budgets</td><td>Most apps — best balance</td><td>Simple apps, fast prototypes</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout blue">
+    <span class="callout-icon">📌</span>
+    <div class="callout-body">
+      <strong>Most apps you use daily</strong> — including many from large companies — are now cross-platform. Instagram uses React Native for parts of its UI. Google Pay uses Flutter. The performance gap between native and cross-platform has shrunk dramatically.
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ═══════════════ SECTION 6 ═══════════════ -->
+<div class="section" id="s6">
+  <div class="section-label"><span class="num">6</span> Why Dart and Flutter?</div>
+  <h2>Why CSBS445 Uses Dart and Flutter</h2>
+  <p class="section-intro">Now that you understand what's available, let's talk about why this course made the choice it did.</p>
+
+  <div class="callout teal">
+    <span class="callout-icon">🎯</span>
+    <div class="callout-body">
+      <strong>The course decision:</strong> CSBS445 – Introduction to Mobile Application Development uses <strong>Dart</strong> as its programming language and <strong>Flutter</strong> as its application development framework.
+    </div>
+  </div>
+
+  <h3>First — What Are They? (Clearly Defined)</h3>
+
+  <div class="df-box">
+    <div class="df-row">
+      <div class="df-dart">
+        <div class="df-head">Programming Language</div>
+        <div class="df-title">Dart</div>
+        <div class="df-desc">
+          Dart is the <strong>language</strong> you write code in. It has syntax (rules for how to write statements), data types, functions, classes, and all the things you'd expect from a programming language. Dart was created by Google and is designed to be fast, readable, and easy to learn. <br><br>
+          Think of Dart as the <strong>words and grammar</strong> of your instructions to the computer.
+        </div>
+      </div>
+      <div class="df-flutter">
+        <div class="df-head">UI Framework</div>
+        <div class="df-title">Flutter</div>
+        <div class="df-desc">
+          Flutter is the <strong>framework</strong> — a collection of pre-built tools, components, and rules that make it fast and structured to build applications. Flutter provides everything you need to construct a mobile app's interface and behavior. <br><br>
+          Think of Flutter as the <strong>toolkit and building materials</strong> you use to construct the application itself.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="analogy">
+    <div class="analogy-label">🏗️ Analogy — Dart & Flutter</div>
+    <p><strong>Dart is the language you speak to give instructions. Flutter is the factory that turns those instructions into a real, running application.</strong> A chef uses a recipe language (Dart) to give instructions, and the kitchen with all its equipment and ingredients (Flutter) turns those instructions into an actual meal. Neither is useful without the other.</p>
+  </div>
+
+  <h3>Why Flutter Is a Great Choice for Beginners</h3>
+
+  <div class="tech-grid" style="grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));">
+    <div class="tech-card">
+      <span class="tech-badge" style="background:#e0f7fa;color:#006064;">Single Codebase</span>
+      <h4>One Code, Two Platforms</h4>
+      <p>Write once, run on Android and iOS. You don't need to learn two languages to reach both audiences.</p>
+    </div>
+    <div class="tech-card">
+      <span class="tech-badge" style="background:#f3e5f5;color:#6a1b9a;">Hot Reload</span>
+      <h4>See Changes Instantly</h4>
+      <p>Change your code, save the file, and the app updates in under a second — without restarting. This speeds up learning dramatically.</p>
+    </div>
+    <div class="tech-card">
+      <span class="tech-badge" style="background:#e8f5e9;color:#1b5e20;">Rich Widgets</span>
+      <h4>Pre-built UI Components</h4>
+      <p>Flutter ships with hundreds of ready-made UI components (buttons, lists, forms, navigation) so you can build real-looking apps from day one.</p>
+    </div>
+    <div class="tech-card">
+      <span class="tech-badge" style="background:#fff3e0;color:#e65100;">Material Design</span>
+      <h4>Professional Look Out of the Box</h4>
+      <p>Flutter follows Google's Material Design guidelines, so your apps look clean and professional without extra effort.</p>
+    </div>
+    <div class="tech-card">
+      <span class="tech-badge" style="background:#eff4ff;color:#3730a3;">Great Docs</span>
+      <h4>Excellent Documentation</h4>
+      <p>Flutter has some of the best official documentation in the industry, with interactive examples and a large, active community.</p>
+    </div>
+    <div class="tech-card">
+      <span class="tech-badge" style="background:#fce4ec;color:#880e4f;">Real Apps</span>
+      <h4>Build Production-Ready Apps</h4>
+      <p>You won't just build toy demos. By the end of this course, you'll have built real, deployable mobile applications.</p>
+    </div>
+  </div>
+
+  <div class="callout green">
+    <span class="callout-icon">🚀</span>
+    <div class="callout-body">
+      <strong>Industry adoption:</strong> Flutter is used by Google, BMW, eBay, Alibaba, and thousands of other companies. Learning Flutter is a genuinely marketable skill — not just a classroom exercise.
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ═══════════════ SECTION 7 ═══════════════ -->
+<div class="section" id="s7">
+  <div class="section-label"><span class="num">7</span> Dart & Flutter Together</div>
+  <h2>How Dart and Flutter Work Together</h2>
+  <p class="section-intro">Here's the basic pipeline from your keyboard to a running app:</p>
+
+  <div class="vflow">
+    <div class="vflow-step"><span class="vflow-icon">✍️</span> You write Dart code in your editor</div>
+    <div class="vflow-arrow-v">↓</div>
+    <div class="vflow-step"><span class="vflow-icon">🐦</span> Flutter's framework reads your code</div>
+    <div class="vflow-arrow-v">↓</div>
+    <div class="vflow-step"><span class="vflow-icon">⚙️</span> Your code is compiled into native machine code</div>
+    <div class="vflow-arrow-v">↓</div>
+    <div class="vflow-step"><span class="vflow-icon">📱</span> The app runs on Android or iOS</div>
+    <div class="vflow-arrow-v">↓</div>
+    <div class="vflow-step"><span class="vflow-icon">👆</span> The user interacts with the app</div>
+  </div>
+
+  <h3>Flutter Building Blocks You'll Encounter</h3>
+  <p>You don't need to understand these deeply yet. Consider this a preview — a vocabulary list for the journey ahead.</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Concept</th><th>What It Is (Plain English)</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Widget</strong></td><td>Everything you see on screen is a widget — a button, a text label, an image, even the entire screen itself. Flutter apps are built by combining widgets.</td></tr>
+        <tr><td><strong>StatelessWidget</strong></td><td>A widget that displays fixed content. It looks the same every time — like a page header or an icon.</td></tr>
+        <tr><td><strong>StatefulWidget</strong></td><td>A widget that can change based on user interaction or data. A checkbox that gets ticked is stateful.</td></tr>
+        <tr><td><strong>Build method</strong></td><td>The function inside a widget that tells Flutter what to draw on screen.</td></tr>
+        <tr><td><strong>Material Design</strong></td><td>Google's visual design system. Flutter follows it by default, giving your app a clean, recognizable look.</td></tr>
+        <tr><td><strong>Layout</strong></td><td>How widgets are arranged on screen — stacked vertically, side by side, in a grid.</td></tr>
+        <tr><td><strong>State</strong></td><td>The current condition of the app — what's checked, what's typed, what's selected.</td></tr>
+        <tr><td><strong>Navigation</strong></td><td>Moving between screens in your app — like tapping "Back" or opening a new page.</td></tr>
+        <tr><td><strong>Packages</strong></td><td>Pre-built libraries you can add to extend Flutter's functionality — like adding a map or calendar widget.</td></tr>
+        <tr><td><strong>API</strong></td><td>A way for your app to communicate with external services — like fetching weather data from a server.</td></tr>
+        <tr><td><strong>Device Features</strong></td><td>Using the camera, location, or contacts from within your Flutter app via special packages.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ═══════════════ SECTION 8 ═══════════════ -->
+<div class="section" id="s8">
+  <div class="section-label"><span class="num">8</span> Development Tools</div>
+  <h2>The Tools You'll Use</h2>
+  <p class="section-intro">Building a mobile app requires more than just a text editor. Here's the toolkit and how each piece fits together.</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Tool</th><th>What It Is</th><th>What You Use It For</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>Flutter SDK</strong></td>
+          <td>Software Development Kit</td>
+          <td>The core Flutter framework — contains all the libraries, tools, and commands needed to build Flutter apps. You install this once on your machine.</td>
+        </tr>
+        <tr>
+          <td><strong>Dart SDK</strong></td>
+          <td>Comes bundled with Flutter</td>
+          <td>The Dart programming language runtime. Flutter includes this automatically when you install Flutter.</td>
+        </tr>
+        <tr>
+          <td><strong>Visual Studio Code</strong></td>
+          <td>Code editor (IDE)</td>
+          <td>Where you write your Dart/Flutter code. With the Flutter extension installed, it provides autocomplete, error highlighting, and hot reload.</td>
+        </tr>
+        <tr>
+          <td><strong>Android Studio</strong></td>
+          <td>IDE (also provides Android tools)</td>
+          <td>Google's official Android IDE. Even if you write code in VS Code, Android Studio installs the Android emulator and build tools you need.</td>
+        </tr>
+        <tr>
+          <td><strong>Android Emulator</strong></td>
+          <td>Virtual Android device</td>
+          <td>A simulated Android phone running on your computer. You can test your app without a physical device.</td>
+        </tr>
+        <tr>
+          <td><strong>Physical Android Device</strong></td>
+          <td>Real phone</td>
+          <td>Connect your phone via USB and run your app directly on real hardware. Reveals real-world performance and sensor access.</td>
+        </tr>
+        <tr>
+          <td><strong>iOS Simulator</strong></td>
+          <td>Virtual iPhone (macOS only)</td>
+          <td>Simulates an iPhone on your Mac. Requires Xcode. Only available on macOS.</td>
+        </tr>
+        <tr>
+          <td><strong>Git</strong></td>
+          <td>Version control system</td>
+          <td>Tracks every change you make to your code. Lets you undo mistakes and work in teams without overwriting each other's work.</td>
+        </tr>
+        <tr>
+          <td><strong>GitHub</strong></td>
+          <td>Cloud code hosting</td>
+          <td>Stores your Git repository online. Enables collaboration, code backup, and submission of assignments.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>How the Tools Connect</h3>
+  <div class="toolchain">
+    <div class="tool-node">👩‍💻 Developer</div>
+    <span class="tool-arrow">→</span>
+    <div class="tool-node">📝 VS Code / Android Studio</div>
+    <span class="tool-arrow">→</span>
+    <div class="tool-node">🎯 Dart + Flutter SDK</div>
+    <span class="tool-arrow">→</span>
+    <div class="tool-node">📱 Emulator / Phone</div>
+    <span class="tool-arrow">→</span>
+    <div class="tool-node">✅ Running App</div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ═══════════════ SECTION 9 ═══════════════ -->
+<div class="section" id="s9">
+  <div class="section-label"><span class="num">9</span> From Code to App</div>
+  <h2>The Journey from Your Keyboard to a Running App</h2>
+  <p class="section-intro">When you save a Dart file and run your Flutter app, a lot happens behind the scenes. Here's a simplified, jargon-free picture of that process.</p>
+
+  <div class="vflow">
+    <div class="vflow-step"><span class="vflow-icon">✍️</span> You write Dart + Flutter code in your editor</div>
+    <div class="vflow-arrow-v">↓</div>
+    <div class="vflow-step"><span class="vflow-icon">🔍</span> Flutter's tools check your code for errors</div>
+    <div class="vflow-arrow-v">↓</div>
+    <div class="vflow-step"><span class="vflow-icon">⚙️</span> The code is compiled — translated into instructions the device can run</div>
+    <div class="vflow-arrow-v">↓</div>
+    <div class="vflow-step"><span class="vflow-icon">📦</span> An app package (.apk or .ipa) is created</div>
+    <div class="vflow-arrow-v">↓</div>
+    <div class="vflow-step"><span class="vflow-icon">📲</span> The package is installed on a device or emulator</div>
+    <div class="vflow-arrow-v">↓</div>
+    <div class="vflow-step"><span class="vflow-icon">▶️</span> The app launches and displays your UI</div>
+    <div class="vflow-arrow-v">↓</div>
+    <div class="vflow-step"><span class="vflow-icon">👆</span> The user interacts — taps, types, scrolls</div>
+  </div>
+
+  <div class="callout purple">
+    <span class="callout-icon">⚡</span>
+    <div class="callout-body">
+      <strong>Hot Reload vs. Full Rebuild:</strong> During development, Flutter's <em>hot reload</em> lets you see most changes almost instantly — in under a second — without going through the full compile and install process. This makes experimenting and learning much faster.
+    </div>
+  </div>
+
+  <h3>What is Compilation?</h3>
+  <p>When you write Dart code, you're writing instructions in a human-readable language. Your computer's processor can't run that directly — it needs the instructions translated into a form it understands. That translation process is called <strong>compilation</strong>.</p>
+  <p>Flutter compiles Dart into native machine code — which is why Flutter apps can run smoothly on both Android and iOS even though those are very different platforms.</p>
+</div>
+
+<hr class="divider">
+
+<!-- ═══════════════ SECTION 10 ═══════════════ -->
+<div class="section" id="s10">
+  <div class="section-label"><span class="num">10</span> Complete Example</div>
+  <h2>Putting It All Together: StudyMap</h2>
+  <p class="section-intro">Let's walk the full development life cycle of a real example — a Student Study Planner app — so the abstract process becomes concrete.</p>
+
+  <div class="example-bar">
+    <span>📚 StudyMap</span>
+    <span class="badge">Student Study Planner</span>
+  </div>
+  <div class="example-body">
+
+    <h4>💡 Idea</h4>
+    <p>College students are missing assignment deadlines because they manage five different courses with no central tracking system. A mobile app that lives in their pocket could solve this.</p>
+
+    <h4>📋 Requirements</h4>
+    <ul>
+      <li>Add an assignment with a course name, description, and due date</li>
+      <li>View all upcoming assignments sorted by due date</li>
+      <li>Mark an assignment as complete</li>
+      <li>Receive a push notification the day before a due date</li>
+    </ul>
+
+    <h4>🎨 Design — What Screens Are Needed?</h4>
+    <div class="screens">
+      <div class="screen-card">
+        <div class="screen-title">Home Screen</div>
+        <ul>
+          <li>Today's assignments</li>
+          <li>Upcoming list</li>
+          <li>"Add" button</li>
+        </ul>
+      </div>
+      <div class="screen-card">
+        <div class="screen-title">Add Assignment</div>
+        <ul>
+          <li>Course name field</li>
+          <li>Description field</li>
+          <li>Due date picker</li>
+          <li>Save button</li>
+        </ul>
+      </div>
+      <div class="screen-card">
+        <div class="screen-title">Assignment Detail</div>
+        <ul>
+          <li>Full assignment info</li>
+          <li>Mark complete toggle</li>
+          <li>Delete option</li>
+        </ul>
+      </div>
+      <div class="screen-card">
+        <div class="screen-title">Calendar View</div>
+        <ul>
+          <li>Monthly calendar</li>
+          <li>Dots on due dates</li>
+          <li>Tap day to see items</li>
+        </ul>
+      </div>
+    </div>
+
+    <h4>⚙️ Technology Selection</h4>
+    <p>The team has one developer and needs to reach both Android and iOS users. Budget is limited. Choice: <strong>Flutter + Dart</strong>. Single codebase, fast development, full access to push notifications and local storage.</p>
+
+    <h4>👩‍💻 Development with Flutter</h4>
+    <p>The developer builds a <code>HomeScreen</code> widget that shows the assignment list. A <code>StatefulWidget</code> manages whether assignments are marked complete. A separate <code>AddAssignmentScreen</code> contains a form with text fields and a date picker. Navigation between screens uses Flutter's built-in <code>Navigator</code>.</p>
+
+    <div class="code-block">
+<span class="cm">// A simple Flutter widget structure (you'll learn this in detail later)</span>
+<span class="kw">class</span> HomeScreen <span class="kw">extends</span> StatefulWidget {
+  <span class="cm">// Displays the list of assignments</span>
+  <span class="cm">// Changes when assignments are added or completed</span>
+}
+
+<span class="kw">class</span> AddAssignmentScreen <span class="kw">extends</span> StatelessWidget {
+  <span class="cm">// Shows the form for entering a new assignment</span>
+}
+    </div>
+
+    <h4>🧪 Testing</h4>
+    <p>The app is tested for edge cases: What if there are no assignments? What if two assignments have the same due date? What if the user has no internet? What if they enter a due date that's already passed?</p>
+
+    <h4>🚀 Deployment</h4>
+    <p>Running <code>flutter build apk</code> produces an Android package. Running <code>flutter build ipa</code> (on a Mac with Xcode) produces an iOS package. Both are uploaded to their respective app stores. After review approval, students can download StudyMap.</p>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ═══════════════ SECTION 11 ═══════════════ -->
+<div class="section" id="s11">
+  <div class="section-label"><span class="num">11</span> Glossary</div>
+  <h2>Key Terms, Explained Simply</h2>
+  <p class="section-intro">When you encounter these terms in readings, lectures, or documentation, here's what they mean.</p>
+
+  <div class="glossary">
+    <div class="gloss-item">
+      <div class="gloss-term">Application (App)</div>
+      <div class="gloss-def">Software that helps a user do something specific — browse the web, message friends, track assignments.</div>
+    </div>
+    <div class="gloss-item">
+      <div class="gloss-term">Mobile Application</div>
+      <div class="gloss-def">An app built specifically for smartphones and tablets, accessed via touchscreen.</div>
+    </div>
+    <div class="gloss-item">
+      <div class="gloss-term">Web Application</div>
+      <div class="gloss-def">An app that runs in a browser; you access it via a URL rather than installing it.</div>
+    </div>
+    <div class="gloss-item">
+      <div class="gloss-term">Native</div>
+      <div class="gloss-def">Built specifically for one platform (Android or iOS) using that platform's official tools.</div>
+    </div>
+    <div class="gloss-item">
+      <div class="gloss-term">Cross-Platform</div>
+      <div class="gloss-def">Built once and deployed to multiple platforms (Android, iOS, etc.) from a single codebase.</div>
+    </div>
+    <div class="gloss-item">
+      <div class="gloss-term">Hybrid</div>
+      <div class="gloss-def">A web app wrapped in a native shell — it appears in app stores but runs web technologies internally.</div>
+    </div>
+    <div class="gloss-item">
+      <div class="gloss-term">Framework</div>
+      <div class="gloss-def">A pre-built collection of tools, libraries, and conventions that give structure to your app. Flutter is a framework.</div>
+    </div>
+    <div class="gloss-item">
+      <div class="gloss-term">Programming Language</div>
+      <div class="gloss-def">A set of rules and syntax for writing instructions that a computer can execute. Dart is a programming language.</div>
+    </div>
+    <div class="gloss-item">
+      <div class="gloss-term">SDK</div>
+      <div class="gloss-def">Software Development Kit — a package of tools, libraries, and documentation you install to start building for a specific platform or framework.</div>
+    </div>
+    <div class="gloss-item">
+      <div class="gloss-term">API</div>
+      <div class="gloss-def">Application Programming Interface — a defined way for software to talk to other software. Your weather app uses a weather API to fetch current conditions.</div>
+    </div>
+    <div class="gloss-item">
+      <div class="gloss-term">UI (User Interface)</div>
+      <div class="gloss-def">Everything the user sees and interacts with — buttons, screens, text, images, forms.</div>
+    </div>
+    <div class="gloss-item">
+      <div class="gloss-term">UX (User Experience)</div>
+      <div class="gloss-def">How a user feels when using the app — how easy it is to navigate, how logical the flow is, how quickly it responds.</div>
+    </div>
+    <div class="gloss-item">
+      <div class="gloss-term">Widget</div>
+      <div class="gloss-def">In Flutter, the basic building block of any UI — every visual element (button, text, image, layout) is a widget.</div>
+    </div>
+    <div class="gloss-item">
+      <div class="gloss-term">Emulator</div>
+      <div class="gloss-def">A software simulation of an Android device running on your computer, used for testing without a physical phone.</div>
+    </div>
+    <div class="gloss-item">
+      <div class="gloss-term">Simulator</div>
+      <div class="gloss-def">Apple's equivalent of an emulator — a virtual iPhone or iPad that runs on your Mac via Xcode.</div>
+    </div>
+    <div class="gloss-item">
+      <div class="gloss-term">IDE</div>
+      <div class="gloss-def">Integrated Development Environment — a software tool where you write, run, and debug code. VS Code and Android Studio are IDEs.</div>
+    </div>
+    <div class="gloss-item">
+      <div class="gloss-term">Compiler</div>
+      <div class="gloss-def">A tool that translates your human-readable code into machine instructions that a device can actually execute.</div>
+    </div>
+    <div class="gloss-item">
+      <div class="gloss-term">Debugging</div>
+      <div class="gloss-def">Finding and fixing errors (bugs) in your code. All developers debug — it's a normal, expected part of development.</div>
+    </div>
+    <div class="gloss-item">
+      <div class="gloss-term">Testing</div>
+      <div class="gloss-def">Systematically verifying that your app behaves correctly — including in unexpected or edge-case situations.</div>
+    </div>
+    <div class="gloss-item">
+      <div class="gloss-term">Deployment</div>
+      <div class="gloss-def">The process of making your finished app available to users — typically by submitting it to an app store.</div>
+    </div>
+    <div class="gloss-item">
+      <div class="gloss-term">App Store</div>
+      <div class="gloss-def">A marketplace for mobile apps. Google Play Store (Android) and Apple App Store (iOS) are the two major ones.</div>
+    </div>
+    <div class="gloss-item">
+      <div class="gloss-term">Package / Plugin</div>
+      <div class="gloss-def">A reusable library someone else has written that you can add to your Flutter project to gain new functionality — like a map widget or a camera integration.</div>
+    </div>
+    <div class="gloss-item">
+      <div class="gloss-term">Hot Reload</div>
+      <div class="gloss-def">A Flutter feature that lets you see code changes reflected in the running app in under a second, without a full restart.</div>
+    </div>
+    <div class="gloss-item">
+      <div class="gloss-term">State</div>
+      <div class="gloss-def">The current condition of your app — what data is displayed, what's selected, what's been typed. Managing state is a core skill in Flutter development.</div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ═══════════════ SECTION 12 ═══════════════ -->
+<div class="section" id="s12">
+  <div class="section-label"><span class="num">12</span> The Big Picture</div>
+  <h2>What You Should Understand Before Starting Flutter</h2>
+  <p class="section-intro">If you've read this far, you're better prepared than most beginners. Here's a final checklist of what you should now have a solid grasp on.</p>
+
+  <ul class="checklist">
+    <li>
+      <span class="ck-num">1</span>
+      <div><strong>What an application is.</strong> Software that helps a user accomplish a specific task on a computing device.</div>
+    </li>
+    <li>
+      <span class="ck-num">2</span>
+      <div><strong>The difference between desktop, web, and mobile applications.</strong> They run on different devices, are accessed differently, and are built with different tools.</div>
+    </li>
+    <li>
+      <span class="ck-num">3</span>
+      <div><strong>The difference between native, cross-platform, and hybrid applications.</strong> Native = one platform, best performance. Cross-platform = one codebase, multiple platforms. Hybrid = web tech in a native wrapper.</div>
+    </li>
+    <li>
+      <span class="ck-num">4</span>
+      <div><strong>What the mobile application development life cycle looks like.</strong> Idea → Requirements → Design → Technology → Development → Testing → Debugging → Release → Deployment → Maintenance.</div>
+    </li>
+    <li>
+      <span class="ck-num">5</span>
+      <div><strong>What technologies are available.</strong> Web: HTML/CSS/JS. Native Android: Kotlin/Java. Native iOS: Swift. Cross-platform: Flutter, React Native, .NET MAUI, Kotlin Multiplatform.</div>
+    </li>
+    <li>
+      <span class="ck-num">6</span>
+      <div><strong>Why different technologies exist.</strong> Different apps have different needs — budget, team size, target platform, performance requirements, and timeline all influence the choice.</div>
+    </li>
+    <li>
+      <span class="ck-num">7</span>
+      <div><strong>What Dart is.</strong> A programming language created by Google. It's the language you write instructions in when building Flutter apps.</div>
+    </li>
+    <li>
+      <span class="ck-num">8</span>
+      <div><strong>What Flutter is.</strong> A UI framework and toolkit built by Google that uses Dart. It lets you build apps for Android, iOS, web, and desktop from a single codebase.</div>
+    </li>
+    <li>
+      <span class="ck-num">9</span>
+      <div><strong>Why CSBS445 uses Dart and Flutter.</strong> Single codebase, beginner-friendly, hot reload, rich widgets, excellent documentation, real-world industry adoption, and the ability to reach both Android and iOS users.</div>
+    </li>
+    <li>
+      <span class="ck-num">10</span>
+      <div><strong>How the development tools fit together.</strong> You write Dart code in VS Code or Android Studio → Flutter SDK compiles it → it runs on an Android emulator or physical device.</div>
+    </li>
+    <li>
+      <span class="ck-num">11</span>
+      <div><strong>What you'll eventually be able to build.</strong> Real, installable mobile applications for Android and iOS — with screens, navigation, forms, data storage, notifications, and more.</div>
+    </li>
+  </ul>
+
+  <div class="callout teal" style="margin-top: 36px;">
+    <span class="callout-icon">🎓</span>
+    <div class="callout-body">
+      <strong>You're ready to begin.</strong> The foundation is in place. You understand what mobile development is, why it exists the way it does, and what tools you'll be using. The next step is learning Dart — and then putting Flutter's building blocks together to create your first real application.
+    </div>
+  </div>
+
+</div>
+
+<!-- Footer -->
+<div style="margin-top: 64px; padding-top: 28px; border-top: 1px solid var(--border); text-align: center; color: var(--text-light); font-size: 13px;">
+  CSBS445 – Introduction to Mobile Application Development &nbsp;·&nbsp; Introductory Reading
+</div>
+
+</div><!-- /page-wrap -->
+</body>
+</html>
