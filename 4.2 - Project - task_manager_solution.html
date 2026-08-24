@@ -1,0 +1,1919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Task Manager — Step-by-Step Solution</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #F6F8FB;
+  --surface: #FFFFFF;
+  --surface-2: #EFF2F7;
+  --border: #DDE3EE;
+  --text: #18202E;
+  --text-muted: #556070;
+  --text-light: #8D99AE;
+  --accent: #3B6EF5;
+  --accent-soft: #EBF0FE;
+  --accent-dark: #2550CC;
+  --green: #16A36A;
+  --green-soft: #E2F6EE;
+  --amber: #C97D10;
+  --amber-soft: #FEF3E2;
+  --red: #D03030;
+  --red-soft: #FDEAEA;
+  --purple: #6C48D4;
+  --purple-soft: #F0EAFC;
+  --teal: #0899A8;
+  --teal-soft: #E0F5F7;
+  --step-done: #16A36A;
+  --font: 'DM Sans', sans-serif;
+  --mono: 'DM Mono', monospace;
+  --radius: 14px;
+  --radius-sm: 8px;
+  --shadow: 0 1px 4px rgba(0,0,0,0.06), 0 4px 20px rgba(0,0,0,0.05);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.07);
+}
+
+html { scroll-behavior: smooth; }
+body { font-family: var(--font); background: var(--bg); color: var(--text); font-size: 16px; line-height: 1.65; }
+
+/* ── LAYOUT ── */
+.shell { display: flex; min-height: 100vh; }
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: 270px; flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  position: fixed; top: 0; left: 0; height: 100vh;
+  overflow-y: auto; z-index: 100;
+  display: flex; flex-direction: column;
+}
+
+.sidebar-head {
+  padding: 22px 20px 18px;
+  border-bottom: 1px solid var(--border);
+}
+.sidebar-eyebrow {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 6px;
+}
+.sidebar-head h2 { font-size: 14px; font-weight: 700; line-height: 1.4; color: var(--text); }
+.sidebar-head p { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+.progress-wrap { padding: 12px 20px 0; }
+.progress-bar { height: 4px; background: var(--surface-2); border-radius: 2px; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--green); border-radius: 2px; transition: width 0.4s ease; width: 0%; }
+.progress-label { font-size: 11px; color: var(--text-light); margin-top: 5px; padding-bottom: 10px; }
+
+.sidebar-nav { flex: 1; padding: 6px 0 24px; }
+.nav-section-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--text-light); padding: 14px 20px 5px;
+}
+
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 20px; font-size: 13px; font-weight: 500;
+  color: var(--text-muted); cursor: pointer;
+  border-left: 3px solid transparent;
+  transition: all 0.15s;
+}
+.nav-item:hover { background: var(--surface-2); color: var(--text); }
+.nav-item.active { background: var(--accent-soft); color: var(--accent); border-left-color: var(--accent); }
+.nav-item.done { color: var(--text-muted); }
+.nav-item .step-bubble {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: var(--surface-2); color: var(--text-light);
+  font-size: 10px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: all 0.15s;
+}
+.nav-item.active .step-bubble { background: var(--accent); color: #fff; }
+.nav-item.done .step-bubble { background: var(--green); color: #fff; }
+.nav-item.done .step-bubble::after { content: '✓'; font-size: 11px; }
+.nav-item.done .step-num { display: none; }
+
+/* ── MAIN ── */
+.main { margin-left: 270px; flex: 1; min-width: 0; }
+
+/* ── TOPBAR ── */
+.topbar {
+  background: var(--surface); border-bottom: 1px solid var(--border);
+  padding: 13px 48px; display: flex; align-items: center; gap: 14px;
+  position: sticky; top: 0; z-index: 50;
+}
+.topbar-title { font-size: 13px; color: var(--text-muted); flex: 1; }
+.topbar-title strong { color: var(--text); font-weight: 700; }
+.step-counter {
+  background: var(--surface-2); border-radius: 20px;
+  padding: 4px 12px; font-size: 12px; font-weight: 600; color: var(--text-muted);
+}
+
+/* ── CONTENT ── */
+.content { padding: 48px; max-width: 860px; }
+
+/* ── STEP PAGES ── */
+.step-page { display: none; }
+.step-page.active { display: block; }
+
+/* ── STEP HERO ── */
+.step-hero {
+  border-radius: var(--radius); padding: 32px 36px; margin-bottom: 36px;
+  position: relative; overflow: hidden;
+}
+.step-hero.green  { background: linear-gradient(135deg, #E2F6EE 0%, #D4F1E6 100%); border: 1px solid #A8DDCA; }
+.step-hero.blue   { background: linear-gradient(135deg, #EBF0FE 0%, #E2EBFD 100%); border: 1px solid #B8CCF9; }
+.step-hero.purple { background: linear-gradient(135deg, #F0EAFC 0%, #E9E0FB 100%); border: 1px solid #C4B0F0; }
+.step-hero.amber  { background: linear-gradient(135deg, #FEF3E2 0%, #FDECD0 100%); border: 1px solid #F0CDA0; }
+.step-hero.teal   { background: linear-gradient(135deg, #E0F5F7 0%, #D2F0F3 100%); border: 1px solid #9FD8DE; }
+.step-hero.red    { background: linear-gradient(135deg, #FDEAEA 0%, #FBDFDF 100%); border: 1px solid #F2B4B4; }
+.step-hero.indigo { background: linear-gradient(135deg, #EBF0FE 0%, #E5E9FD 100%); border: 1px solid #B0C0F8; }
+
+.step-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: white; border-radius: 20px; padding: 4px 12px;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+  margin-bottom: 12px; box-shadow: var(--shadow-sm);
+}
+.step-hero h1 { font-size: 26px; font-weight: 700; line-height: 1.25; margin-bottom: 10px; }
+.step-hero .hero-desc { font-size: 15px; color: var(--text-muted); max-width: 580px; line-height: 1.6; }
+
+/* ── WHAT YOU'LL BUILD strip ── */
+.build-strip {
+  display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px;
+}
+.build-tag {
+  background: white; border: 1px solid var(--border); border-radius: 20px;
+  padding: 4px 12px; font-size: 12px; font-weight: 500; color: var(--text-muted);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ── PROSE ── */
+.prose { line-height: 1.75; }
+.prose h2 { font-size: 19px; font-weight: 700; margin: 34px 0 12px; color: var(--text); }
+.prose h2:first-child { margin-top: 0; }
+.prose h3 { font-size: 15px; font-weight: 700; margin: 24px 0 8px; color: var(--text); }
+.prose p { margin-bottom: 14px; color: #2A3344; }
+.prose ul, .prose ol { padding-left: 22px; margin-bottom: 14px; }
+.prose li { margin-bottom: 6px; }
+.prose strong { font-weight: 600; color: var(--text); }
+code { font-family: var(--mono); font-size: 12.5px; background: var(--surface-2); color: var(--accent); border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px; }
+
+/* ── CODE BLOCK ── */
+.code-block { background: #1B1F2E; border-radius: var(--radius-sm); overflow: hidden; margin: 18px 0; box-shadow: var(--shadow); }
+.code-header { display: flex; align-items: center; gap: 10px; padding: 10px 16px; background: #131626; border-bottom: 1px solid #252A40; }
+.code-dots { display: flex; gap: 5px; }
+.code-dots span { width: 11px; height: 11px; border-radius: 50%; }
+.code-dots span:nth-child(1) { background: #FF5F57; }
+.code-dots span:nth-child(2) { background: #FFBD2E; }
+.code-dots span:nth-child(3) { background: #28CA41; }
+.code-label { font-size: 12px; font-family: var(--mono); color: #7A8AAA; font-weight: 500; }
+.code-lang { margin-left: auto; font-size: 10px; font-family: var(--mono); color: #4A5570; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; }
+.code-body { padding: 18px 20px; font-family: var(--mono); font-size: 13px; line-height: 1.75; color: #C9D3E8; overflow-x: auto; white-space: pre; }
+
+/* Syntax */
+.kw { color: #82C8E2; }
+.str { color: #A8D8A8; }
+.num { color: #F0A880; }
+.cm { color: #5A6480; font-style: italic; }
+.fn { color: #80B0F8; }
+.cls { color: #F0A0B0; }
+.op { color: #C0A0F0; }
+.ann { color: #7090C0; }
+
+/* ── EXPLAINED CODE ── */
+.explain-table { border: 1px solid var(--border); border-radius: 0 0 var(--radius-sm) var(--radius-sm); overflow: hidden; margin-top: -2px; }
+.explain-row { display: flex; border-bottom: 1px solid var(--border); }
+.explain-row:last-child { border-bottom: none; }
+.explain-code { background: #1B1F2E; font-family: var(--mono); font-size: 11.5px; color: #7A8AAA; padding: 9px 14px; border-right: 1px solid var(--border); min-width: 170px; display: flex; align-items: flex-start; line-height: 1.5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.explain-text { padding: 9px 14px; font-size: 13px; color: var(--text-muted); line-height: 1.55; flex: 1; }
+
+/* ── CALLOUTS ── */
+.callout { border-radius: var(--radius-sm); padding: 14px 16px; margin: 18px 0; display: flex; gap: 12px; font-size: 14px; line-height: 1.6; }
+.callout .icon { font-size: 17px; flex-shrink: 0; margin-top: 1px; }
+.callout-body { flex: 1; }
+.callout-body strong { display: block; margin-bottom: 3px; }
+.callout.tip   { background: var(--green-soft); border-left: 3px solid var(--green); }
+.callout.info  { background: var(--accent-soft); border-left: 3px solid var(--accent); }
+.callout.warn  { background: var(--amber-soft); border-left: 3px solid var(--amber); }
+.callout.note  { background: var(--purple-soft); border-left: 3px solid var(--purple); }
+
+/* ── FILE TREE ── */
+.file-tree { background: #1B1F2E; border-radius: var(--radius-sm); padding: 18px 20px; font-family: var(--mono); font-size: 13px; color: #C9D3E8; line-height: 1.8; margin: 16px 0; box-shadow: var(--shadow); }
+.ft-dir { color: #80B0F8; }
+.ft-file { color: #A8D8A8; }
+.ft-focus { color: #F0A880; font-weight: 600; }
+.ft-dim { color: #5A6480; }
+.ft-comment { color: #5A6480; font-style: italic; }
+
+/* ── PHONE PREVIEW ── */
+.preview-wrap { display: flex; gap: 24px; flex-wrap: wrap; margin: 20px 0; }
+.phone {
+  display: inline-flex; flex-direction: column;
+  background: #1A1D26; border-radius: 30px; padding: 8px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18), inset 0 0 0 2px #2A2D3A;
+}
+.phone-label { font-size: 11px; font-weight: 600; color: var(--text-muted); text-align: center; margin-top: 10px; text-transform: uppercase; letter-spacing: 0.06em; }
+.phone-screen { background: #F7F8FA; border-radius: 23px; overflow: hidden; width: 180px; }
+.phone-notch { background: #1A1D26; height: 22px; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 4px; }
+.phone-notch-pill { width: 60px; height: 5px; background: #2A2D3A; border-radius: 3px; }
+.p-appbar { background: #3B6EF5; color: white; padding: 10px 14px; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: space-between; }
+.p-appbar-back { font-size: 16px; cursor: pointer; }
+.p-body { padding: 12px 14px; min-height: 260px; }
+.p-task {
+  display: flex; align-items: center; gap: 8px;
+  background: white; border: 1px solid #E5EAF2; border-radius: 8px;
+  padding: 8px 10px; margin-bottom: 6px; font-size: 11px;
+}
+.p-task-check { width: 16px; height: 16px; border-radius: 4px; border: 2px solid #CBD2DC; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 10px; }
+.p-task-check.done { background: var(--green); border-color: var(--green); color: white; }
+.p-task-text { flex: 1; line-height: 1.3; }
+.p-task-text.done { text-decoration: line-through; color: var(--text-light); }
+.p-task-badge { font-size: 9px; font-weight: 700; border-radius: 10px; padding: 2px 6px; }
+.badge-high { background: #FDEAEA; color: #C93030; }
+.badge-med  { background: #FEF3E2; color: #C97D10; }
+.badge-low  { background: #E2F6EE; color: #16A36A; }
+.p-fab { position: absolute; bottom: 14px; right: 14px; width: 36px; height: 36px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 20px; font-weight: 300; box-shadow: 0 4px 12px rgba(59,110,245,0.4); cursor: pointer; }
+.p-body-rel { position: relative; }
+.p-field { background: white; border: 1px solid #DDE3EE; border-radius: 6px; padding: 7px 10px; margin-bottom: 8px; font-size: 11px; }
+.p-field-label { font-size: 9px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 2px; }
+.p-field-val { color: var(--text); font-size: 11px; }
+.p-priority-row { display: flex; gap: 5px; margin-bottom: 10px; }
+.p-priority-btn { flex: 1; padding: 5px 4px; border-radius: 5px; border: 1.5px solid var(--border); font-size: 9px; font-weight: 700; text-align: center; cursor: pointer; }
+.p-priority-btn.sel-high { background: var(--red-soft); border-color: var(--red); color: var(--red); }
+.p-priority-btn.sel-med  { background: var(--amber-soft); border-color: var(--amber); color: var(--amber); }
+.p-priority-btn.sel-low  { background: var(--green-soft); border-color: var(--green); color: var(--green); }
+.p-btn { display: block; width: 100%; background: var(--accent); color: white; border: none; border-radius: 6px; padding: 8px; font-size: 11px; font-weight: 700; text-align: center; margin-bottom: 6px; cursor: pointer; font-family: var(--font); }
+.p-btn-outline { background: transparent; color: var(--text-muted); border: 1.5px solid var(--border); }
+.p-empty { text-align: center; padding: 30px 10px; color: var(--text-light); font-size: 11px; line-height: 1.6; }
+
+/* ── DIFF VIEWER ── */
+.diff-block { background: #1B1F2E; border-radius: var(--radius-sm); overflow: hidden; margin: 18px 0; box-shadow: var(--shadow); }
+.diff-header { display: flex; align-items: center; gap: 10px; padding: 10px 16px; background: #131626; border-bottom: 1px solid #252A40; }
+.diff-label { font-size: 12px; font-family: var(--mono); color: #7A8AAA; }
+.diff-body { padding: 0; font-family: var(--mono); font-size: 12.5px; line-height: 1.75; overflow-x: auto; }
+.diff-line { display: flex; align-items: flex-start; gap: 0; white-space: pre; }
+.diff-gutter { width: 30px; text-align: right; padding: 0 8px; color: #3A4060; font-size: 11px; flex-shrink: 0; user-select: none; }
+.diff-content { padding: 0 14px 0 4px; flex: 1; color: #C9D3E8; }
+.diff-line.add { background: rgba(22,163,106,0.12); }
+.diff-line.add .diff-gutter { color: #5AB08A; }
+.diff-line.add .diff-content { color: #A8D8A8; }
+.diff-line.add .diff-sign { color: #5AB08A; }
+.diff-line.rem { background: rgba(208,48,48,0.1); }
+.diff-line.rem .diff-content { color: #F0A0A0; text-decoration: line-through; opacity: 0.6; }
+.diff-line.ctx .diff-content { color: #6A7490; }
+
+/* ── QUIZ ── */
+.quiz-card { background: var(--surface); border: 2px solid var(--border); border-radius: var(--radius); padding: 22px; margin: 22px 0; }
+.quiz-label { display: inline-flex; align-items: center; gap: 6px; background: var(--purple-soft); color: var(--purple); border-radius: 20px; padding: 4px 12px; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 12px; }
+.quiz-q { font-size: 15px; font-weight: 600; margin-bottom: 14px; line-height: 1.5; }
+.quiz-opts { display: flex; flex-direction: column; gap: 7px; }
+.quiz-opt { display: flex; align-items: center; gap: 10px; padding: 10px 13px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; font-size: 13.5px; transition: all 0.15s; background: var(--surface); text-align: left; width: 100%; font-family: var(--font); }
+.quiz-opt:hover { border-color: var(--accent); background: var(--accent-soft); }
+.quiz-opt .ltr { width: 24px; height: 24px; border-radius: 50%; background: var(--surface-2); color: var(--text-muted); font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.quiz-opt.correct { border-color: var(--green); background: var(--green-soft); }
+.quiz-opt.correct .ltr { background: var(--green); color: white; }
+.quiz-opt.wrong { border-color: var(--red); background: var(--red-soft); }
+.quiz-opt.wrong .ltr { background: var(--red); color: white; }
+.quiz-opt:disabled { cursor: not-allowed; }
+.quiz-fb { margin-top: 12px; padding: 11px 13px; border-radius: var(--radius-sm); font-size: 13.5px; line-height: 1.5; display: none; }
+.quiz-fb.show { display: block; }
+.quiz-fb.good { background: var(--green-soft); color: #0D6040; border: 1px solid #A0D8C0; }
+.quiz-fb.bad  { background: var(--red-soft); color: #8A2020; border: 1px solid #F5B4B4; }
+
+/* ── TRY IT ── */
+.tryit { background: #EBF4FE; border: 1.5px dashed #90BAF5; border-radius: var(--radius); padding: 18px 20px; margin: 20px 0; }
+.tryit-label { display: flex; align-items: center; gap: 7px; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+.tryit h4 { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+.tryit ol, .tryit ul { font-size: 13.5px; color: var(--text-muted); padding-left: 18px; margin-top: 6px; }
+.tryit li { margin-bottom: 4px; }
+
+/* ── MILESTONE TRACKER ── */
+.milestone-bar { display: flex; gap: 0; margin: 24px 0; overflow-x: auto; }
+.ms-step { display: flex; flex-direction: column; align-items: center; flex: 1; min-width: 70px; }
+.ms-circle { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; border: 2px solid var(--border); background: var(--surface); color: var(--text-light); transition: all 0.3s; cursor: pointer; }
+.ms-circle.done { background: var(--green); border-color: var(--green); color: white; }
+.ms-circle.active { background: var(--accent); border-color: var(--accent); color: white; box-shadow: 0 0 0 4px var(--accent-soft); }
+.ms-label { font-size: 10px; font-weight: 600; color: var(--text-light); margin-top: 6px; text-align: center; line-height: 1.3; max-width: 66px; }
+.ms-connector { height: 2px; flex: 1; background: var(--border); margin-top: 20px; min-width: 10px; }
+.ms-connector.done { background: var(--green); }
+
+/* ── TABS (for code tabs) ── */
+.tab-bar { display: flex; gap: 2px; background: #131626; padding: 8px 16px 0; border-bottom: 1px solid #252A40; }
+.tab-btn { padding: 6px 14px; font-size: 12px; font-family: var(--mono); font-weight: 500; color: #5A6480; border: none; background: transparent; cursor: pointer; border-radius: 6px 6px 0 0; transition: all 0.15s; }
+.tab-btn.active { background: #1B1F2E; color: #C9D3E8; }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* ── FULL CODE REVEAL ── */
+.reveal-btn { display: inline-flex; align-items: center; gap: 8px; background: var(--surface-2); border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 8px 16px; font-size: 13px; font-weight: 600; color: var(--text-muted); cursor: pointer; font-family: var(--font); transition: all 0.15s; margin: 10px 0; }
+.reveal-btn:hover { background: var(--surface); color: var(--text); border-color: var(--accent); }
+.reveal-content { display: none; }
+.reveal-content.open { display: block; }
+
+/* ── NAV BUTTONS ── */
+.step-nav { display: flex; gap: 12px; margin-top: 48px; padding-top: 22px; border-top: 1px solid var(--border); }
+.btn { display: inline-flex; align-items: center; gap: 8px; border-radius: var(--radius-sm); padding: 10px 20px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; font-family: var(--font); transition: all 0.15s; }
+.btn-primary { background: var(--accent); color: white; }
+.btn-primary:hover { background: var(--accent-dark); }
+.btn-ghost { background: var(--surface); color: var(--text-muted); border: 1.5px solid var(--border); }
+.btn-ghost:hover { background: var(--surface-2); color: var(--text); }
+.btn-ghost:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn-green { background: var(--green); color: white; }
+.btn-green:hover { background: #128558; }
+
+/* ── CHECKLIST ── */
+.checklist { list-style: none; padding: 0; margin: 14px 0; }
+.checklist li { display: flex; align-items: flex-start; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 14px; }
+.checklist li:last-child { border-bottom: none; }
+.chk { width: 20px; height: 20px; border-radius: 5px; border: 2px solid var(--border); flex-shrink: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 11px; margin-top: 2px; transition: all 0.15s; }
+.chk.on { background: var(--green); border-color: var(--green); color: white; }
+
+/* ── MOBILE TOGGLE ── */
+.mob-toggle { display: none; position: fixed; bottom: 20px; right: 20px; width: 48px; height: 48px; border-radius: 50%; background: var(--accent); color: white; border: none; font-size: 19px; box-shadow: 0 4px 16px rgba(59,110,245,0.4); cursor: pointer; z-index: 200; align-items: center; justify-content: center; }
+
+@media (max-width: 860px) {
+  .sidebar { transform: translateX(-100%); transition: transform 0.25s; }
+  .sidebar.open { transform: translateX(0); }
+  .main { margin-left: 0; }
+  .content { padding: 24px 18px; }
+  .topbar { padding: 12px 18px; }
+  .mob-toggle { display: flex; }
+  .preview-wrap { justify-content: center; }
+}
+
+/* ── INTERACTIVE DEMO APP ── */
+.demo-app-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin: 20px 0; box-shadow: var(--shadow-sm); }
+.demo-app-header { background: var(--surface-2); border-bottom: 1px solid var(--border); padding: 10px 16px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); display: flex; align-items: center; gap: 8px; }
+.demo-app-body { padding: 20px; }
+
+/* ── STEP INDEX PROGRESS ── */
+.step-dots { display: flex; gap: 4px; margin-bottom: 20px; flex-wrap: wrap; }
+.sdot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); transition: background 0.2s; cursor: pointer; }
+.sdot.done { background: var(--green); }
+.sdot.active { background: var(--accent); }
+
+/* ── SUMMARY BOX ── */
+.summary-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 16px 18px; margin: 16px 0; }
+.summary-box h4 { font-size: 13px; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 7px; }
+.summary-box ul { font-size: 13px; color: var(--text-muted); padding-left: 18px; }
+.summary-box li { margin-bottom: 4px; }
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- ── SIDEBAR ── -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-head">
+    <div class="sidebar-eyebrow">🏗️ Build Along</div>
+    <h2>Student Task Manager</h2>
+    <p>Step-by-step Flutter solution</p>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progFill"></div></div>
+    <div class="progress-label" id="progLabel">0 of 9 steps complete</div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Setup</div>
+    <div class="nav-item" onclick="goTo(0)" id="nav-0"><div class="step-bubble"><span class="step-num">1</span></div> Project Overview</div>
+    <div class="nav-item" onclick="goTo(1)" id="nav-1"><div class="step-bubble"><span class="step-num">2</span></div> Create the Project</div>
+
+    <div class="nav-section-label">Data Model</div>
+    <div class="nav-item" onclick="goTo(2)" id="nav-2"><div class="step-bubble"><span class="step-num">3</span></div> Task Data Model</div>
+
+    <div class="nav-section-label">Building Screens</div>
+    <div class="nav-item" onclick="goTo(3)" id="nav-3"><div class="step-bubble"><span class="step-num">4</span></div> Home Screen — Shell</div>
+    <div class="nav-item" onclick="goTo(4)" id="nav-4"><div class="step-bubble"><span class="step-num">5</span></div> Home Screen — Task List</div>
+    <div class="nav-item" onclick="goTo(5)" id="nav-5"><div class="step-bubble"><span class="step-num">6</span></div> Add Task Screen</div>
+    <div class="nav-item" onclick="goTo(6)" id="nav-6"><div class="step-bubble"><span class="step-num">7</span></div> Wiring Navigation</div>
+
+    <div class="nav-section-label">Polish & Quality</div>
+    <div class="nav-item" onclick="goTo(7)" id="nav-7"><div class="step-bubble"><span class="step-num">8</span></div> Complete Final App</div>
+    <div class="nav-item" onclick="goTo(8)" id="nav-8"><div class="step-bubble"><span class="step-num">9</span></div> Testing + Checklist</div>
+  </nav>
+</aside>
+
+<!-- ── MAIN ── -->
+<main class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="topTitle"><strong>Step 1</strong> — Project Overview</div>
+    <div class="step-counter" id="stepCounter">Step 1 of 9</div>
+  </div>
+
+  <div class="content">
+    <div class="step-dots" id="stepDots"></div>
+
+    <!-- ══════════════════════════════════════
+         STEP 0 — OVERVIEW
+    ══════════════════════════════════════ -->
+    <div class="step-page active" id="step-0">
+      <div class="step-hero green">
+        <div class="step-tag" style="color:#16A36A">🎓 Final Project</div>
+        <h1>Student Task Manager — Build-Along</h1>
+        <p class="hero-desc">This tutorial walks you through the complete solution to the final project, one step at a time. Every line of code is explained before you write it.</p>
+        <div class="build-strip">
+          <span class="build-tag">📁 Project setup</span>
+          <span class="build-tag">📦 Data model</span>
+          <span class="build-tag">🏠 Home screen</span>
+          <span class="build-tag">➕ Add Task screen</span>
+          <span class="build-tag">🗺️ Navigation</span>
+          <span class="build-tag">✅ Unit tests</span>
+        </div>
+      </div>
+
+      <div class="prose">
+        <h2>What You'll Build</h2>
+        <p>By the end of this tutorial you'll have a fully working Flutter app. Here's what it will look like:</p>
+      </div>
+
+      <!-- Phone previews -->
+      <div class="preview-wrap">
+        <div>
+          <div class="phone">
+            <div class="phone-screen">
+              <div class="phone-notch"><div class="phone-notch-pill"></div></div>
+              <div class="p-appbar">📚 My Tasks</div>
+              <div class="p-body p-body-rel" style="padding-bottom:50px">
+                <div class="p-task"><div class="p-task-check done">✓</div><div class="p-task-text done">Math homework</div><div class="p-task-badge badge-high">High</div></div>
+                <div class="p-task"><div class="p-task-check"></div><div class="p-task-text">Read Chapter 4</div><div class="p-task-badge badge-med">Med</div></div>
+                <div class="p-task"><div class="p-task-check"></div><div class="p-task-text">Submit project</div><div class="p-task-badge badge-low">Low</div></div>
+                <div class="p-fab">+</div>
+              </div>
+            </div>
+          </div>
+          <div class="phone-label">Home Screen</div>
+        </div>
+        <div>
+          <div class="phone">
+            <div class="phone-screen">
+              <div class="phone-notch"><div class="phone-notch-pill"></div></div>
+              <div class="p-appbar"><span class="p-appbar-back">←</span> Add Task</div>
+              <div class="p-body">
+                <div class="p-field"><div class="p-field-label">Task Name</div><div class="p-field-val">Buy groceries</div></div>
+                <div style="font-size:9px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px">Priority</div>
+                <div class="p-priority-row">
+                  <div class="p-priority-btn sel-high">High</div>
+                  <div class="p-priority-btn">Medium</div>
+                  <div class="p-priority-btn">Low</div>
+                </div>
+                <button class="p-btn">Save Task</button>
+                <button class="p-btn p-btn-outline">Cancel</button>
+              </div>
+            </div>
+          </div>
+          <div class="phone-label">Add Task Screen</div>
+        </div>
+      </div>
+
+      <div class="prose">
+        <h2>What Skills You'll Use</h2>
+        <p>Every feature in this app maps directly to something you learned in the course:</p>
+      </div>
+
+      <div class="summary-box">
+        <h4>📋 Skills → Features Map</h4>
+        <ul>
+          <li><strong>Dart class</strong> → the <code>Task</code> data model</li>
+          <li><strong>List&lt;Task&gt;</strong> → storing all tasks in state</li>
+          <li><strong>StatefulWidget + setState()</strong> → adding, removing, and toggling tasks</li>
+          <li><strong>ListView.builder</strong> → rendering the scrollable task list</li>
+          <li><strong>TextField + TextEditingController</strong> → the task name input</li>
+          <li><strong>Navigator.push / pop</strong> → moving between Home and Add Task</li>
+          <li><strong>Column, Row, Padding, SizedBox</strong> → all layout work</li>
+          <li><strong>Unit test</strong> → verifying add/remove logic</li>
+        </ul>
+      </div>
+
+      <div class="prose">
+        <h2>How This Tutorial Works</h2>
+        <p>Each step builds on the last. We follow this pattern throughout:</p>
+        <ol>
+          <li><strong>What we're building</strong> — see the goal before writing code</li>
+          <li><strong>The code</strong> — shown in small, digestible pieces</li>
+          <li><strong>Line-by-line explanation</strong> — every key line is explained</li>
+          <li><strong>Try it</strong> — verify your app matches the expected output</li>
+        </ol>
+      </div>
+
+      <div class="callout info">
+        <div class="icon">💡</div>
+        <div class="callout-body"><strong>Don't just copy and paste.</strong> Type each piece of code yourself. The act of typing helps you notice details you'd miss by pasting.</div>
+      </div>
+
+      <div class="step-nav">
+        <button class="btn btn-ghost" disabled>← Previous</button>
+        <button class="btn btn-primary" onclick="goTo(1)">Start Building →</button>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         STEP 1 — CREATE PROJECT
+    ══════════════════════════════════════ -->
+    <div class="step-page" id="step-1">
+      <div class="step-hero blue">
+        <div class="step-tag" style="color:#3B6EF5">⚙️ Step 1</div>
+        <h1>Create the Flutter Project</h1>
+        <p class="hero-desc">Set up the project, clean out the starter boilerplate, and understand the file structure before writing any app code.</p>
+      </div>
+
+      <div class="prose">
+        <h2>Create the Project</h2>
+        <p>Open your terminal and run these two commands:</p>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><div class="code-label">Terminal</div><div class="code-lang">shell</div></div>
+        <div class="code-body">flutter create student_task_manager
+cd student_task_manager</div>
+      </div>
+
+      <div class="callout tip">
+        <div class="icon">✅</div>
+        <div class="callout-body"><strong>Naming rule:</strong> Flutter project names must be all lowercase with underscores — no spaces, no dashes, no capital letters. <code>student_task_manager</code> is correct.</div>
+      </div>
+
+      <div class="prose">
+        <h2>The Files You'll Work With</h2>
+        <p>Flutter creates many files. For this project, you only need to touch these:</p>
+      </div>
+
+      <div class="file-tree">
+<span class="ft-dir">student_task_manager/</span>
+<span class="ft-dim">│</span>
+<span class="ft-dim">├──</span> <span class="ft-dir">lib/</span>
+<span class="ft-dim">│    ├──</span> <span class="ft-focus">main.dart</span>          <span class="ft-comment">← app entry point  ✏️ you write this</span>
+<span class="ft-dim">│    ├──</span> <span class="ft-focus">models/task.dart</span>   <span class="ft-comment">← Task class         ✏️ you create this</span>
+<span class="ft-dim">│    ├──</span> <span class="ft-focus">screens/home_screen.dart</span>    <span class="ft-comment">✏️ you create this</span>
+<span class="ft-dim">│    └──</span> <span class="ft-focus">screens/add_task_screen.dart</span> <span class="ft-comment">✏️ you create this</span>
+<span class="ft-dim">│</span>
+<span class="ft-dim">├──</span> <span class="ft-dir">test/</span>
+<span class="ft-dim">│    └──</span> <span class="ft-focus">task_test.dart</span>     <span class="ft-comment">← unit tests         ✏️ you write this</span>
+<span class="ft-dim">│</span>
+<span class="ft-dim">└──</span> <span class="ft-file">pubspec.yaml</span>          <span class="ft-comment">← leave this as-is</span></div>
+
+      <div class="prose">
+        <h2>Create the Folder Structure</h2>
+        <p>Inside <code>lib/</code>, create two sub-folders: <code>models</code> and <code>screens</code>. In VS Code you can right-click the <code>lib</code> folder and choose "New Folder".</p>
+        <p>Then create these empty files (you'll fill them in the coming steps):</p>
+        <ul>
+          <li><code>lib/models/task.dart</code></li>
+          <li><code>lib/screens/home_screen.dart</code></li>
+          <li><code>lib/screens/add_task_screen.dart</code></li>
+        </ul>
+
+        <h2>Clean Up main.dart</h2>
+        <p>Flutter's starter code has a demo counter app. Replace <em>everything</em> in <code>main.dart</code> with this clean starting point:</p>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><div class="code-label">lib/main.dart</div><div class="code-lang">Dart</div></div>
+        <div class="code-body"><span class="kw">import</span> <span class="str">'package:flutter/material.dart'</span>;
+<span class="kw">import</span> <span class="str">'screens/home_screen.dart'</span>;
+
+<span class="kw">void</span> <span class="fn">main</span>() {
+  <span class="fn">runApp</span>(<span class="kw">const</span> <span class="cls">TaskManagerApp</span>());
+}
+
+<span class="kw">class</span> <span class="cls">TaskManagerApp</span> <span class="kw">extends</span> <span class="cls">StatelessWidget</span> {
+  <span class="kw">const</span> <span class="cls">TaskManagerApp</span>({<span class="kw">super</span>.key});
+
+  <span class="ann">@override</span>
+  <span class="cls">Widget</span> <span class="fn">build</span>(<span class="cls">BuildContext</span> context) {
+    <span class="kw">return</span> <span class="cls">MaterialApp</span>(
+      title: <span class="str">'Student Task Manager'</span>,
+      debugShowCheckedModeBanner: <span class="kw">false</span>,
+      theme: <span class="cls">ThemeData</span>(
+        colorScheme: <span class="cls">ColorScheme</span>.<span class="fn">fromSeed</span>(seedColor: <span class="cls">Colors</span>.indigo),
+        useMaterial3: <span class="kw">true</span>,
+      ),
+      home: <span class="kw">const</span> <span class="cls">HomeScreen</span>(),
+    );
+  }
+}</div>
+      </div>
+
+      <div class="explain-table">
+        <div class="explain-row"><div class="explain-code">import 'screens/home_screen.dart'</div><div class="explain-text">Pulls in the HomeScreen widget we'll create in Step 3. VS Code will show a red error until that file exists — that's fine.</div></div>
+        <div class="explain-row"><div class="explain-code">debugShowCheckedModeBanner: false</div><div class="explain-text">Removes the "DEBUG" ribbon from the top-right corner of the screen. Cleaner for demos and screenshots.</div></div>
+        <div class="explain-row"><div class="explain-code">ColorScheme.fromSeed(seedColor: Colors.indigo)</div><div class="explain-text">Generates a full Material 3 color palette starting from indigo. Flutter automatically derives button colors, AppBar colors, and more from this one choice.</div></div>
+        <div class="explain-row"><div class="explain-code">home: const HomeScreen()</div><div class="explain-text">The first screen the user sees when the app opens.</div></div>
+      </div>
+
+      <div class="tryit">
+        <div class="tryit-label">🛠️ Verify This Step</div>
+        <h4>What to check before moving on</h4>
+        <ol>
+          <li>Your folder structure matches the file tree above</li>
+          <li><code>main.dart</code> has the clean version (no counter demo code)</li>
+          <li>The two sub-folders <code>models/</code> and <code>screens/</code> exist inside <code>lib/</code></li>
+          <li>The three empty files are created (even if empty for now)</li>
+        </ol>
+      </div>
+
+      <div class="step-nav">
+        <button class="btn btn-ghost" onclick="goTo(0)">← Previous</button>
+        <button class="btn btn-primary" onclick="goTo(2)">Next: Task Data Model →</button>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         STEP 2 — TASK MODEL
+    ══════════════════════════════════════ -->
+    <div class="step-page" id="step-2">
+      <div class="step-hero purple">
+        <div class="step-tag" style="color:#6C48D4">📦 Step 2</div>
+        <h1>The Task Data Model</h1>
+        <p class="hero-desc">Before building any UI, define what a task <em>is</em>. Every task in the app will be an instance of the <code>Task</code> class you write here.</p>
+      </div>
+
+      <div class="prose">
+        <h2>Why a Data Model First?</h2>
+        <p>A <strong>data model</strong> is a Dart class that describes the shape of your data. Think of it as a blueprint: every task in the app will be built from this blueprint.</p>
+        <p>Our task needs to store:</p>
+        <ul>
+          <li>A <strong>name</strong> (String) — what the task is</li>
+          <li>A <strong>priority</strong> (String) — "High", "Medium", or "Low"</li>
+          <li>A <strong>isDone</strong> flag (bool) — whether the task is complete</li>
+          <li>An <strong>id</strong> (String) — a unique identifier so we can find and delete specific tasks</li>
+        </ul>
+
+        <h2>Write the Task Class</h2>
+        <p>Open <code>lib/models/task.dart</code> and write this:</p>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><div class="code-label">lib/models/task.dart</div><div class="code-lang">Dart</div></div>
+        <div class="code-body"><span class="kw">class</span> <span class="cls">Task</span> {
+  <span class="kw">final</span> <span class="kw">String</span> id;
+  <span class="kw">final</span> <span class="kw">String</span> name;
+  <span class="kw">final</span> <span class="kw">String</span> priority;
+  <span class="kw">bool</span> isDone;
+
+  <span class="cls">Task</span>({
+    <span class="kw">required</span> <span class="kw">this</span>.id,
+    <span class="kw">required</span> <span class="kw">this</span>.name,
+    <span class="kw">required</span> <span class="kw">this</span>.priority,
+    <span class="kw">this</span>.isDone <span class="op">=</span> <span class="kw">false</span>,
+  });
+}</div>
+      </div>
+
+      <div class="explain-table">
+        <div class="explain-row"><div class="explain-code">final String id</div><div class="explain-text"><code>final</code> means this value is set once and never changed. Every task gets a unique ID when created so we can identify it later (especially for deletion).</div></div>
+        <div class="explain-row"><div class="explain-code">bool isDone</div><div class="explain-text">Notice <code>isDone</code> is NOT <code>final</code> — it needs to change when the user marks the task complete. This is the only mutable property.</div></div>
+        <div class="explain-row"><div class="explain-code">required this.name</div><div class="explain-text"><code>required</code> means you must pass this value when creating a Task — you can't leave it out. The <code>this.</code> shorthand sets the property directly.</div></div>
+        <div class="explain-row"><div class="explain-code">this.isDone = false</div><div class="explain-text">A default value: new tasks start as not done. You can override this when creating a Task, but you don't have to.</div></div>
+      </div>
+
+      <div class="prose">
+        <h2>How You'll Use It</h2>
+        <p>Here's a preview of how we'll create tasks later. You don't need to write this now — just understand what the model enables:</p>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><div class="code-label">Usage Preview</div><div class="code-lang">Dart</div></div>
+        <div class="code-body"><span class="cm">// Creating a new task</span>
+<span class="kw">final</span> newTask <span class="op">=</span> <span class="cls">Task</span>(
+  id: <span class="cls">DateTime</span>.now().millisecondsSinceEpoch.toString(),
+  name: <span class="str">'Complete homework'</span>,
+  priority: <span class="str">'High'</span>,
+);
+
+<span class="cm">// Marking it done</span>
+newTask.isDone <span class="op">=</span> <span class="kw">true</span>;
+
+<span class="cm">// A list of tasks</span>
+<span class="cls">List</span>&lt;<span class="cls">Task</span>&gt; tasks <span class="op">=</span> [newTask];</div>
+      </div>
+
+      <div class="callout tip">
+        <div class="icon">💡</div>
+        <div class="callout-body"><strong>ID trick:</strong> <code>DateTime.now().millisecondsSinceEpoch.toString()</code> gives us a unique number based on the current time in milliseconds. It's not the most sophisticated ID system, but it works perfectly for a beginner project where tasks are added one at a time.</div>
+      </div>
+
+      <div class="quiz-card">
+        <div class="quiz-label">🧠 Check Your Understanding</div>
+        <div class="quiz-q">Why is <code>isDone</code> the only property that is NOT marked <code>final</code>?</div>
+        <div class="quiz-opts" id="qa">
+          <button class="quiz-opt" onclick="ans('qa','a','c')"><span class="ltr">A</span> Because booleans can't be final in Dart</button>
+          <button class="quiz-opt" onclick="ans('qa','b','c')"><span class="ltr">B</span> Because it was forgotten — it should be final</button>
+          <button class="quiz-opt" onclick="ans('qa','c','c')"><span class="ltr">C</span> Because it needs to change when the user marks the task complete</button>
+          <button class="quiz-opt" onclick="ans('qa','d','c')"><span class="ltr">D</span> Because final only works on Strings and ints</button>
+        </div>
+        <div class="quiz-fb" id="qa-fb"></div>
+      </div>
+
+      <div class="step-nav">
+        <button class="btn btn-ghost" onclick="goTo(1)">← Previous</button>
+        <button class="btn btn-primary" onclick="goTo(3)">Next: Home Screen Shell →</button>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         STEP 3 — HOME SCREEN SHELL
+    ══════════════════════════════════════ -->
+    <div class="step-page" id="step-3">
+      <div class="step-hero amber">
+        <div class="step-tag" style="color:#C97D10">🏠 Step 3</div>
+        <h1>Home Screen — Shell</h1>
+        <p class="hero-desc">Build the structural skeleton of the Home Screen: the StatefulWidget, the task list in state, and the AppBar. The task list display comes next.</p>
+      </div>
+
+      <div class="prose">
+        <h2>Why StatefulWidget?</h2>
+        <p>The Home Screen needs to hold the list of tasks and rebuild whenever a task is added, removed, or marked complete. That's exactly what <code>StatefulWidget</code> is for.</p>
+
+        <h2>The Home Screen Shell</h2>
+        <p>Open <code>lib/screens/home_screen.dart</code> and write this. Read the explanation below before moving on.</p>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><div class="code-label">lib/screens/home_screen.dart</div><div class="code-lang">Dart</div></div>
+        <div class="code-body"><span class="kw">import</span> <span class="str">'package:flutter/material.dart'</span>;
+<span class="kw">import</span> <span class="str">'../models/task.dart'</span>;
+
+<span class="kw">class</span> <span class="cls">HomeScreen</span> <span class="kw">extends</span> <span class="cls">StatefulWidget</span> {
+  <span class="kw">const</span> <span class="cls">HomeScreen</span>({<span class="kw">super</span>.key});
+
+  <span class="ann">@override</span>
+  <span class="cls">State</span>&lt;<span class="cls">HomeScreen</span>&gt; <span class="fn">createState</span>() <span class="op">=&gt;</span> _HomeScreenState();
+}
+
+<span class="kw">class</span> _HomeScreenState <span class="kw">extends</span> <span class="cls">State</span>&lt;<span class="cls">HomeScreen</span>&gt; {
+
+  <span class="cm">// Our task list — starts with some sample tasks</span>
+  <span class="kw">final</span> <span class="cls">List</span>&lt;<span class="cls">Task</span>&gt; _tasks <span class="op">=</span> [
+    <span class="cls">Task</span>(id: <span class="str">'1'</span>, name: <span class="str">'Complete Math homework'</span>, priority: <span class="str">'High'</span>),
+    <span class="cls">Task</span>(id: <span class="str">'2'</span>, name: <span class="str">'Read Chapter 4'</span>, priority: <span class="str">'Medium'</span>),
+    <span class="cls">Task</span>(id: <span class="str">'3'</span>, name: <span class="str">'Submit project draft'</span>, priority: <span class="str">'Low'</span>),
+  ];
+
+  <span class="cm">// Toggle a task between done and not done</span>
+  <span class="kw">void</span> <span class="fn">_toggleTask</span>(<span class="kw">String</span> id) {
+    <span class="fn">setState</span>(() {
+      <span class="kw">final</span> task <span class="op">=</span> _tasks.<span class="fn">firstWhere</span>((t) <span class="op">=&gt;</span> t.id <span class="op">==</span> id);
+      task.isDone <span class="op">=</span> !task.isDone;
+    });
+  }
+
+  <span class="cm">// Delete a task</span>
+  <span class="kw">void</span> <span class="fn">_deleteTask</span>(<span class="kw">String</span> id) {
+    <span class="fn">setState</span>(() {
+      _tasks.<span class="fn">removeWhere</span>((t) <span class="op">=&gt;</span> t.id <span class="op">==</span> id);
+    });
+  }
+
+  <span class="cm">// Add a new task (called after returning from AddTaskScreen)</span>
+  <span class="kw">void</span> <span class="fn">_addTask</span>(<span class="cls">Task</span> task) {
+    <span class="fn">setState</span>(() {
+      _tasks.<span class="fn">add</span>(task);
+    });
+  }
+
+  <span class="ann">@override</span>
+  <span class="cls">Widget</span> <span class="fn">build</span>(<span class="cls">BuildContext</span> context) {
+    <span class="kw">return</span> <span class="cls">Scaffold</span>(
+      appBar: <span class="cls">AppBar</span>(
+        title: <span class="kw">const</span> <span class="cls">Text</span>(<span class="str">'📚 My Tasks'</span>),
+        backgroundColor: <span class="cls">Theme</span>.<span class="fn">of</span>(context).colorScheme.inversePrimary,
+      ),
+      body: <span class="kw">const</span> <span class="cls">Center</span>(
+        child: <span class="cls">Text</span>(<span class="str">'Task list coming in next step!'</span>),
+      ),
+    );
+  }
+}</div>
+      </div>
+
+      <div class="explain-table">
+        <div class="explain-row"><div class="explain-code">import '../models/task.dart'</div><div class="explain-text"><code>..</code> means "go up one folder" — from <code>screens/</code> up to <code>lib/</code>, then into <code>models/task.dart</code>.</div></div>
+        <div class="explain-row"><div class="explain-code">final List&lt;Task&gt; _tasks</div><div class="explain-text">The list itself is <code>final</code> (the variable won't be reassigned), but the <em>contents</em> of the list can still change — we can add and remove items freely.</div></div>
+        <div class="explain-row"><div class="explain-code">_tasks.firstWhere((t) =&gt; t.id == id)</div><div class="explain-text">Searches the list for the first task whose <code>id</code> matches the given id. The <code>(t) =&gt;</code> is a short arrow function — think of it as "for each task t, check if t.id equals id".</div></div>
+        <div class="explain-row"><div class="explain-code">task.isDone = !task.isDone</div><div class="explain-text">Flips the boolean: if it was <code>true</code>, it becomes <code>false</code>; if it was <code>false</code>, it becomes <code>true</code>. The <code>!</code> means "not".</div></div>
+        <div class="explain-row"><div class="explain-code">_tasks.removeWhere((t) =&gt; t.id == id)</div><div class="explain-text">Removes every task from the list where the condition is true. Since IDs are unique, this removes exactly one task.</div></div>
+        <div class="explain-row"><div class="explain-code">Theme.of(context).colorScheme.inversePrimary</div><div class="explain-text">Uses a color from the app's theme — automatically matches the indigo seed color we set in main.dart. No hardcoded hex values needed.</div></div>
+      </div>
+
+      <div class="callout info">
+        <div class="icon">🔨</div>
+        <div class="callout-body"><strong>Run the app now.</strong> You should see a screen with an AppBar titled "📚 My Tasks" and the placeholder text. The three state methods (<code>_toggleTask</code>, <code>_deleteTask</code>, <code>_addTask</code>) are written but not yet called — that's fine.</div>
+      </div>
+
+      <div class="step-nav">
+        <button class="btn btn-ghost" onclick="goTo(2)">← Previous</button>
+        <button class="btn btn-primary" onclick="goTo(4)">Next: Task List UI →</button>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         STEP 4 — HOME SCREEN TASK LIST
+    ══════════════════════════════════════ -->
+    <div class="step-page" id="step-4">
+      <div class="step-hero teal">
+        <div class="step-tag" style="color:#0899A8">📋 Step 4</div>
+        <h1>Home Screen — Task List UI</h1>
+        <p class="hero-desc">Replace the placeholder body with a real scrollable task list. Each task shows its name, priority badge, a checkbox, and a delete button.</p>
+      </div>
+
+      <div class="prose">
+        <h2>The Task List Body</h2>
+        <p>We need to build two things for the body:</p>
+        <ol>
+          <li>An <strong>empty state message</strong> when there are no tasks</li>
+          <li>A <strong>ListView</strong> that displays each task as a card</li>
+        </ol>
+        <p>Replace the <code>body:</code> line and everything inside it in your <code>home_screen.dart</code> <code>build</code> method with this:</p>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><div class="code-label">inside build() — replace body:</div><div class="code-lang">Dart</div></div>
+        <div class="code-body">body: _tasks.isEmpty
+    ? <span class="kw">const</span> <span class="cls">Center</span>(
+        child: <span class="cls">Column</span>(
+          mainAxisAlignment: <span class="cls">MainAxisAlignment</span>.center,
+          children: [
+            <span class="cls">Icon</span>(<span class="cls">Icons</span>.check_circle_outline,
+                size: <span class="num">64</span>, color: <span class="cls">Colors</span>.grey),
+            <span class="cls">SizedBox</span>(height: <span class="num">16</span>),
+            <span class="cls">Text</span>(<span class="str">'No tasks yet!'</span>,
+                style: <span class="cls">TextStyle</span>(fontSize: <span class="num">18</span>, color: <span class="cls">Colors</span>.grey)),
+            <span class="cls">Text</span>(<span class="str">'Tap + to add your first task.'</span>,
+                style: <span class="cls">TextStyle</span>(color: <span class="cls">Colors</span>.grey)),
+          ],
+        ),
+      )
+    : <span class="cls">ListView</span>.<span class="fn">builder</span>(
+        padding: <span class="kw">const</span> <span class="cls">EdgeInsets</span>.<span class="fn">all</span>(<span class="num">12</span>),
+        itemCount: _tasks.length,
+        itemBuilder: (context, index) {
+          <span class="kw">final</span> task <span class="op">=</span> _tasks[index];
+          <span class="kw">return</span> <span class="fn">_buildTaskCard</span>(task);
+        },
+      ),</div>
+      </div>
+
+      <div class="explain-table">
+        <div class="explain-row"><div class="explain-code">_tasks.isEmpty ? ... : ...</div><div class="explain-text">A ternary expression — "if the list is empty, show the empty state message; otherwise, show the ListView." This is the Flutter way to show different UI based on a condition.</div></div>
+        <div class="explain-row"><div class="explain-code">ListView.builder( itemCount: _tasks.length</div><div class="explain-text">Tells Flutter how many items to show. As tasks are added or removed and setState() is called, this number updates automatically.</div></div>
+        <div class="explain-row"><div class="explain-code">_buildTaskCard(task)</div><div class="explain-text">We're calling a helper method that returns a widget. This keeps the build() method clean and readable. We'll write this method next.</div></div>
+      </div>
+
+      <div class="prose">
+        <h2>The Task Card Widget</h2>
+        <p>Now add the <code>_buildTaskCard</code> helper method inside <code>_HomeScreenState</code> (above the <code>build</code> method):</p>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><div class="code-label">helper method inside _HomeScreenState</div><div class="code-lang">Dart</div></div>
+        <div class="code-body"><span class="cls">Widget</span> <span class="fn">_buildTaskCard</span>(<span class="cls">Task</span> task) {
+  <span class="cm">// Priority colors</span>
+  <span class="kw">final</span> priorityColor = {
+    <span class="str">'High'</span>: <span class="cls">Colors</span>.red.shade100,
+    <span class="str">'Medium'</span>: <span class="cls">Colors</span>.orange.shade100,
+    <span class="str">'Low'</span>: <span class="cls">Colors</span>.green.shade100,
+  }[task.priority] <span class="op">??</span> <span class="cls">Colors</span>.grey.shade100;
+
+  <span class="kw">final</span> priorityTextColor = {
+    <span class="str">'High'</span>: <span class="cls">Colors</span>.red.shade800,
+    <span class="str">'Medium'</span>: <span class="cls">Colors</span>.orange.shade800,
+    <span class="str">'Low'</span>: <span class="cls">Colors</span>.green.shade800,
+  }[task.priority] <span class="op">??</span> <span class="cls">Colors</span>.grey.shade800;
+
+  <span class="kw">return</span> <span class="cls">Card</span>(
+    margin: <span class="kw">const</span> <span class="cls">EdgeInsets</span>.<span class="fn">only</span>(bottom: <span class="num">8</span>),
+    child: <span class="cls">ListTile</span>(
+      leading: <span class="cls">Checkbox</span>(
+        value: task.isDone,
+        onChanged: (_) <span class="op">=&gt;</span> <span class="fn">_toggleTask</span>(task.id),
+      ),
+      title: <span class="cls">Text</span>(
+        task.name,
+        style: <span class="cls">TextStyle</span>(
+          decoration: task.isDone
+              ? <span class="cls">TextDecoration</span>.lineThrough
+              : <span class="cls">TextDecoration</span>.none,
+          color: task.isDone ? <span class="cls">Colors</span>.grey : <span class="kw">null</span>,
+        ),
+      ),
+      trailing: <span class="cls">Row</span>(
+        mainAxisSize: <span class="cls">MainAxisSize</span>.min,
+        children: [
+          <span class="cls">Container</span>(
+            padding: <span class="kw">const</span> <span class="cls">EdgeInsets</span>.<span class="fn">symmetric</span>(
+                horizontal: <span class="num">8</span>, vertical: <span class="num">3</span>),
+            decoration: <span class="cls">BoxDecoration</span>(
+              color: priorityColor,
+              borderRadius: <span class="cls">BorderRadius</span>.<span class="fn">circular</span>(<span class="num">12</span>),
+            ),
+            child: <span class="cls">Text</span>(
+              task.priority,
+              style: <span class="cls">TextStyle</span>(
+                fontSize: <span class="num">11</span>,
+                fontWeight: <span class="cls">FontWeight</span>.bold,
+                color: priorityTextColor,
+              ),
+            ),
+          ),
+          <span class="cls">IconButton</span>(
+            icon: <span class="kw">const</span> <span class="cls">Icon</span>(<span class="cls">Icons</span>.delete_outline,
+                color: <span class="cls">Colors</span>.redAccent),
+            onPressed: () <span class="op">=&gt;</span> <span class="fn">_deleteTask</span>(task.id),
+          ),
+        ],
+      ),
+    ),
+  );
+}</div>
+      </div>
+
+      <div class="explain-table">
+        <div class="explain-row"><div class="explain-code">{ 'High': Colors.red... }[task.priority] ?? ...</div><div class="explain-text">A Map literal used as a lookup table. We get the color for this task's priority. The <code>??</code> (null-coalescing operator) provides a fallback if the priority doesn't match any key.</div></div>
+        <div class="explain-row"><div class="explain-code">Checkbox(value: task.isDone, onChanged: (_) =&gt; _toggleTask(...))</div><div class="explain-text">The checkbox displays the current done state. When tapped, it calls _toggleTask. The <code>_</code> parameter ignores the new value because we flip the state ourselves in _toggleTask.</div></div>
+        <div class="explain-row"><div class="explain-code">TextDecoration.lineThrough</div><div class="explain-text">Draws a strikethrough line through the text — a common visual signal that a task is complete.</div></div>
+        <div class="explain-row"><div class="explain-code">MainAxisSize.min</div><div class="explain-text">Tells the Row to be only as wide as its children need — important here because the Row is inside a ListTile's trailing slot, which has limited space.</div></div>
+      </div>
+
+      <div class="callout tip">
+        <div class="icon">🔥</div>
+        <div class="callout-body"><strong>Hot reload now.</strong> You should see three task cards with checkboxes, priority badges, and delete buttons. Try tapping a checkbox — it should toggle the strikethrough. Try tapping delete — the task should disappear.</div>
+      </div>
+
+      <div class="step-nav">
+        <button class="btn btn-ghost" onclick="goTo(3)">← Previous</button>
+        <button class="btn btn-primary" onclick="goTo(5)">Next: Add Task Screen →</button>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         STEP 5 — ADD TASK SCREEN
+    ══════════════════════════════════════ -->
+    <div class="step-page" id="step-5">
+      <div class="step-hero purple">
+        <div class="step-tag" style="color:#6C48D4">➕ Step 5</div>
+        <h1>Add Task Screen</h1>
+        <p class="hero-desc">Build the second screen — a form where the user types a task name, picks a priority, and saves it back to the Home Screen.</p>
+      </div>
+
+      <div class="prose">
+        <h2>What This Screen Needs</h2>
+        <ul>
+          <li>A <code>TextField</code> for the task name with a <code>TextEditingController</code></li>
+          <li>Three buttons to select priority: High, Medium, Low</li>
+          <li>A "Save Task" button that validates input, creates a <code>Task</code>, and returns it to the Home Screen</li>
+          <li>A "Cancel" button that goes back without saving</li>
+        </ul>
+
+        <h2>Full Add Task Screen</h2>
+        <p>Open <code>lib/screens/add_task_screen.dart</code> and write this complete file:</p>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><div class="code-label">lib/screens/add_task_screen.dart</div><div class="code-lang">Dart</div></div>
+        <div class="code-body"><span class="kw">import</span> <span class="str">'package:flutter/material.dart'</span>;
+<span class="kw">import</span> <span class="str">'../models/task.dart'</span>;
+
+<span class="kw">class</span> <span class="cls">AddTaskScreen</span> <span class="kw">extends</span> <span class="cls">StatefulWidget</span> {
+  <span class="kw">const</span> <span class="cls">AddTaskScreen</span>({<span class="kw">super</span>.key});
+
+  <span class="ann">@override</span>
+  <span class="cls">State</span>&lt;<span class="cls">AddTaskScreen</span>&gt; <span class="fn">createState</span>() <span class="op">=&gt;</span> _AddTaskScreenState();
+}
+
+<span class="kw">class</span> _AddTaskScreenState <span class="kw">extends</span> <span class="cls">State</span>&lt;<span class="cls">AddTaskScreen</span>&gt; {
+  <span class="cm">// Controller reads whatever the user typed</span>
+  <span class="kw">final</span> _nameController <span class="op">=</span> <span class="cls">TextEditingController</span>();
+
+  <span class="cm">// Selected priority — starts at Medium</span>
+  <span class="kw">String</span> _selectedPriority <span class="op">=</span> <span class="str">'Medium'</span>;
+
+  <span class="cm">// Error message if the user tries to save with an empty name</span>
+  <span class="kw">String</span>? _errorText;
+
+  <span class="ann">@override</span>
+  <span class="kw">void</span> <span class="fn">dispose</span>() {
+    _nameController.<span class="fn">dispose</span>();
+    <span class="kw">super</span>.<span class="fn">dispose</span>();
+  }
+
+  <span class="kw">void</span> <span class="fn">_saveTask</span>() {
+    <span class="kw">final</span> name <span class="op">=</span> _nameController.text.<span class="fn">trim</span>();
+
+    <span class="kw">if</span> (name.isEmpty) {
+      <span class="fn">setState</span>(() {
+        _errorText <span class="op">=</span> <span class="str">'Please enter a task name.'</span>;
+      });
+      <span class="kw">return</span>;
+    }
+
+    <span class="kw">final</span> newTask <span class="op">=</span> <span class="cls">Task</span>(
+      id: <span class="cls">DateTime</span>.now().millisecondsSinceEpoch.<span class="fn">toString</span>(),
+      name: name,
+      priority: _selectedPriority,
+    );
+
+    <span class="cm">// Pop and pass the new task back to HomeScreen</span>
+    <span class="kw">if</span> (!<span class="fn">mounted</span>()) <span class="kw">return</span>;
+    <span class="cls">Navigator</span>.<span class="fn">of</span>(context).<span class="fn">pop</span>(newTask);
+  }
+
+  <span class="ann">@override</span>
+  <span class="cls">Widget</span> <span class="fn">build</span>(<span class="cls">BuildContext</span> context) {
+    <span class="kw">return</span> <span class="cls">Scaffold</span>(
+      appBar: <span class="cls">AppBar</span>(
+        title: <span class="kw">const</span> <span class="cls">Text</span>(<span class="str">'Add Task'</span>),
+        backgroundColor: <span class="cls">Theme</span>.<span class="fn">of</span>(context).colorScheme.inversePrimary,
+      ),
+      body: <span class="cls">Padding</span>(
+        padding: <span class="kw">const</span> <span class="cls">EdgeInsets</span>.<span class="fn">all</span>(<span class="num">20</span>),
+        child: <span class="cls">Column</span>(
+          crossAxisAlignment: <span class="cls">CrossAxisAlignment</span>.stretch,
+          children: [
+
+            <span class="cm">// ── Task Name Field ──</span>
+            <span class="cls">TextField</span>(
+              controller: _nameController,
+              autofocus: <span class="kw">true</span>,
+              decoration: <span class="cls">InputDecoration</span>(
+                labelText: <span class="str">'Task Name'</span>,
+                hintText: <span class="str">'e.g. Read Chapter 5'</span>,
+                border: <span class="kw">const</span> <span class="cls">OutlineInputBorder</span>(),
+                errorText: _errorText,
+              ),
+              onChanged: (_) {
+                <span class="kw">if</span> (_errorText != <span class="kw">null</span>) {
+                  <span class="fn">setState</span>(() => _errorText <span class="op">=</span> <span class="kw">null</span>);
+                }
+              },
+            ),
+
+            <span class="kw">const</span> <span class="cls">SizedBox</span>(height: <span class="num">24</span>),
+
+            <span class="cm">// ── Priority Label ──</span>
+            <span class="kw">const</span> <span class="cls">Text</span>(
+              <span class="str">'Priority'</span>,
+              style: <span class="cls">TextStyle</span>(
+                  fontSize: <span class="num">13</span>, fontWeight: <span class="cls">FontWeight</span>.w600),
+            ),
+            <span class="kw">const</span> <span class="cls">SizedBox</span>(height: <span class="num">8</span>),
+
+            <span class="cm">// ── Priority Buttons ──</span>
+            <span class="cls">Row</span>(
+              children: [<span class="str">'High'</span>, <span class="str">'Medium'</span>, <span class="str">'Low'</span>].<span class="fn">map</span>((priority) {
+                <span class="kw">final</span> isSelected <span class="op">=</span> _selectedPriority <span class="op">==</span> priority;
+                <span class="kw">final</span> color = priority <span class="op">==</span> <span class="str">'High'</span>
+                    ? <span class="cls">Colors</span>.red
+                    : priority <span class="op">==</span> <span class="str">'Medium'</span>
+                        ? <span class="cls">Colors</span>.orange
+                        : <span class="cls">Colors</span>.green;
+                <span class="kw">return</span> <span class="cls">Expanded</span>(
+                  child: <span class="cls">Padding</span>(
+                    padding: <span class="kw">const</span> <span class="cls">EdgeInsets</span>.<span class="fn">only</span>(right: <span class="num">8</span>),
+                    child: <span class="cls">OutlinedButton</span>(
+                      style: <span class="cls">OutlinedButton</span>.styleFrom(
+                        backgroundColor:
+                            isSelected ? color.withOpacity(<span class="num">0.1</span>) : <span class="kw">null</span>,
+                        side: <span class="cls">BorderSide</span>(
+                            color: isSelected ? color : <span class="cls">Colors</span>.grey,
+                            width: isSelected ? <span class="num">2</span> : <span class="num">1</span>),
+                        foregroundColor: isSelected ? color : <span class="cls">Colors</span>.grey,
+                      ),
+                      onPressed: () {
+                        <span class="fn">setState</span>(() => _selectedPriority <span class="op">=</span> priority);
+                      },
+                      child: <span class="cls">Text</span>(priority),
+                    ),
+                  ),
+                );
+              }).<span class="fn">toList</span>(),
+            ),
+
+            <span class="kw">const</span> <span class="cls">SizedBox</span>(height: <span class="num">32</span>),
+
+            <span class="cm">// ── Save Button ──</span>
+            <span class="cls">FilledButton</span>(
+              onPressed: <span class="fn">_saveTask</span>,
+              child: <span class="kw">const</span> <span class="cls">Text</span>(<span class="str">'Save Task'</span>),
+            ),
+            <span class="kw">const</span> <span class="cls">SizedBox</span>(height: <span class="num">10</span>),
+
+            <span class="cm">// ── Cancel Button ──</span>
+            <span class="cls">OutlinedButton</span>(
+              onPressed: () <span class="op">=&gt;</span> <span class="cls">Navigator</span>.<span class="fn">of</span>(context).<span class="fn">pop</span>(),
+              child: <span class="kw">const</span> <span class="cls">Text</span>(<span class="str">'Cancel'</span>),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}</div>
+      </div>
+
+      <div class="explain-table">
+        <div class="explain-row"><div class="explain-code">TextEditingController</div><div class="explain-text">Attached to the TextField. We read its <code>.text</code> property when the Save button is pressed to get what the user typed.</div></div>
+        <div class="explain-row"><div class="explain-code">dispose() { _nameController.dispose() }</div><div class="explain-text">When the screen is removed from the app, we must clean up the controller to prevent memory leaks. Always dispose controllers in <code>dispose()</code>.</div></div>
+        <div class="explain-row"><div class="explain-code">name.trim()</div><div class="explain-text"><code>trim()</code> removes any leading or trailing whitespace. So if the user typed "  homework  " it becomes "homework". Prevents tasks with blank-looking names.</div></div>
+        <div class="explain-row"><div class="explain-code">String? _errorText</div><div class="explain-text">The <code>?</code> means this can be <code>null</code>. When null, no error is shown. When set to a string, the TextField displays it as an error message below the field.</div></div>
+        <div class="explain-row"><div class="explain-code">Navigator.of(context).pop(newTask)</div><div class="explain-text">Pops back to the Home Screen AND passes the new task along as a return value. This is how data flows back from a pushed screen.</div></div>
+        <div class="explain-row"><div class="explain-code">['High','Medium','Low'].map((priority) {...})</div><div class="explain-text">Loops over the three priority names and creates an OutlinedButton for each. <code>.toList()</code> at the end converts the result to a List, which Row requires.</div></div>
+        <div class="explain-row"><div class="explain-code">CrossAxisAlignment.stretch</div><div class="explain-text">Makes every child of the Column stretch to fill the full width — so the buttons and text field span the whole screen, not just their content width.</div></div>
+      </div>
+
+      <div class="step-nav">
+        <button class="btn btn-ghost" onclick="goTo(4)">← Previous</button>
+        <button class="btn btn-primary" onclick="goTo(6)">Next: Wire Navigation →</button>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         STEP 6 — NAVIGATION
+    ══════════════════════════════════════ -->
+    <div class="step-page" id="step-6">
+      <div class="step-hero green">
+        <div class="step-tag" style="color:#16A36A">🗺️ Step 6</div>
+        <h1>Wiring Navigation</h1>
+        <p class="hero-desc">The two screens exist — now connect them. Add the floating action button to navigate to Add Task, and catch the returned task to add it to the list.</p>
+      </div>
+
+      <div class="prose">
+        <h2>Two Things to Add in home_screen.dart</h2>
+        <ol>
+          <li>A <strong>FloatingActionButton</strong> (<code>+</code> button) on the Scaffold</li>
+          <li>An <strong><code>_openAddTaskScreen()</code></strong> method that pushes to <code>AddTaskScreen</code> and awaits the result</li>
+        </ol>
+
+        <h2>The Navigation Method</h2>
+        <p>Add this method inside <code>_HomeScreenState</code> (alongside the other methods you already wrote):</p>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><div class="code-label">add inside _HomeScreenState</div><div class="code-lang">Dart</div></div>
+        <div class="code-body"><span class="cm">// Navigate to AddTaskScreen and wait for a result</span>
+<span class="kw">Future</span>&lt;<span class="kw">void</span>&gt; <span class="fn">_openAddTaskScreen</span>() <span class="kw">async</span> {
+  <span class="kw">final</span> newTask <span class="op">=</span> <span class="kw">await</span> <span class="cls">Navigator</span>.<span class="fn">of</span>(context).<span class="fn">push</span>&lt;<span class="cls">Task</span>&gt;(
+    <span class="cls">MaterialPageRoute</span>(
+      builder: (context) <span class="op">=&gt;</span> <span class="kw">const</span> <span class="cls">AddTaskScreen</span>(),
+    ),
+  );
+
+  <span class="cm">// If the user saved a task (didn't tap Cancel), add it</span>
+  <span class="kw">if</span> (newTask != <span class="kw">null</span>) {
+    <span class="fn">_addTask</span>(newTask);
+  }
+}</div>
+      </div>
+
+      <div class="explain-table">
+        <div class="explain-row"><div class="explain-code">async / await</div><div class="explain-text">Navigation is asynchronous — we push a screen and <em>wait</em> for the user to come back. <code>async</code> on the method and <code>await</code> on the push lets us wait without freezing the app.</div></div>
+        <div class="explain-row"><div class="explain-code">Navigator.push&lt;Task&gt;(...)</div><div class="explain-text">The <code>&lt;Task&gt;</code> tells Flutter what type of value to expect back. When <code>pop(newTask)</code> is called on AddTaskScreen, this is what we receive.</div></div>
+        <div class="explain-row"><div class="explain-code">if (newTask != null)</div><div class="explain-text">If the user tapped Cancel, <code>pop()</code> was called with no argument, so <code>newTask</code> is null. We only add a task if the user actually saved one.</div></div>
+      </div>
+
+      <div class="prose">
+        <h2>Add the Import and FloatingActionButton</h2>
+        <p>At the top of <code>home_screen.dart</code>, add the import for AddTaskScreen:</p>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><div class="code-label">add at the top of home_screen.dart</div><div class="code-lang">Dart</div></div>
+        <div class="code-body"><span class="kw">import</span> <span class="str">'add_task_screen.dart'</span>;</div>
+      </div>
+
+      <div class="prose">
+        <p>Then update the <code>Scaffold</code> in your <code>build</code> method to add the <code>floatingActionButton</code> property:</p>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><div class="code-label">update Scaffold in build()</div><div class="code-lang">Dart</div></div>
+        <div class="code-body"><span class="kw">return</span> <span class="cls">Scaffold</span>(
+  appBar: <span class="cls">AppBar</span>(
+    title: <span class="kw">const</span> <span class="cls">Text</span>(<span class="str">'📚 My Tasks'</span>),
+    backgroundColor: <span class="cls">Theme</span>.<span class="fn">of</span>(context).colorScheme.inversePrimary,
+  ),
+  body: <span class="cm">/* ... your existing body code ... */</span>,
+  floatingActionButton: <span class="cls">FloatingActionButton</span>(
+    onPressed: <span class="fn">_openAddTaskScreen</span>,
+    tooltip: <span class="str">'Add Task'</span>,
+    child: <span class="kw">const</span> <span class="cls">Icon</span>(<span class="cls">Icons</span>.add),
+  ),
+);</div>
+      </div>
+
+      <div class="callout tip">
+        <div class="icon">🔥</div>
+        <div class="callout-body"><strong>Test the full flow now.</strong> Tap the <code>+</code> button → Add Task screen appears → type a task name → choose a priority → tap Save Task → you're back on Home Screen and the new task appears in the list!</div>
+      </div>
+
+      <div class="quiz-card">
+        <div class="quiz-label">🧠 Check Your Understanding</div>
+        <div class="quiz-q">Why do we check <code>if (newTask != null)</code> after the <code>await</code>?</div>
+        <div class="quiz-opts" id="qb">
+          <button class="quiz-opt" onclick="ans('qb','a','c')"><span class="ltr">A</span> Because newTask is always null when navigation works correctly</button>
+          <button class="quiz-opt" onclick="ans('qb','b','c')"><span class="ltr">B</span> Because await returns null for async functions</button>
+          <button class="quiz-opt" onclick="ans('qb','c','c')"><span class="ltr">C</span> Because the user may have pressed Cancel, which pops without a value</button>
+          <button class="quiz-opt" onclick="ans('qb','d','c')"><span class="ltr">D</span> Because Task objects can't be returned from navigation</button>
+        </div>
+        <div class="quiz-fb" id="qb-fb"></div>
+      </div>
+
+      <div class="step-nav">
+        <button class="btn btn-ghost" onclick="goTo(5)">← Previous</button>
+        <button class="btn btn-primary" onclick="goTo(7)">Next: Complete App →</button>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         STEP 7 — COMPLETE APP (ALL FILES)
+    ══════════════════════════════════════ -->
+    <div class="step-page" id="step-7">
+      <div class="step-hero indigo">
+        <div class="step-tag" style="color:#3B6EF5">📄 Step 7</div>
+        <h1>Complete Final App — All Files</h1>
+        <p class="hero-desc">Here are the three complete, final versions of every file. Use these to verify your code or fix anything that isn't working.</p>
+      </div>
+
+      <div class="prose">
+        <h2>The Complete Files</h2>
+        <p>Each tab shows the full, final version of one file. Compare against what you've written to find any differences.</p>
+      </div>
+
+      <!-- Tab system -->
+      <div class="code-block" style="margin:0">
+        <div class="tab-bar">
+          <button class="tab-btn active" onclick="switchTab('tab1')">main.dart</button>
+          <button class="tab-btn" onclick="switchTab('tab2')">models/task.dart</button>
+          <button class="tab-btn" onclick="switchTab('tab3')">screens/home_screen.dart</button>
+          <button class="tab-btn" onclick="switchTab('tab4')">screens/add_task_screen.dart</button>
+        </div>
+
+        <!-- main.dart -->
+        <div class="tab-panel active" id="tab1">
+          <div class="code-body"><span class="kw">import</span> <span class="str">'package:flutter/material.dart'</span>;
+<span class="kw">import</span> <span class="str">'screens/home_screen.dart'</span>;
+
+<span class="kw">void</span> <span class="fn">main</span>() {
+  <span class="fn">runApp</span>(<span class="kw">const</span> <span class="cls">TaskManagerApp</span>());
+}
+
+<span class="kw">class</span> <span class="cls">TaskManagerApp</span> <span class="kw">extends</span> <span class="cls">StatelessWidget</span> {
+  <span class="kw">const</span> <span class="cls">TaskManagerApp</span>({<span class="kw">super</span>.key});
+
+  <span class="ann">@override</span>
+  <span class="cls">Widget</span> <span class="fn">build</span>(<span class="cls">BuildContext</span> context) {
+    <span class="kw">return</span> <span class="cls">MaterialApp</span>(
+      title: <span class="str">'Student Task Manager'</span>,
+      debugShowCheckedModeBanner: <span class="kw">false</span>,
+      theme: <span class="cls">ThemeData</span>(
+        colorScheme: <span class="cls">ColorScheme</span>.<span class="fn">fromSeed</span>(seedColor: <span class="cls">Colors</span>.indigo),
+        useMaterial3: <span class="kw">true</span>,
+      ),
+      home: <span class="kw">const</span> <span class="cls">HomeScreen</span>(),
+    );
+  }
+}</div>
+        </div>
+
+        <!-- task.dart -->
+        <div class="tab-panel" id="tab2">
+          <div class="code-body"><span class="kw">class</span> <span class="cls">Task</span> {
+  <span class="kw">final</span> <span class="kw">String</span> id;
+  <span class="kw">final</span> <span class="kw">String</span> name;
+  <span class="kw">final</span> <span class="kw">String</span> priority;
+  <span class="kw">bool</span> isDone;
+
+  <span class="cls">Task</span>({
+    <span class="kw">required</span> <span class="kw">this</span>.id,
+    <span class="kw">required</span> <span class="kw">this</span>.name,
+    <span class="kw">required</span> <span class="kw">this</span>.priority,
+    <span class="kw">this</span>.isDone <span class="op">=</span> <span class="kw">false</span>,
+  });
+}</div>
+        </div>
+
+        <!-- home_screen.dart -->
+        <div class="tab-panel" id="tab3">
+          <div class="code-body"><span class="kw">import</span> <span class="str">'package:flutter/material.dart'</span>;
+<span class="kw">import</span> <span class="str">'../models/task.dart'</span>;
+<span class="kw">import</span> <span class="str">'add_task_screen.dart'</span>;
+
+<span class="kw">class</span> <span class="cls">HomeScreen</span> <span class="kw">extends</span> <span class="cls">StatefulWidget</span> {
+  <span class="kw">const</span> <span class="cls">HomeScreen</span>({<span class="kw">super</span>.key});
+
+  <span class="ann">@override</span>
+  <span class="cls">State</span>&lt;<span class="cls">HomeScreen</span>&gt; <span class="fn">createState</span>() <span class="op">=&gt;</span> _HomeScreenState();
+}
+
+<span class="kw">class</span> _HomeScreenState <span class="kw">extends</span> <span class="cls">State</span>&lt;<span class="cls">HomeScreen</span>&gt; {
+  <span class="kw">final</span> <span class="cls">List</span>&lt;<span class="cls">Task</span>&gt; _tasks <span class="op">=</span> [
+    <span class="cls">Task</span>(id: <span class="str">'1'</span>, name: <span class="str">'Complete Math homework'</span>, priority: <span class="str">'High'</span>),
+    <span class="cls">Task</span>(id: <span class="str">'2'</span>, name: <span class="str">'Read Chapter 4'</span>, priority: <span class="str">'Medium'</span>),
+    <span class="cls">Task</span>(id: <span class="str">'3'</span>, name: <span class="str">'Submit project draft'</span>, priority: <span class="str">'Low'</span>),
+  ];
+
+  <span class="kw">void</span> <span class="fn">_toggleTask</span>(<span class="kw">String</span> id) {
+    <span class="fn">setState</span>(() {
+      <span class="kw">final</span> task <span class="op">=</span> _tasks.<span class="fn">firstWhere</span>((t) <span class="op">=&gt;</span> t.id <span class="op">==</span> id);
+      task.isDone <span class="op">=</span> !task.isDone;
+    });
+  }
+
+  <span class="kw">void</span> <span class="fn">_deleteTask</span>(<span class="kw">String</span> id) {
+    <span class="fn">setState</span>(() {
+      _tasks.<span class="fn">removeWhere</span>((t) <span class="op">=&gt;</span> t.id <span class="op">==</span> id);
+    });
+  }
+
+  <span class="kw">void</span> <span class="fn">_addTask</span>(<span class="cls">Task</span> task) {
+    <span class="fn">setState</span>(() {
+      _tasks.<span class="fn">add</span>(task);
+    });
+  }
+
+  <span class="kw">Future</span>&lt;<span class="kw">void</span>&gt; <span class="fn">_openAddTaskScreen</span>() <span class="kw">async</span> {
+    <span class="kw">final</span> newTask <span class="op">=</span> <span class="kw">await</span> <span class="cls">Navigator</span>.<span class="fn">of</span>(context).<span class="fn">push</span>&lt;<span class="cls">Task</span>&gt;(
+      <span class="cls">MaterialPageRoute</span>(
+        builder: (context) <span class="op">=&gt;</span> <span class="kw">const</span> <span class="cls">AddTaskScreen</span>(),
+      ),
+    );
+    <span class="kw">if</span> (newTask != <span class="kw">null</span>) <span class="fn">_addTask</span>(newTask);
+  }
+
+  <span class="cls">Widget</span> <span class="fn">_buildTaskCard</span>(<span class="cls">Task</span> task) {
+    <span class="kw">final</span> priorityColor = {
+      <span class="str">'High'</span>: <span class="cls">Colors</span>.red.shade100,
+      <span class="str">'Medium'</span>: <span class="cls">Colors</span>.orange.shade100,
+      <span class="str">'Low'</span>: <span class="cls">Colors</span>.green.shade100,
+    }[task.priority] <span class="op">??</span> <span class="cls">Colors</span>.grey.shade100;
+
+    <span class="kw">final</span> priorityTextColor = {
+      <span class="str">'High'</span>: <span class="cls">Colors</span>.red.shade800,
+      <span class="str">'Medium'</span>: <span class="cls">Colors</span>.orange.shade800,
+      <span class="str">'Low'</span>: <span class="cls">Colors</span>.green.shade800,
+    }[task.priority] <span class="op">??</span> <span class="cls">Colors</span>.grey.shade800;
+
+    <span class="kw">return</span> <span class="cls">Card</span>(
+      margin: <span class="kw">const</span> <span class="cls">EdgeInsets</span>.<span class="fn">only</span>(bottom: <span class="num">8</span>),
+      child: <span class="cls">ListTile</span>(
+        leading: <span class="cls">Checkbox</span>(
+          value: task.isDone,
+          onChanged: (_) <span class="op">=&gt;</span> <span class="fn">_toggleTask</span>(task.id),
+        ),
+        title: <span class="cls">Text</span>(
+          task.name,
+          style: <span class="cls">TextStyle</span>(
+            decoration: task.isDone
+                ? <span class="cls">TextDecoration</span>.lineThrough
+                : <span class="cls">TextDecoration</span>.none,
+            color: task.isDone ? <span class="cls">Colors</span>.grey : <span class="kw">null</span>,
+          ),
+        ),
+        trailing: <span class="cls">Row</span>(
+          mainAxisSize: <span class="cls">MainAxisSize</span>.min,
+          children: [
+            <span class="cls">Container</span>(
+              padding: <span class="kw">const</span> <span class="cls">EdgeInsets</span>.<span class="fn">symmetric</span>(
+                  horizontal: <span class="num">8</span>, vertical: <span class="num">3</span>),
+              decoration: <span class="cls">BoxDecoration</span>(
+                color: priorityColor,
+                borderRadius: <span class="cls">BorderRadius</span>.<span class="fn">circular</span>(<span class="num">12</span>),
+              ),
+              child: <span class="cls">Text</span>(
+                task.priority,
+                style: <span class="cls">TextStyle</span>(
+                  fontSize: <span class="num">11</span>,
+                  fontWeight: <span class="cls">FontWeight</span>.bold,
+                  color: priorityTextColor,
+                ),
+              ),
+            ),
+            <span class="cls">IconButton</span>(
+              icon: <span class="kw">const</span> <span class="cls">Icon</span>(<span class="cls">Icons</span>.delete_outline,
+                  color: <span class="cls">Colors</span>.redAccent),
+              onPressed: () <span class="op">=&gt;</span> <span class="fn">_deleteTask</span>(task.id),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  <span class="ann">@override</span>
+  <span class="cls">Widget</span> <span class="fn">build</span>(<span class="cls">BuildContext</span> context) {
+    <span class="kw">return</span> <span class="cls">Scaffold</span>(
+      appBar: <span class="cls">AppBar</span>(
+        title: <span class="kw">const</span> <span class="cls">Text</span>(<span class="str">'📚 My Tasks'</span>),
+        backgroundColor: <span class="cls">Theme</span>.<span class="fn">of</span>(context).colorScheme.inversePrimary,
+      ),
+      body: _tasks.isEmpty
+          ? <span class="kw">const</span> <span class="cls">Center</span>(
+              child: <span class="cls">Column</span>(
+                mainAxisAlignment: <span class="cls">MainAxisAlignment</span>.center,
+                children: [
+                  <span class="cls">Icon</span>(<span class="cls">Icons</span>.check_circle_outline,
+                      size: <span class="num">64</span>, color: <span class="cls">Colors</span>.grey),
+                  <span class="cls">SizedBox</span>(height: <span class="num">16</span>),
+                  <span class="cls">Text</span>(<span class="str">'No tasks yet!'</span>,
+                      style: <span class="cls">TextStyle</span>(
+                          fontSize: <span class="num">18</span>, color: <span class="cls">Colors</span>.grey)),
+                  <span class="cls">Text</span>(<span class="str">'Tap + to add your first task.'</span>,
+                      style: <span class="cls">TextStyle</span>(color: <span class="cls">Colors</span>.grey)),
+                ],
+              ),
+            )
+          : <span class="cls">ListView</span>.<span class="fn">builder</span>(
+              padding: <span class="kw">const</span> <span class="cls">EdgeInsets</span>.<span class="fn">all</span>(<span class="num">12</span>),
+              itemCount: _tasks.length,
+              itemBuilder: (context, index) {
+                <span class="kw">return</span> <span class="fn">_buildTaskCard</span>(_tasks[index]);
+              },
+            ),
+      floatingActionButton: <span class="cls">FloatingActionButton</span>(
+        onPressed: <span class="fn">_openAddTaskScreen</span>,
+        tooltip: <span class="str">'Add Task'</span>,
+        child: <span class="kw">const</span> <span class="cls">Icon</span>(<span class="cls">Icons</span>.add),
+      ),
+    );
+  }
+}</div>
+        </div>
+
+        <!-- add_task_screen.dart -->
+        <div class="tab-panel" id="tab4">
+          <div class="code-body"><span class="kw">import</span> <span class="str">'package:flutter/material.dart'</span>;
+<span class="kw">import</span> <span class="str">'../models/task.dart'</span>;
+
+<span class="kw">class</span> <span class="cls">AddTaskScreen</span> <span class="kw">extends</span> <span class="cls">StatefulWidget</span> {
+  <span class="kw">const</span> <span class="cls">AddTaskScreen</span>({<span class="kw">super</span>.key});
+
+  <span class="ann">@override</span>
+  <span class="cls">State</span>&lt;<span class="cls">AddTaskScreen</span>&gt; <span class="fn">createState</span>() <span class="op">=&gt;</span> _AddTaskScreenState();
+}
+
+<span class="kw">class</span> _AddTaskScreenState <span class="kw">extends</span> <span class="cls">State</span>&lt;<span class="cls">AddTaskScreen</span>&gt; {
+  <span class="kw">final</span> _nameController <span class="op">=</span> <span class="cls">TextEditingController</span>();
+  <span class="kw">String</span> _selectedPriority <span class="op">=</span> <span class="str">'Medium'</span>;
+  <span class="kw">String</span>? _errorText;
+
+  <span class="ann">@override</span>
+  <span class="kw">void</span> <span class="fn">dispose</span>() {
+    _nameController.<span class="fn">dispose</span>();
+    <span class="kw">super</span>.<span class="fn">dispose</span>();
+  }
+
+  <span class="kw">void</span> <span class="fn">_saveTask</span>() {
+    <span class="kw">final</span> name <span class="op">=</span> _nameController.text.<span class="fn">trim</span>();
+    <span class="kw">if</span> (name.isEmpty) {
+      <span class="fn">setState</span>(() => _errorText <span class="op">=</span> <span class="str">'Please enter a task name.'</span>);
+      <span class="kw">return</span>;
+    }
+    <span class="kw">final</span> newTask <span class="op">=</span> <span class="cls">Task</span>(
+      id: <span class="cls">DateTime</span>.now().millisecondsSinceEpoch.<span class="fn">toString</span>(),
+      name: name,
+      priority: _selectedPriority,
+    );
+    <span class="kw">if</span> (!<span class="fn">mounted</span>()) <span class="kw">return</span>;
+    <span class="cls">Navigator</span>.<span class="fn">of</span>(context).<span class="fn">pop</span>(newTask);
+  }
+
+  <span class="ann">@override</span>
+  <span class="cls">Widget</span> <span class="fn">build</span>(<span class="cls">BuildContext</span> context) {
+    <span class="kw">return</span> <span class="cls">Scaffold</span>(
+      appBar: <span class="cls">AppBar</span>(
+        title: <span class="kw">const</span> <span class="cls">Text</span>(<span class="str">'Add Task'</span>),
+        backgroundColor: <span class="cls">Theme</span>.<span class="fn">of</span>(context).colorScheme.inversePrimary,
+      ),
+      body: <span class="cls">Padding</span>(
+        padding: <span class="kw">const</span> <span class="cls">EdgeInsets</span>.<span class="fn">all</span>(<span class="num">20</span>),
+        child: <span class="cls">Column</span>(
+          crossAxisAlignment: <span class="cls">CrossAxisAlignment</span>.stretch,
+          children: [
+            <span class="cls">TextField</span>(
+              controller: _nameController,
+              autofocus: <span class="kw">true</span>,
+              decoration: <span class="cls">InputDecoration</span>(
+                labelText: <span class="str">'Task Name'</span>,
+                hintText: <span class="str">'e.g. Read Chapter 5'</span>,
+                border: <span class="kw">const</span> <span class="cls">OutlineInputBorder</span>(),
+                errorText: _errorText,
+              ),
+              onChanged: (_) {
+                <span class="kw">if</span> (_errorText != <span class="kw">null</span>) {
+                  <span class="fn">setState</span>(() => _errorText <span class="op">=</span> <span class="kw">null</span>);
+                }
+              },
+            ),
+            <span class="kw">const</span> <span class="cls">SizedBox</span>(height: <span class="num">24</span>),
+            <span class="kw">const</span> <span class="cls">Text</span>(<span class="str">'Priority'</span>,
+                style: <span class="cls">TextStyle</span>(
+                    fontSize: <span class="num">13</span>, fontWeight: <span class="cls">FontWeight</span>.w600)),
+            <span class="kw">const</span> <span class="cls">SizedBox</span>(height: <span class="num">8</span>),
+            <span class="cls">Row</span>(
+              children: [<span class="str">'High'</span>, <span class="str">'Medium'</span>, <span class="str">'Low'</span>].<span class="fn">map</span>((priority) {
+                <span class="kw">final</span> isSelected <span class="op">=</span> _selectedPriority <span class="op">==</span> priority;
+                <span class="kw">final</span> color = priority <span class="op">==</span> <span class="str">'High'</span>
+                    ? <span class="cls">Colors</span>.red
+                    : priority <span class="op">==</span> <span class="str">'Medium'</span>
+                        ? <span class="cls">Colors</span>.orange
+                        : <span class="cls">Colors</span>.green;
+                <span class="kw">return</span> <span class="cls">Expanded</span>(
+                  child: <span class="cls">Padding</span>(
+                    padding: <span class="kw">const</span> <span class="cls">EdgeInsets</span>.<span class="fn">only</span>(right: <span class="num">8</span>),
+                    child: <span class="cls">OutlinedButton</span>(
+                      style: <span class="cls">OutlinedButton</span>.styleFrom(
+                        backgroundColor: isSelected
+                            ? color.<span class="fn">withOpacity</span>(<span class="num">0.1</span>)
+                            : <span class="kw">null</span>,
+                        side: <span class="cls">BorderSide</span>(
+                            color: isSelected ? color : <span class="cls">Colors</span>.grey,
+                            width: isSelected ? <span class="num">2</span> : <span class="num">1</span>),
+                        foregroundColor:
+                            isSelected ? color : <span class="cls">Colors</span>.grey,
+                      ),
+                      onPressed: () {
+                        <span class="fn">setState</span>(
+                            () => _selectedPriority <span class="op">=</span> priority);
+                      },
+                      child: <span class="cls">Text</span>(priority),
+                    ),
+                  ),
+                );
+              }).<span class="fn">toList</span>(),
+            ),
+            <span class="kw">const</span> <span class="cls">SizedBox</span>(height: <span class="num">32</span>),
+            <span class="cls">FilledButton</span>(
+              onPressed: <span class="fn">_saveTask</span>,
+              child: <span class="kw">const</span> <span class="cls">Text</span>(<span class="str">'Save Task'</span>),
+            ),
+            <span class="kw">const</span> <span class="cls">SizedBox</span>(height: <span class="num">10</span>),
+            <span class="cls">OutlinedButton</span>(
+              onPressed: () <span class="op">=&gt;</span> <span class="cls">Navigator</span>.<span class="fn">of</span>(context).<span class="fn">pop</span>(),
+              child: <span class="kw">const</span> <span class="cls">Text</span>(<span class="str">'Cancel'</span>),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}</div>
+        </div>
+      </div>
+
+      <div class="step-nav">
+        <button class="btn btn-ghost" onclick="goTo(6)">← Previous</button>
+        <button class="btn btn-primary" onclick="goTo(8)">Next: Tests + Checklist →</button>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         STEP 8 — TESTING
+    ══════════════════════════════════════ -->
+    <div class="step-page" id="step-8">
+      <div class="step-hero green">
+        <div class="step-tag" style="color:#16A36A">🧪 Step 8</div>
+        <h1>Testing + Final Checklist</h1>
+        <p class="hero-desc">Write a unit test to verify the core logic, run the manual testing checklist, and confirm your project is ready to submit.</p>
+      </div>
+
+      <div class="prose">
+        <h2>Unit Tests</h2>
+        <p>Open <code>test/task_test.dart</code> (delete whatever's there) and write these tests. They verify the most important behaviors: adding and removing tasks.</p>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><div class="code-label">test/task_test.dart</div><div class="code-lang">Dart</div></div>
+        <div class="code-body"><span class="kw">import</span> <span class="str">'package:flutter_test/flutter_test.dart'</span>;
+<span class="kw">import</span> <span class="str">'package:student_task_manager/models/task.dart'</span>;
+
+<span class="kw">void</span> <span class="fn">main</span>() {
+
+  <span class="fn">group</span>(<span class="str">'Task model'</span>, () {
+
+    <span class="fn">test</span>(<span class="str">'new task starts as not done'</span>, () {
+      <span class="kw">final</span> task <span class="op">=</span> <span class="cls">Task</span>(
+          id: <span class="str">'1'</span>, name: <span class="str">'Test task'</span>, priority: <span class="str">'High'</span>);
+      <span class="fn">expect</span>(task.isDone, <span class="kw">false</span>);
+    });
+
+    <span class="fn">test</span>(<span class="str">'toggling isDone changes its value'</span>, () {
+      <span class="kw">final</span> task <span class="op">=</span> <span class="cls">Task</span>(
+          id: <span class="str">'1'</span>, name: <span class="str">'Test task'</span>, priority: <span class="str">'High'</span>);
+      task.isDone <span class="op">=</span> <span class="kw">true</span>;
+      <span class="fn">expect</span>(task.isDone, <span class="kw">true</span>);
+      task.isDone <span class="op">=</span> !task.isDone;
+      <span class="fn">expect</span>(task.isDone, <span class="kw">false</span>);
+    });
+
+  });
+
+  <span class="fn">group</span>(<span class="str">'Task list logic'</span>, () {
+
+    <span class="fn">test</span>(<span class="str">'adding a task increases list length'</span>, () {
+      <span class="kw">final</span> <span class="cls">List</span>&lt;<span class="cls">Task</span>&gt; tasks <span class="op">=</span> [];
+      tasks.<span class="fn">add</span>(<span class="cls">Task</span>(
+          id: <span class="str">'1'</span>, name: <span class="str">'Do homework'</span>, priority: <span class="str">'Medium'</span>));
+      <span class="fn">expect</span>(tasks.length, <span class="num">1</span>);
+      <span class="fn">expect</span>(tasks[<span class="num">0</span>].name, <span class="str">'Do homework'</span>);
+    });
+
+    <span class="fn">test</span>(<span class="str">'removing a task decreases list length'</span>, () {
+      <span class="kw">final</span> <span class="cls">List</span>&lt;<span class="cls">Task</span>&gt; tasks <span class="op">=</span> [
+        <span class="cls">Task</span>(id: <span class="str">'1'</span>, name: <span class="str">'Task A'</span>, priority: <span class="str">'High'</span>),
+        <span class="cls">Task</span>(id: <span class="str">'2'</span>, name: <span class="str">'Task B'</span>, priority: <span class="str">'Low'</span>),
+      ];
+      tasks.<span class="fn">removeWhere</span>((t) <span class="op">=&gt;</span> t.id <span class="op">==</span> <span class="str">'1'</span>);
+      <span class="fn">expect</span>(tasks.length, <span class="num">1</span>);
+      <span class="fn">expect</span>(tasks[<span class="num">0</span>].name, <span class="str">'Task B'</span>);
+    });
+
+    <span class="fn">test</span>(<span class="str">'task with empty name is invalid'</span>, () {
+      <span class="kw">final</span> name <span class="op">=</span> <span class="str">'   '</span>.<span class="fn">trim</span>();
+      <span class="fn">expect</span>(name.isEmpty, <span class="kw">true</span>);
+    });
+
+  });
+}</div>
+      </div>
+
+      <div class="explain-table">
+        <div class="explain-row"><div class="explain-code">group('Task model', () {...})</div><div class="explain-text">Groups related tests together. In the output, failed tests show the group name + test name, making it easy to find the problem.</div></div>
+        <div class="explain-row"><div class="explain-code">expect(task.isDone, false)</div><div class="explain-text">Asserts that <code>task.isDone</code> equals <code>false</code>. If it doesn't, the test fails with a clear message showing what was expected vs what was found.</div></div>
+        <div class="explain-row"><div class="explain-code">'   '.trim().isEmpty</div><div class="explain-text">Tests that our validation logic works: whitespace-only input should be treated as empty, just like our _saveTask method does with .trim().</div></div>
+      </div>
+
+      <div class="prose">
+        <h2>Run Your Tests</h2>
+        <p>In the terminal, from your project root:</p>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><div class="code-label">Terminal</div><div class="code-lang">shell</div></div>
+        <div class="code-body">flutter test</div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><div class="code-label">Expected output</div><div class="code-lang">output</div></div>
+        <div class="code-body" style="color:#A8D8A8">00:01 +5: All tests passed!</div>
+      </div>
+
+      <div class="prose">
+        <h2>Final Manual Testing Checklist</h2>
+        <p>Go through this checklist on your emulator or device before submitting:</p>
+      </div>
+
+      <ul class="checklist" id="finalChecklist">
+        <li><div class="chk" onclick="chk(this)"></div> App launches without crashing</li>
+        <li><div class="chk" onclick="chk(this)"></div> Home Screen shows the 3 starter tasks</li>
+        <li><div class="chk" onclick="chk(this)"></div> Tapping a checkbox marks the task done (strikethrough appears)</li>
+        <li><div class="chk" onclick="chk(this)"></div> Tapping the checkbox again un-marks the task</li>
+        <li><div class="chk" onclick="chk(this)"></div> Tapping delete removes the task from the list</li>
+        <li><div class="chk" onclick="chk(this)"></div> Deleting all tasks shows the empty state message</li>
+        <li><div class="chk" onclick="chk(this)"></div> Tapping the + button opens the Add Task screen</li>
+        <li><div class="chk" onclick="chk(this)"></div> The keyboard appears automatically on the Add Task screen</li>
+        <li><div class="chk" onclick="chk(this)"></div> Tapping Save with an empty name shows the error message</li>
+        <li><div class="chk" onclick="chk(this)"></div> The error disappears when you start typing</li>
+        <li><div class="chk" onclick="chk(this)"></div> All three priority buttons can be selected (only one at a time)</div></li>
+        <li><div class="chk" onclick="chk(this)"></div> Tapping Save adds the task and returns to Home Screen</li>
+        <li><div class="chk" onclick="chk(this)"></div> The new task appears with the correct priority badge</li>
+        <li><div class="chk" onclick="chk(this)"></div> Tapping Cancel returns to Home Screen without adding a task</li>
+        <li><div class="chk" onclick="chk(this)"></div> The back arrow in the AppBar also cancels and goes back</li>
+        <li><div class="chk" onclick="chk(this)"></div> All 5 unit tests pass with <code>flutter test</code></li>
+      </ul>
+
+      <!-- Interactive app demo -->
+      <div class="demo-app-wrap" style="margin-top:28px">
+        <div class="demo-app-header">⚡ Mini Interactive Demo — try the finished app</div>
+        <div class="demo-app-body">
+          <div id="demoScreen" style="display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap">
+            <div>
+              <p style="font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Home Screen</p>
+              <div class="phone" style="margin:0">
+                <div class="phone-screen">
+                  <div class="phone-notch"><div class="phone-notch-pill"></div></div>
+                  <div class="p-appbar">📚 My Tasks</div>
+                  <div class="p-body p-body-rel" style="padding-bottom:52px" id="demoList"></div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <p style="font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Add Task Screen</p>
+              <div class="phone" style="margin:0">
+                <div class="phone-screen">
+                  <div class="phone-notch"><div class="phone-notch-pill"></div></div>
+                  <div class="p-appbar"><span style="cursor:pointer">← </span>Add Task</div>
+                  <div class="p-body">
+                    <div class="p-field"><div class="p-field-label">Task Name</div><input id="demoInput" type="text" placeholder="Type task name..." style="border:none;outline:none;width:100%;font-size:11px;font-family:var(--font);background:transparent;color:var(--text)"></div>
+                    <div id="demoErr" style="font-size:10px;color:var(--red);margin:-4px 0 8px;display:none">Please enter a task name.</div>
+                    <div style="font-size:9px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px">Priority</div>
+                    <div class="p-priority-row" id="demoPriority">
+                      <div class="p-priority-btn" onclick="selectPriority('High',this)">High</div>
+                      <div class="p-priority-btn sel-med" onclick="selectPriority('Medium',this)">Medium</div>
+                      <div class="p-priority-btn" onclick="selectPriority('Low',this)">Low</div>
+                    </div>
+                    <button class="p-btn" onclick="demoSave()">Save Task</button>
+                    <button class="p-btn p-btn-outline">Cancel</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="prose" style="margin-top:32px">
+        <h2>🎉 You Did It!</h2>
+        <p>You've built a complete, tested, two-screen Flutter app from scratch. Here's what you accomplished:</p>
+      </div>
+
+      <div class="summary-box">
+        <h4>✅ Project Complete</h4>
+        <ul>
+          <li>Created a Flutter project with a clean folder structure</li>
+          <li>Wrote a <code>Task</code> data model class with proper types</li>
+          <li>Built a <code>StatefulWidget</code> Home Screen with real state management</li>
+          <li>Displayed a dynamic, scrollable <code>ListView</code> of task cards</li>
+          <li>Handled checkbox toggling and task deletion with <code>setState()</code></li>
+          <li>Built a form screen with input validation and priority selection</li>
+          <li>Passed data between screens using <code>Navigator.push</code> with a return value</li>
+          <li>Wrote and passed 5 unit tests</li>
+        </ul>
+      </div>
+
+      <div class="step-nav">
+        <button class="btn btn-ghost" onclick="goTo(7)">← Previous</button>
+        <button class="btn btn-green" onclick="goTo(0)">🔄 Start Over</button>
+      </div>
+    </div>
+
+  </div><!-- .content -->
+</main>
+</div><!-- .shell -->
+
+<button class="mob-toggle" id="mobToggle" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+
+<script>
+// ── STEP DATA ──
+const steps = [
+  { title: 'Project Overview', label: 'Step 0 of 8 — Overview' },
+  { title: 'Create the Project', label: 'Step 1 of 8 — Project Setup' },
+  { title: 'Task Data Model', label: 'Step 2 of 8 — Data Model' },
+  { title: 'Home Screen Shell', label: 'Step 3 of 8 — Home Screen' },
+  { title: 'Home Screen Task List', label: 'Step 4 of 8 — Task List UI' },
+  { title: 'Add Task Screen', label: 'Step 5 of 8 — Add Task Screen' },
+  { title: 'Wiring Navigation', label: 'Step 6 of 8 — Navigation' },
+  { title: 'Complete App', label: 'Step 7 of 8 — All Files' },
+  { title: 'Tests + Checklist', label: 'Step 8 of 8 — Done! 🎉' },
+];
+
+const totalSteps = steps.length;
+let visited = new Set();
+
+function goTo(idx) {
+  document.querySelectorAll('.step-page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+  document.getElementById('step-' + idx).classList.add('active');
+  const navEl = document.getElementById('nav-' + idx);
+  if (navEl) { navEl.classList.add('active'); }
+
+  visited.add(idx);
+
+  // Update nav items
+  for (let i = 0; i < totalSteps; i++) {
+    const el = document.getElementById('nav-' + i);
+    if (!el) continue;
+    if (i !== idx && visited.has(i)) el.classList.add('done');
+  }
+
+  // Update topbar
+  const info = steps[idx];
+  document.getElementById('topTitle').innerHTML = `<strong>${info.title}</strong>`;
+  document.getElementById('stepCounter').textContent = `Step ${idx + 1} of ${totalSteps}`;
+
+  // Update progress
+  const pct = Math.round((visited.size / totalSteps) * 100);
+  document.getElementById('progFill').style.width = pct + '%';
+  document.getElementById('progLabel').textContent = visited.size + ' of ' + totalSteps + ' steps complete';
+
+  // Update dots
+  const dotsEl = document.getElementById('stepDots');
+  dotsEl.innerHTML = steps.map((s, i) => {
+    let cls = 'sdot';
+    if (i === idx) cls += ' active';
+    else if (visited.has(i)) cls += ' done';
+    return `<div class="${cls}" onclick="goTo(${i})" title="${s.title}"></div>`;
+  }).join('');
+
+  window.scrollTo(0, 0);
+  if (window.innerWidth < 860) document.getElementById('sidebar').classList.remove('open');
+
+  // Init demo on last step
+  if (idx === 8) initDemo();
+}
+
+// ── TABS ──
+function switchTab(tabId) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById(tabId).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ── QUIZ ──
+const quizAnswers = {
+  qa: { correct: 'c', explain: 'isDone is the only property that changes after a Task is created — the user marks tasks complete. All other properties (id, name, priority) are set once and never changed, so they\'re final.' },
+  qb: { correct: 'c', explain: 'When the user taps Cancel, Navigator.pop() is called with no argument, returning null. We only want to add a task if the user actually saved one, so we check for null first.' },
+};
+
+function ans(quizId, chosen, correct) {
+  const container = document.getElementById(quizId);
+  const buttons = container.querySelectorAll('.quiz-opt');
+  buttons.forEach(b => { b.disabled = true; b.onclick = null; });
+  buttons.forEach((btn, i) => {
+    const letter = ['a','b','c','d'][i];
+    if (letter === correct) btn.classList.add('correct');
+    else if (letter === chosen && chosen !== correct) btn.classList.add('wrong');
+  });
+  const fb = document.getElementById(quizId + '-fb');
+  const ok = chosen === correct;
+  fb.className = 'quiz-fb show ' + (ok ? 'good' : 'bad');
+  fb.textContent = (ok ? '✅ Correct! ' : '❌ Not quite. ') + quizAnswers[quizId].explain;
+}
+
+// ── CHECKLIST ──
+function chk(box) {
+  box.classList.toggle('on');
+  box.textContent = box.classList.contains('on') ? '✓' : '';
+}
+
+// ── DEMO APP ──
+let demoTasks = [
+  { id: '1', name: 'Complete Math homework', priority: 'High', done: false },
+  { id: '2', name: 'Read Chapter 4', priority: 'Medium', done: false },
+  { id: '3', name: 'Submit project draft', priority: 'Low', done: false },
+];
+let demoPriority = 'Medium';
+
+function initDemo() { renderDemo(); }
+
+function renderDemo() {
+  const list = document.getElementById('demoList');
+  if (!list) return;
+  if (demoTasks.length === 0) {
+    list.innerHTML = `<div class="p-empty">No tasks yet!<br><span style="font-size:22px">☑️</span><br>Tap + to add your first task.</div>
+      <div class="p-fab" onclick="document.getElementById('demoInput').focus()">+</div>`;
+    return;
+  }
+  const badgeClass = { High: 'badge-high', Medium: 'badge-med', Low: 'badge-low' };
+  list.innerHTML = demoTasks.map(t => `
+    <div class="p-task" id="dt-${t.id}">
+      <div class="p-task-check ${t.done ? 'done' : ''}" onclick="toggleDemo('${t.id}')">${t.done ? '✓' : ''}</div>
+      <div class="p-task-text ${t.done ? 'done' : ''}" style="font-size:11px">${t.name}</div>
+      <div class="p-task-badge ${badgeClass[t.priority] || 'badge-med'}">${t.priority.slice(0,3)}</div>
+      <span onclick="deleteDemo('${t.id}')" style="font-size:13px;color:#ccc;cursor:pointer;margin-left:3px">✕</span>
+    </div>
+  `).join('') + `<div class="p-fab" onclick="document.getElementById('demoInput').focus()">+</div>`;
+}
+
+function toggleDemo(id) {
+  const t = demoTasks.find(x => x.id === id);
+  if (t) t.done = !t.done;
+  renderDemo();
+}
+
+function deleteDemo(id) {
+  demoTasks = demoTasks.filter(x => x.id !== id);
+  renderDemo();
+}
+
+function selectPriority(p, el) {
+  demoPriority = p;
+  document.querySelectorAll('.p-priority-btn').forEach(b => {
+    b.className = 'p-priority-btn';
+  });
+  const cls = p === 'High' ? 'sel-high' : p === 'Medium' ? 'sel-med' : 'sel-low';
+  el.classList.add(cls);
+}
+
+function demoSave() {
+  const input = document.getElementById('demoInput');
+  const err = document.getElementById('demoErr');
+  const name = input.value.trim();
+  if (!name) { err.style.display = 'block'; return; }
+  err.style.display = 'none';
+  demoTasks.push({ id: Date.now().toString(), name, priority: demoPriority, done: false });
+  input.value = '';
+  renderDemo();
+}
+
+// ── INIT ──
+goTo(0);
+</script>
+</body>
+</html>
