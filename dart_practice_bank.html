@@ -1,0 +1,2220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dart Practice Bank — Beginner Programming</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F7F8FC; --white:#FFF; --border:#E2E8F0; --surface:#EFF2F9;
+  --text:#18202E; --muted:#546070; --light:#8D99AE;
+  --blue:#3060F0; --blue-bg:#EBF0FE; --blue-pale:#F4F6FF;
+  --green:#15A065; --green-bg:#E2F5EE;
+  --amber:#C87C10; --amber-bg:#FEF2E1;
+  --purple:#6840D0; --purple-bg:#EFE9FC;
+  --red:#CE2E2E; --red-bg:#FDEAEA;
+  --teal:#0891A8; --teal-bg:#DFF4F7;
+  --font:'DM Sans',sans-serif; --mono:'DM Mono',monospace;
+  --r:12px; --rs:8px;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:15.5px;line-height:1.7}
+
+/* ── SHELL ── */
+.shell{display:flex;min-height:100vh}
+
+/* ── SIDEBAR ── */
+.sidebar{width:260px;flex-shrink:0;background:var(--white);border-right:1px solid var(--border);position:fixed;top:0;left:0;height:100vh;overflow-y:auto;z-index:100}
+.sb-head{padding:18px 16px 13px;border-bottom:1px solid var(--border)}
+.sb-badge{display:inline-block;background:var(--blue-bg);color:var(--blue);font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;border-radius:20px;padding:3px 10px;margin-bottom:6px}
+.sb-head h2{font-size:13px;font-weight:700;line-height:1.4}
+.sb-head p{font-size:11px;color:var(--muted);margin-top:2px}
+.prog-wrap{padding:10px 16px 0}
+.prog-bar{height:4px;background:var(--surface);border-radius:2px;overflow:hidden}
+.prog-fill{height:100%;background:var(--green);border-radius:2px;transition:width .4s;width:0%}
+.prog-lbl{font-size:11px;color:var(--light);margin-top:4px;padding-bottom:8px}
+.sb-nav{padding:4px 0 24px}
+.sb-grp{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--light);padding:12px 16px 4px}
+.sb-item{display:flex;align-items:center;gap:8px;padding:8px 16px;font-size:12.5px;font-weight:500;color:var(--muted);cursor:pointer;border-left:3px solid transparent;transition:all .15s}
+.sb-item:hover{background:var(--surface);color:var(--text)}
+.sb-item.active{background:var(--blue-bg);color:var(--blue);border-left-color:var(--blue)}
+.sb-item.done{color:var(--muted)}
+.sb-num{width:20px;height:20px;border-radius:50%;background:var(--surface);color:var(--light);font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
+.sb-item.active .sb-num{background:var(--blue);color:#fff}
+.sb-item.done .sb-num{background:var(--green);color:#fff}
+
+/* ── MAIN ── */
+.main{margin-left:260px;flex:1}
+.topbar{background:var(--white);border-bottom:1px solid var(--border);padding:12px 40px;display:flex;align-items:center;position:sticky;top:0;z-index:50}
+.topbar-title{font-size:13px;color:var(--muted);flex:1}
+.topbar-title strong{color:var(--text);font-weight:700}
+.score-badge{background:var(--green-bg);color:var(--green);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:700}
+
+/* ── CONTENT ── */
+.content{padding:36px 40px;max-width:860px}
+.page{display:none}
+.page.active{display:block}
+
+/* ── DOTS ── */
+.dots{display:flex;gap:4px;margin-bottom:20px;flex-wrap:wrap}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--border);cursor:pointer;transition:background .2s}
+.dot.active{background:var(--blue)}
+.dot.done{background:var(--green)}
+
+/* ── HERO ── */
+.hero{border-radius:var(--r);padding:26px 30px;margin-bottom:26px}
+.hero.blue  {background:linear-gradient(135deg,#EBF0FE,#E2EBFD);border:1px solid #BED0F8}
+.hero.green {background:linear-gradient(135deg,#E2F5EE,#D5F0E5);border:1px solid #A5DCC5}
+.hero.purple{background:linear-gradient(135deg,#EFE9FC,#E7DFF8);border:1px solid #C0ACF0}
+.hero.amber {background:linear-gradient(135deg,#FEF2E1,#FDEACF);border:1px solid #EFC99A}
+.hero.teal  {background:linear-gradient(135deg,#DFF4F7,#D0EFF3);border:1px solid #9CD2DA}
+.hero.red   {background:linear-gradient(135deg,#FDEAEA,#FBDFDF);border:1px solid #F0B4B4}
+.hero-tag{display:inline-block;background:#fff;border-radius:20px;padding:3px 12px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:9px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.hero h1{font-size:21px;font-weight:700;line-height:1.3;margin-bottom:7px}
+.hero .hsub{font-size:13.5px;color:var(--muted);max-width:540px;line-height:1.6}
+
+/* ── SECTION HEADER ── */
+.sec-head{display:flex;align-items:center;gap:10px;margin:28px 0 14px}
+.sec-icon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.ic-blue{background:var(--blue-bg)} .ic-green{background:var(--green-bg)} .ic-amber{background:var(--amber-bg)} .ic-purple{background:var(--purple-bg)} .ic-teal{background:var(--teal-bg)} .ic-red{background:var(--red-bg)}
+.sec-head h2{font-size:17px;font-weight:700}
+
+/* ── PROSE ── */
+.prose p{margin-bottom:12px;color:#2A3344;line-height:1.75}
+.prose ul,.prose ol{padding-left:20px;margin-bottom:12px}
+.prose li{margin-bottom:5px;color:#2A3344}
+.prose strong{font-weight:600;color:var(--text)}
+code{font-family:var(--mono);font-size:12px;background:var(--surface);color:var(--blue);border:1px solid var(--border);border-radius:4px;padding:1px 5px}
+
+/* ── DIFFICULTY BADGES ── */
+.diff{display:inline-flex;align-items:center;gap:5px;border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700;margin-bottom:6px}
+.d-green{background:var(--green-bg);color:var(--green)}
+.d-amber{background:var(--amber-bg);color:var(--amber)}
+.d-blue{background:var(--blue-bg);color:var(--blue)}
+.d-red{background:var(--red-bg);color:var(--red)}
+
+/* ── PROBLEM CARD ── */
+.prob{background:var(--white);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:18px}
+.prob-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:12px}
+.prob-num{width:30px;height:30px;border-radius:50%;background:var(--blue-bg);color:var(--blue);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.prob-title-wrap{flex:1}
+.prob-title{font-size:14.5px;font-weight:700;margin-bottom:3px}
+.prob-body{padding:16px 18px}
+.prob-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--light);margin-bottom:5px}
+.prob-scenario{font-size:13.5px;color:var(--muted);line-height:1.6;margin-bottom:12px}
+.prob-task{font-size:14px;color:var(--text);line-height:1.65;margin-bottom:10px}
+
+/* ── CODE BOX ── */
+.code-box{background:#F0F4FF;border:1.5px solid #C5D3F8;border-radius:var(--rs);padding:14px 16px;font-family:var(--mono);font-size:13px;line-height:1.8;color:#1C2333;overflow-x:auto;white-space:pre;margin:10px 0}
+.code-lbl{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--blue);margin-bottom:4px}
+.kw{color:#2550CC;font-weight:700} .str{color:#167A4A} .val{color:#C97D10;font-weight:600} .fn{color:#6C48D4} .cm{color:#8EA0C8;font-style:italic}
+
+/* ── OUTPUT BOX ── */
+.out-box{background:#F0FBF4;border:1.5px solid #A5DCC5;border-radius:var(--rs);padding:10px 16px;font-family:var(--mono);font-size:13px;color:#0D5535;line-height:1.8;white-space:pre;margin:6px 0 10px}
+.out-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--green);margin-bottom:3px}
+
+/* ── HINT / SOLUTION REVEAL ── */
+.reveal-btn{display:inline-flex;align-items:center;gap:7px;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rs);padding:7px 14px;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;font-family:var(--font);transition:all .15s;margin:6px 4px 6px 0}
+.reveal-btn:hover{background:var(--white);color:var(--text);border-color:var(--blue)}
+.reveal-btn.hint-btn{border-color:var(--amber);color:var(--amber);background:var(--amber-bg)}
+.reveal-btn.sol-btn{border-color:var(--green);color:var(--green);background:var(--green-bg)}
+.reveal-content{display:none;margin-top:10px}
+.reveal-content.open{display:block}
+
+/* ── HINT BOX ── */
+.hint-box{background:var(--amber-bg);border:1px solid #EFC99A;border-radius:var(--rs);padding:12px 15px;font-size:13.5px;color:#7A5010;line-height:1.6}
+.hint-box strong{color:var(--amber);display:block;margin-bottom:3px}
+
+/* ── SOLUTION BOX ── */
+.sol-box{background:var(--green-bg);border:1px solid #A5DCC5;border-radius:var(--rs);padding:14px 16px;margin-top:8px}
+.sol-box .sol-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--green);margin-bottom:10px}
+.sol-explain{background:var(--white);border:1px solid var(--border);border-radius:var(--rs);padding:12px 15px;margin-top:10px;font-size:13.5px;color:var(--muted);line-height:1.65}
+.sol-explain strong{color:var(--text);font-weight:600}
+
+/* ── MCQ QUIZ ── */
+.quiz-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);padding:18px 20px;margin-bottom:14px}
+.quiz-num{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--light);margin-bottom:6px}
+.quiz-q{font-size:14px;font-weight:600;margin-bottom:12px;line-height:1.5}
+.quiz-opts{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
+.opt{display:flex;align-items:flex-start;gap:9px;padding:8px 12px;border:1.5px solid var(--border);border-radius:var(--rs);cursor:pointer;font-size:13.5px;background:var(--white);text-align:left;width:100%;font-family:var(--font);transition:all .15s;line-height:1.5}
+.opt:hover{border-color:var(--blue);background:var(--blue-bg)}
+.opt .let{width:22px;height:22px;border-radius:50%;background:var(--surface);color:var(--muted);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.opt.correct{border-color:var(--green);background:var(--green-bg)}
+.opt.correct .let{background:var(--green);color:#fff}
+.opt.wrong{border-color:var(--red);background:var(--red-bg)}
+.opt.wrong .let{background:var(--red);color:#fff}
+.opt:disabled{cursor:not-allowed}
+.qfb{margin-top:8px;padding:8px 12px;border-radius:var(--rs);font-size:13px;display:none}
+.qfb.show{display:block}
+.qfb.ok{background:var(--green-bg);color:#0D5535;border:1px solid #A5DCC5}
+.qfb.no{background:var(--red-bg);color:#7A1A1A;border:1px solid #F0B4B4}
+
+/* ── FILL IN THE BLANK ── */
+.blank-input{font-family:var(--mono);font-size:13px;border:2px solid var(--blue);border-radius:5px;padding:2px 8px;color:var(--blue);background:var(--blue-pale);min-width:80px;outline:none;width:100px;text-align:center}
+.blank-input.correct{border-color:var(--green);background:var(--green-bg);color:#0D5535}
+.blank-input.wrong{border-color:var(--red);background:var(--red-bg);color:var(--red)}
+.check-blank-btn{background:var(--blue);color:#fff;border:none;border-radius:var(--rs);padding:7px 16px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font);margin-top:10px}
+
+/* ── DECISION FLOW ── */
+.flow-diag{background:var(--blue-pale);border:1.5px solid #C5D3F8;border-radius:var(--rs);padding:16px 20px;font-family:var(--mono);font-size:13px;color:var(--muted);line-height:2.2;margin:12px 0;white-space:pre;overflow-x:auto}
+
+/* ── DEBUGGING CARD ── */
+.debug-card{background:var(--white);border:2px solid #F0B4B4;border-radius:var(--r);overflow:hidden;margin-bottom:16px}
+.debug-head{background:var(--red-bg);padding:10px 16px;display:flex;align-items:center;gap:8px;border-bottom:1px solid #F0B4B4}
+.debug-head .dh-icon{font-size:16px}
+.debug-head .dh-title{font-size:13px;font-weight:700;color:var(--red)}
+.debug-body{padding:14px 16px}
+.broken-code{background:#FFF5F5;border:1.5px solid #F0B4B4;border-radius:var(--rs);padding:14px 16px;font-family:var(--mono);font-size:13px;color:#1C2333;line-height:1.8;white-space:pre;overflow-x:auto;margin:8px 0}
+.broken-line{background:#FECACA;border-left:3px solid var(--red);margin:-2px -16px;padding:2px 16px;display:block}
+
+/* ── CALLOUT ── */
+.callout{border-radius:var(--rs);padding:12px 14px;margin:12px 0;display:flex;gap:10px;font-size:13.5px;line-height:1.6}
+.callout .ico{font-size:16px;flex-shrink:0;margin-top:1px}
+.callout-body{flex:1}
+.callout-body strong{display:block;margin-bottom:2px}
+.callout.tip{background:var(--green-bg);border-left:3px solid var(--green)}
+.callout.info{background:var(--blue-bg);border-left:3px solid var(--blue)}
+.callout.warn{background:var(--amber-bg);border-left:3px solid var(--amber)}
+.callout.mistake{background:var(--red-bg);border-left:3px solid var(--red)}
+
+/* ── SKILLS USED ── */
+.skills-row{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0}
+.skill-tag{background:var(--purple-bg);color:var(--purple);border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600}
+
+/* ── PROGRESS / SCORE ── */
+.score-display{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:16px 20px;margin-bottom:20px;display:flex;align-items:center;gap:16px}
+.score-num{font-size:32px;font-weight:700;color:var(--blue);line-height:1}
+.score-label{font-size:13px;color:var(--muted)}
+.score-bar-wrap{flex:1;height:10px;background:var(--surface);border-radius:5px;overflow:hidden}
+.score-bar{height:100%;background:var(--blue);border-radius:5px;transition:width .5s}
+
+/* ── NAV BUTTONS ── */
+.page-nav{display:flex;gap:10px;margin-top:36px;padding-top:16px;border-top:1px solid var(--border)}
+.btn{display:inline-flex;align-items:center;gap:6px;border-radius:var(--rs);padding:9px 18px;font-size:13.5px;font-weight:600;cursor:pointer;border:none;font-family:var(--font);transition:all .15s}
+.btn-primary{background:var(--blue);color:#fff}
+.btn-primary:hover{background:#2040C0}
+.btn-green{background:var(--green);color:#fff}
+.btn-green:hover{background:#118A58}
+.btn-ghost{background:var(--white);color:var(--muted);border:1.5px solid var(--border)}
+.btn-ghost:hover{background:var(--surface);color:var(--text)}
+.btn-ghost:disabled{opacity:.4;cursor:not-allowed}
+
+/* ── TABLE ── */
+.tbl{width:100%;border-collapse:collapse;margin:12px 0;font-size:13.5px}
+.tbl th{background:var(--surface);padding:8px 12px;font-weight:700;text-align:left;border:1px solid var(--border)}
+.tbl td{padding:8px 12px;border:1px solid var(--border);color:#2A3344;vertical-align:top;line-height:1.5}
+.tbl tr:nth-child(even) td{background:#FAFBFD}
+
+/* ── TOPIC OVERVIEW GRID ── */
+.topic-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}
+.topic-card{background:var(--white);border:1px solid var(--border);border-radius:var(--rs);padding:12px 14px;cursor:pointer;transition:all .15s}
+.topic-card:hover{border-color:var(--blue);background:var(--blue-bg)}
+.topic-card .tc-icon{font-size:20px;margin-bottom:5px}
+.topic-card .tc-name{font-size:13px;font-weight:700;margin-bottom:2px}
+.topic-card .tc-count{font-size:11px;color:var(--muted)}
+
+hr{border:none;border-top:1px solid var(--border);margin:22px 0}
+
+/* ── MOBILE ── */
+.mob-btn{display:none;position:fixed;bottom:16px;right:16px;width:42px;height:42px;border-radius:50%;background:var(--blue);color:#fff;border:none;font-size:18px;box-shadow:0 4px 14px rgba(48,96,240,.4);cursor:pointer;z-index:200;align-items:center;justify-content:center}
+@media(max-width:800px){
+  .sidebar{transform:translateX(-100%);transition:transform .25s}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0}
+  .content{padding:20px 16px}
+  .topbar{padding:11px 16px}
+  .mob-btn{display:flex}
+  .topic-grid{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- ── SIDEBAR ── -->
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <div class="sb-badge">💻 Dart Practice</div>
+    <h2>Dart Practice Bank</h2>
+    <p>Beginner programming exercises</p>
+  </div>
+  <div class="prog-wrap">
+    <div class="prog-bar"><div class="prog-fill" id="progFill"></div></div>
+    <div class="prog-lbl" id="progLbl">0 of 9 sections visited</div>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-grp">Overview</div>
+    <div class="sb-item" onclick="go(0)" id="n0"><div class="sb-num">0</div> How to Use This Bank</div>
+
+    <div class="sb-grp">Core Topics</div>
+    <div class="sb-item" onclick="go(1)" id="n1"><div class="sb-num">1</div> Variables &amp; Types</div>
+    <div class="sb-item" onclick="go(2)" id="n2"><div class="sb-num">2</div> If / Else</div>
+    <div class="sb-item" onclick="go(3)" id="n3"><div class="sb-num">3</div> Lists</div>
+    <div class="sb-item" onclick="go(4)" id="n4"><div class="sb-num">4</div> Functions</div>
+    <div class="sb-item" onclick="go(5)" id="n5"><div class="sb-num">5</div> Classes</div>
+
+    <div class="sb-grp">Special Sections</div>
+    <div class="sb-item" onclick="go(6)" id="n6"><div class="sb-num">6</div> 🐛 Debugging</div>
+    <div class="sb-item" onclick="go(7)" id="n7"><div class="sb-num">7</div> 🏗️ Mini Projects</div>
+    <div class="sb-item" onclick="go(8)" id="n8"><div class="sb-num">8</div> 📝 Final Quiz</div>
+  </div>
+</aside>
+
+<!-- ── MAIN ── -->
+<main class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="topTitle"><strong>How to Use This Practice Bank</strong></div>
+    <div class="score-badge" id="scoreBadge">Score: 0</div>
+  </div>
+  <div class="content">
+    <div class="dots" id="dots"></div>
+
+    <!-- ═══════════════════════════════════
+         PAGE 0 — HOW TO USE
+    ═══════════════════════════════════ -->
+    <div class="page active" id="p0">
+      <div class="hero blue">
+        <div class="hero-tag" style="color:var(--blue)">🗺️ Welcome</div>
+        <h1>Dart Practice Bank — Beginner Edition</h1>
+        <p class="hsub">Hundreds of problems, quizzes, debugging exercises, and mini-projects built around the Dart concepts you've already learned.</p>
+      </div>
+
+      <div class="prose">
+        <p>This practice bank covers every topic from your Dart tutorial. Work through each section in order, or jump to the topic you want to practise most. Every problem follows the same pattern:</p>
+      </div>
+
+      <div class="callout info">
+        <div class="ico">📋</div>
+        <div class="callout-body">
+          <strong>The progression for every problem:</strong>
+          Read the scenario → Try it yourself → Reveal hint if stuck → Reveal solution → Read the explanation
+        </div>
+      </div>
+
+      <div class="prose">
+        <p>Difficulty is marked on every problem:</p>
+      </div>
+
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 18px">
+        <span class="diff d-green">🟢 Beginner — start here</span>
+        <span class="diff d-amber">🟡 Easy — combine 2 ideas</span>
+        <span class="diff d-blue">🔵 Intermediate — think it through</span>
+        <span class="diff d-red">🔴 Challenge — logic + multiple concepts</span>
+      </div>
+
+      <div class="sec-head"><div class="sec-icon ic-blue">📚</div><h2>What's Inside</h2></div>
+
+      <div class="topic-grid">
+        <div class="topic-card" onclick="go(1)"><div class="tc-icon">📦</div><div class="tc-name">Variables &amp; Types</div><div class="tc-count">20 problems + MCQ quiz</div></div>
+        <div class="topic-card" onclick="go(2)"><div class="tc-icon">🚦</div><div class="tc-name">If / Else</div><div class="tc-count">30 problems + debugging</div></div>
+        <div class="topic-card" onclick="go(3)"><div class="tc-icon">📋</div><div class="tc-name">Lists</div><div class="tc-count">15 problems + output quiz</div></div>
+        <div class="topic-card" onclick="go(4)"><div class="tc-icon">🔧</div><div class="tc-name">Functions</div><div class="tc-count">15 problems + fill-in-blank</div></div>
+        <div class="topic-card" onclick="go(5)"><div class="tc-icon">🏗️</div><div class="tc-name">Classes</div><div class="tc-count">10 problems + quiz</div></div>
+        <div class="topic-card" onclick="go(6)"><div class="tc-icon">🐛</div><div class="tc-name">Debugging</div><div class="tc-count">20 broken programs to fix</div></div>
+        <div class="topic-card" onclick="go(7)"><div class="tc-icon">🏗️</div><div class="tc-name">Mini Projects</div><div class="tc-count">6 real-world challenges</div></div>
+        <div class="topic-card" onclick="go(8)"><div class="tc-icon">📝</div><div class="tc-name">Final Quiz</div><div class="tc-count">30 mixed questions</div></div>
+      </div>
+
+      <div class="callout warn">
+        <div class="ico">⚠️</div>
+        <div class="callout-body"><strong>Use DartPad!</strong> Go to <strong>dartpad.dev</strong> and type your answers there — running code yourself is the fastest way to learn.</div>
+      </div>
+
+      <div class="page-nav">
+        <button class="btn btn-ghost" disabled>← Back</button>
+        <button class="btn btn-primary" onclick="go(1)">Start Practising →</button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════
+         PAGE 1 — VARIABLES & TYPES
+    ═══════════════════════════════════ -->
+    <div class="page" id="p1">
+      <div class="hero green">
+        <div class="hero-tag" style="color:var(--green)">📦 Section 1</div>
+        <h1>Variables &amp; Data Types</h1>
+        <p class="hsub">String, int, double, bool — practise creating variables, assigning values, and printing them.</p>
+      </div>
+
+      <!-- P1-Q1 -->
+      <div class="prob">
+        <div class="prob-head">
+          <div class="prob-num">1</div>
+          <div class="prob-title-wrap">
+            <div class="diff d-green">🟢 Beginner</div>
+            <div class="prob-title">Store and Print Your Name</div>
+          </div>
+        </div>
+        <div class="prob-body">
+          <div class="prob-label">Task</div>
+          <div class="prob-task">Create a <code>String</code> variable called <code>myName</code>, store your name in it, and print it.</div>
+          <div class="skills-row"><span class="skill-tag">String</span><span class="skill-tag">variable</span><span class="skill-tag">print()</span></div>
+          <div style="display:flex;gap:8px;margin-top:10px">
+            <button class="reveal-btn hint-btn" onclick="toggle('h1_1')">💡 Hint</button>
+            <button class="reveal-btn sol-btn" onclick="toggle('s1_1')">✅ Solution</button>
+          </div>
+          <div class="reveal-content" id="h1_1"><div class="hint-box"><strong>Hint:</strong> String variables store text. Text always goes inside quote marks: <code>"your text here"</code>. Then use <code>print(variableName);</code> to display it.</div></div>
+          <div class="reveal-content" id="s1_1">
+            <div class="sol-box">
+              <div class="sol-title">✅ Solution</div>
+              <div class="code-lbl">📄 Dart</div>
+              <div class="code-box"><span class="kw">void</span> <span class="fn">main</span>() {
+  <span class="kw">String</span> myName = <span class="str">"Alex"</span>;
+  <span class="fn">print</span>(myName);
+}</div>
+              <div class="out-lbl">Output</div>
+              <div class="out-box">Alex</div>
+              <div class="sol-explain"><strong>Line by line:</strong> <code>String myName = "Alex";</code> creates a text variable named myName and puts "Alex" inside it. <code>print(myName);</code> shows whatever is inside myName on screen.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- P1-Q2 -->
+      <div class="prob">
+        <div class="prob-head">
+          <div class="prob-num">2</div>
+          <div class="prob-title-wrap">
+            <div class="diff d-green">🟢 Beginner</div>
+            <div class="prob-title">Student Profile Variables</div>
+          </div>
+        </div>
+        <div class="prob-body">
+          <div class="prob-task">Create four variables — your name (<code>String</code>), age (<code>int</code>), GPA (<code>double</code>), and whether you are enrolled (<code>bool</code>). Print all four.</div>
+          <div class="skills-row"><span class="skill-tag">String</span><span class="skill-tag">int</span><span class="skill-tag">double</span><span class="skill-tag">bool</span></div>
+          <div style="display:flex;gap:8px;margin-top:10px">
+            <button class="reveal-btn hint-btn" onclick="toggle('h1_2')">💡 Hint</button>
+            <button class="reveal-btn sol-btn" onclick="toggle('s1_2')">✅ Solution</button>
+          </div>
+          <div class="reveal-content" id="h1_2"><div class="hint-box"><strong>Hint:</strong> Use a different type for each: <code>String</code> for text, <code>int</code> for whole numbers, <code>double</code> for decimals, <code>bool</code> for true/false.</div></div>
+          <div class="reveal-content" id="s1_2">
+            <div class="sol-box">
+              <div class="sol-title">✅ Solution</div>
+              <div class="code-box"><span class="kw">void</span> <span class="fn">main</span>() {
+  <span class="kw">String</span> name       = <span class="str">"Alex"</span>;
+  <span class="kw">int</span>    age        = <span class="val">20</span>;
+  <span class="kw">double</span> gpa        = <span class="val">3.7</span>;
+  <span class="kw">bool</span>   isEnrolled = <span class="val">true</span>;
+
+  <span class="fn">print</span>(name);
+  <span class="fn">print</span>(age);
+  <span class="fn">print</span>(gpa);
+  <span class="fn">print</span>(isEnrolled);
+}</div>
+              <div class="out-lbl">Output</div>
+              <div class="out-box">Alex
+20
+3.7
+true</div>
+              <div class="sol-explain">Each variable uses the type that matches what it stores. Notice: <strong>Strings need quote marks</strong>, numbers and booleans do not.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- P1-Q3 -->
+      <div class="prob">
+        <div class="prob-head">
+          <div class="prob-num">3</div>
+          <div class="prob-title-wrap">
+            <div class="diff d-green">🟢 Beginner</div>
+            <div class="prob-title">Change a Variable</div>
+          </div>
+        </div>
+        <div class="prob-body">
+          <div class="prob-task">Create a <code>String</code> variable called <code>city</code> set to <code>"London"</code>. Print it. Then change it to <code>"Paris"</code> and print it again.</div>
+          <div class="skills-row"><span class="skill-tag">variable reassignment</span><span class="skill-tag">String</span></div>
+          <div style="display:flex;gap:8px;margin-top:10px">
+            <button class="reveal-btn hint-btn" onclick="toggle('h1_3')">💡 Hint</button>
+            <button class="reveal-btn sol-btn" onclick="toggle('s1_3')">✅ Solution</button>
+          </div>
+          <div class="reveal-content" id="h1_3"><div class="hint-box"><strong>Hint:</strong> To change a variable, just write its name and assign a new value: <code>city = "Paris";</code> — you do NOT write <code>String</code> again.</div></div>
+          <div class="reveal-content" id="s1_3">
+            <div class="sol-box">
+              <div class="sol-title">✅ Solution</div>
+              <div class="code-box"><span class="kw">void</span> <span class="fn">main</span>() {
+  <span class="kw">String</span> city = <span class="str">"London"</span>;
+  <span class="fn">print</span>(city);       <span class="cm">← prints London</span>
+
+  city = <span class="str">"Paris"</span>;     <span class="cm">← change the value</span>
+  <span class="fn">print</span>(city);       <span class="cm">← prints Paris</span>
+}</div>
+              <div class="out-lbl">Output</div>
+              <div class="out-box">London
+Paris</div>
+              <div class="sol-explain">You only write the type (<code>String</code>) the <strong>first time</strong> you create the variable. After that, just use the variable name to change it.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- P1-Q4 -->
+      <div class="prob">
+        <div class="prob-head">
+          <div class="prob-num">4</div>
+          <div class="prob-title-wrap">
+            <div class="diff d-amber">🟡 Easy</div>
+            <div class="prob-title">Task Details</div>
+          </div>
+        </div>
+        <div class="prob-body">
+          <div class="prob-task">Create variables to represent one task in a to-do app: <code>taskName</code> (String), <code>priority</code> (String — "High", "Medium", or "Low"), and <code>isDone</code> (bool). Print all three on separate lines.</div>
+          <div class="skills-row"><span class="skill-tag">String</span><span class="skill-tag">bool</span><span class="skill-tag">real-world context</span></div>
+          <div style="display:flex;gap:8px;margin-top:10px">
+            <button class="reveal-btn sol-btn" onclick="toggle('s1_4')">✅ Solution</button>
+          </div>
+          <div class="reveal-content" id="s1_4">
+            <div class="sol-box">
+              <div class="sol-title">✅ Solution</div>
+              <div class="code-box"><span class="kw">void</span> <span class="fn">main</span>() {
+  <span class="kw">String</span> taskName = <span class="str">"Submit Flutter project"</span>;
+  <span class="kw">String</span> priority = <span class="str">"High"</span>;
+  <span class="kw">bool</span>   isDone   = <span class="val">false</span>;
+
+  <span class="fn">print</span>(taskName);
+  <span class="fn">print</span>(priority);
+  <span class="fn">print</span>(isDone);
+}</div>
+              <div class="out-lbl">Output</div>
+              <div class="out-box">Submit Flutter project
+High
+false</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- P1-Q5 — OUTPUT PREDICTION -->
+      <div class="sec-head"><div class="sec-icon ic-purple">🔮</div><h2>Predict the Output</h2></div>
+
+      <!-- MCQ QUIZ — Variables -->
+      <div class="quiz-card">
+        <div class="quiz-num">Output Prediction 1</div>
+        <div class="quiz-q">What will this program print?</div>
+        <div class="code-box"><span class="kw">void</span> <span class="fn">main</span>() {
+  <span class="kw">int</span> score = <span class="val">85</span>;
+  score = score + <span class="val">10</span>;
+  <span class="fn">print</span>(score);
+}</div>
+        <div class="quiz-opts" id="qv1">
+          <button class="opt" onclick="qa('qv1','a','c')"><span class="let">A</span> 85</button>
+          <button class="opt" onclick="qa('qv1','b','c')"><span class="let">B</span> 10</button>
+          <button class="opt" onclick="qa('qv1','c','c')"><span class="let">C</span> 95</button>
+          <button class="opt" onclick="qa('qv1','d','c')"><span class="let">D</span> Error</button>
+        </div>
+        <div class="qfb" id="qv1-fb"></div>
+      </div>
+
+      <div class="quiz-card">
+        <div class="quiz-num">Output Prediction 2</div>
+        <div class="quiz-q">What will this print?</div>
+        <div class="code-box"><span class="kw">void</span> <span class="fn">main</span>() {
+  <span class="kw">bool</span> isRaining = <span class="val">false</span>;
+  <span class="fn">print</span>(isRaining);
+  isRaining = <span class="val">true</span>;
+  <span class="fn">print</span>(isRaining);
+}</div>
+        <div class="quiz-opts" id="qv2">
+          <button class="opt" onclick="qa('qv2','a','b')"><span class="let">A</span> true, false</button>
+          <button class="opt" onclick="qa('qv2','b','b')"><span class="let">B</span> false, true</button>
+          <button class="opt" onclick="qa('qv2','c','b')"><span class="let">C</span> false, false</button>
+          <button class="opt" onclick="qa('qv2','d','b')"><span class="let">D</span> true, true</button>
+        </div>
+        <div class="qfb" id="qv2-fb"></div>
+      </div>
+
+      <div class="quiz-card">
+        <div class="quiz-num">MCQ 3 — Which type?</div>
+        <div class="quiz-q">A student's task is marked "done" or "not done." Which Dart type should store this?</div>
+        <div class="quiz-opts" id="qv3">
+          <button class="opt" onclick="qa('qv3','a','d')"><span class="let">A</span> String</button>
+          <button class="opt" onclick="qa('qv3','b','d')"><span class="let">B</span> int</button>
+          <button class="opt" onclick="qa('qv3','c','d')"><span class="let">C</span> double</button>
+          <button class="opt" onclick="qa('qv3','d','d')"><span class="let">D</span> bool</button>
+        </div>
+        <div class="qfb" id="qv3-fb"></div>
+      </div>
+
+      <div class="quiz-card">
+        <div class="quiz-num">MCQ 4 — Common Mistake</div>
+        <div class="quiz-q">What is wrong with this code?<br><br><code>int age = "twenty";</code></div>
+        <div class="quiz-opts" id="qv4">
+          <button class="opt" onclick="qa('qv4','a','b')"><span class="let">A</span> Nothing — it is correct</button>
+          <button class="opt" onclick="qa('qv4','b','b')"><span class="let">B</span> You cannot put text ("twenty") into an int variable — int holds numbers only</button>
+          <button class="opt" onclick="qa('qv4','c','b')"><span class="let">C</span> The variable name "age" is not allowed</button>
+          <button class="opt" onclick="qa('qv4','d','b')"><span class="let">D</span> You need double instead of int</button>
+        </div>
+        <div class="qfb" id="qv4-fb"></div>
+      </div>
+
+      <!-- Fill in the blank -->
+      <div class="sec-head"><div class="sec-icon ic-amber">✏️</div><h2>Fill in the Blank</h2></div>
+
+      <div class="prob">
+        <div class="prob-head">
+          <div class="prob-num">5</div>
+          <div class="prob-title-wrap">
+            <div class="diff d-green">🟢 Beginner</div>
+            <div class="prob-title">Complete the Variable Declarations</div>
+          </div>
+        </div>
+        <div class="prob-body">
+          <div class="prob-task">Fill in the blanks to complete each variable declaration:</div>
+          <div class="code-box">___ courseName = <span class="str">"Mobile App Dev"</span>;
+<span class="kw">int</span> ___ = <span class="val">2</span>;
+<span class="kw">double</span> price = ___;
+<span class="kw">bool</span> isComplete = ___;</div>
+          <div style="margin-top:12px">
+            <div style="display:flex;flex-direction:column;gap:8px;font-size:13.5px;color:var(--muted)">
+              <div>Line 1 — type: <input class="blank-input" id="b1" placeholder="?"> </div>
+              <div>Line 2 — variable name: <input class="blank-input" id="b2" placeholder="?"></div>
+              <div>Line 3 — a price value: <input class="blank-input" id="b3" placeholder="?"></div>
+              <div>Line 4 — a boolean value: <input class="blank-input" id="b4" placeholder="?"></div>
+            </div>
+            <button class="check-blank-btn" onclick="checkBlanks()">Check Answers</button>
+            <div id="blank-result" style="margin-top:8px;font-size:13px;display:none"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout mistake">
+        <div class="ico">❌</div>
+        <div class="callout-body">
+          <strong>Common Beginner Mistakes — Variables</strong>
+          <ul style="margin-top:6px;padding-left:18px;font-size:13px">
+            <li>Putting text into an <code>int</code> variable: <code>int age = "20";</code> ❌</li>
+            <li>Forgetting the semicolon at the end of every line ❌</li>
+            <li>Writing the type again when changing a variable: <code>String name = "Alex"; String name = "Jo";</code> ❌</li>
+            <li>Using a variable before creating it ❌</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="btn btn-ghost" onclick="go(0)">← Back</button>
+        <button class="btn btn-primary" onclick="go(2)">Next: If / Else →</button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════
+         PAGE 2 — IF / ELSE
+    ═══════════════════════════════════ -->
+    <div class="page" id="p2">
+      <div class="hero amber">
+        <div class="hero-tag" style="color:var(--amber)">🚦 Section 2</div>
+        <h1>If / Else — Conditional Statements</h1>
+        <p class="hsub">The most important section. Practise simple if, if-else, else-if chains, multiple conditions, and real-world scenarios.</p>
+      </div>
+
+      <div class="sec-head"><div class="sec-icon ic-green">🟢</div><h2>Basic If / If-Else</h2></div>
+
+      <!-- Q2-1 -->
+      <div class="prob">
+        <div class="prob-head">
+          <div class="prob-num">1</div>
+          <div class="prob-title-wrap">
+            <div class="diff d-green">🟢 Beginner</div>
+            <div class="prob-title">Pass or Fail</div>
+          </div>
+        </div>
+        <div class="prob-body">
+          <div class="prob-scenario">A student passes if their marks are 40 or above.</div>
+          <div class="prob-task">Write a program with a variable <code>marks = 75</code>. Print "Pass" if marks are 40 or above, otherwise print "Fail".</div>
+          <div class="flow-diag">Student's marks
+      ↓
+  marks >= 40?
+    /       \
+  YES        NO
+   ↓          ↓
+"Pass"      "Fail"</div>
+          <div class="skills-row"><span class="skill-tag">if-else</span><span class="skill-tag">comparison operator</span><span class="skill-tag">bool</span></div>
+          <div style="display:flex;gap:8px;margin-top:10px">
+            <button class="reveal-btn hint-btn" onclick="toggle('h2_1')">💡 Hint</button>
+            <button class="reveal-btn sol-btn" onclick="toggle('s2_1')">✅ Solution</button>
+          </div>
+          <div class="reveal-content" id="h2_1"><div class="hint-box"><strong>Hint:</strong> Use <code>>=</code> to mean "greater than OR equal to". <code>></code> alone would miss students with exactly 40 marks.</div></div>
+          <div class="reveal-content" id="s2_1">
+            <div class="sol-box">
+              <div class="sol-title">✅ Solution</div>
+              <div class="code-box"><span class="kw">void</span> <span class="fn">main</span>() {
+  <span class="kw">int</span> marks = <span class="val">75</span>;
+
+  <span class="kw">if</span> (marks >= <span class="val">40</span>) {
+    <span class="fn">print</span>(<span class="str">"Pass"</span>);
+  } <span class="kw">else</span> {
+    <span class="fn">print</span>(<span class="str">"Fail"</span>);
+  }
+}</div>
+              <div class="out-lbl">Output</div>
+              <div class="out-box">Pass</div>
+              <div class="sol-explain"><strong>Why >=?</strong> The requirement says "40 or above." <code>>=</code> means "greater than OR equal to." If we used <code>></code>, a student with exactly 40 marks would wrongly print "Fail."</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q2-2 -->
+      <div class="prob">
+        <div class="prob-head">
+          <div class="prob-num">2</div>
+          <div class="prob-title-wrap">
+            <div class="diff d-green">🟢 Beginner</div>
+            <div class="prob-title">Even or Odd</div>
+          </div>
+        </div>
+        <div class="prob-body">
+          <div class="prob-task">Write a program with a variable <code>number = 14</code>. Print "Even" if the number is divisible by 2, otherwise print "Odd".</div>
+          <div class="skills-row"><span class="skill-tag">if-else</span><span class="skill-tag">% operator</span></div>
+          <div style="display:flex;gap:8px;margin-top:10px">
+            <button class="reveal-btn hint-btn" onclick="toggle('h2_2')">💡 Hint</button>
+            <button class="reveal-btn sol-btn" onclick="toggle('s2_2')">✅ Solution</button>
+          </div>
+          <div class="reveal-content" id="h2_2"><div class="hint-box"><strong>Hint:</strong> The <code>%</code> operator gives the remainder after division. If <code>number % 2 == 0</code>, there is no remainder — the number is even.</div></div>
+          <div class="reveal-content" id="s2_2">
+            <div class="sol-box">
+              <div class="sol-title">✅ Solution</div>
+              <div class="code-box"><span class="kw">void</span> <span class="fn">main</span>() {
+  <span class="kw">int</span> number = <span class="val">14</span>;
+
+  <span class="kw">if</span> (number % <span class="val">2</span> == <span class="val">0</span>) {
+    <span class="fn">print</span>(<span class="str">"Even"</span>);
+  } <span class="kw">else</span> {
+    <span class="fn">print</span>(<span class="str">"Odd"</span>);
+  }
+}</div>
+              <div class="out-lbl">Output</div>
+              <div class="out-box">Even</div>
+              <div class="sol-explain"><code>14 % 2 = 0</code> because 14 divides evenly by 2. If the remainder is 0, the number is even. Try changing to 15 — the remainder would be 1, so "Odd" would print.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q2-3 -->
+      <div class="prob">
+        <div class="prob-head">
+          <div class="prob-num">3</div>
+          <div class="prob-title-wrap">
+            <div class="diff d-green">🟢 Beginner</div>
+            <div class="prob-title">Task Status</div>
+          </div>
+        </div>
+        <div class="prob-body">
+          <div class="prob-task">Create a <code>bool</code> variable <code>taskDone = false</code>. If taskDone is true, print "✅ Completed". Otherwise print "⬜ Still to do".</div>
+          <div class="skills-row"><span class="skill-tag">bool</span><span class="skill-tag">if-else</span></div>
+          <div style="display:flex;gap:8px;margin-top:10px">
+            <button class="reveal-btn sol-btn" onclick="toggle('s2_3')">✅ Solution</button>
+          </div>
+          <div class="reveal-content" id="s2_3">
+            <div class="sol-box">
+              <div class="sol-title">✅ Solution</div>
+              <div class="code-box"><span class="kw">void</span> <span class="fn">main</span>() {
+  <span class="kw">bool</span> taskDone = <span class="val">false</span>;
+
+  <span class="kw">if</span> (taskDone) {
+    <span class="fn">print</span>(<span class="str">"✅ Completed"</span>);
+  } <span class="kw">else</span> {
+    <span class="fn">print</span>(<span class="str">"⬜ Still to do"</span>);
+  }
+}</div>
+              <div class="out-lbl">Output</div>
+              <div class="out-box">⬜ Still to do</div>
+              <div class="sol-explain">Because <code>taskDone</code> is <code>false</code>, the if-block is skipped and the else-block runs. Change to <code>true</code> and "✅ Completed" prints instead.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec-head"><div class="sec-icon ic-amber">🟡</div><h2>Else-If Chains — Multiple Categories</h2></div>
+
+      <!-- Q2-4 Grade Calculator -->
+      <div class="prob">
+        <div class="prob-head">
+          <div class="prob-num">4</div>
+          <div class="prob-title-wrap">
+            <div class="diff d-amber">🟡 Easy</div>
+            <div class="prob-title">Grade Calculator</div>
+          </div>
+        </div>
+        <div class="prob-body">
+          <div class="prob-scenario">A university uses this grading scale: 90+ = A, 80–89 = B, 70–79 = C, 60–69 = D, below 60 = F.</div>
+          <div class="prob-task">Write a program with <code>marks = 82</code> and print the correct letter grade.</div>
+          <div class="flow-diag">marks >= 90 → "A"
+marks >= 80 → "B"
+marks >= 70 → "C"
+marks >= 60 → "D"
+otherwise  → "F"</div>
+          <div class="skills-row"><span class="skill-tag">else-if</span><span class="skill-tag">comparison</span><span class="skill-tag">real-world</span></div>
+          <div style="display:flex;gap:8px;margin-top:10px">
+            <button class="reveal-btn hint-btn" onclick="toggle('h2_4')">💡 Hint</button>
+            <button class="reveal-btn sol-btn" onclick="toggle('s2_4')">✅ Solution</button>
+          </div>
+          <div class="reveal-content" id="h2_4"><div class="hint-box"><strong>Hint:</strong> Put the highest grade first. Once Dart finds a true condition, it skips the rest — so ordering matters.</div></div>
+          <div class="reveal-content" id="s2_4">
+            <div class="sol-box">
+              <div class="sol-title">✅ Solution</div>
+              <div class="code-box"><span class="kw">void</span> <span class="fn">main</span>() {
+  <span class="kw">int</span> marks = <span class="val">82</span>;
+
+  <span class="kw">if</span> (marks >= <span class="val">90</span>) {
+    <span class="fn">print</span>(<span class="str">"Grade: A"</span>);
+  } <span class="kw">else if</span> (marks >= <span class="val">80</span>) {
+    <span class="fn">print</span>(<span class="str">"Grade: B"</span>);
+  } <span class="kw">else if</span> (marks >= <span class="val">70</span>) {
+    <span class="fn">print</span>(<span class="str">"Grade: C"</span>);
+  } <span class="kw">else if</span> (marks >= <span class="val">60</span>) {
+    <span class="fn">print</span>(<span class="str">"Grade: D"</span>);
+  } <span class="kw">else</span> {
+    <span class="fn">print</span>(<span class="str">"Grade: F"</span>);
+  }
+}</div>
+              <div class="out-lbl">Output</div>
+              <div class="out-box">Grade: B</div>
+              <div class="sol-explain">82 is not ≥90, but it IS ≥80, so "Grade: B" prints and all remaining else-if blocks are skipped.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q2-5 Movie Ticket -->
+      <div class="prob">
+        <div class="prob-head">
+          <div class="prob-num">5</div>
+          <div class="prob-title-wrap">
+            <div class="diff d-amber">🟡 Easy</div>
+            <div class="prob-title">Movie Ticket Pricing</div>
+          </div>
+        </div>
+        <div class="prob-body">
+          <div class="prob-scenario">A cinema charges: under 12 = $6, 12–17 = $9, 18–64 = $14, 65+ = $8.</div>
+          <div class="prob-task">Write a program with <code>age = 15</code> and print the correct ticket price.</div>
+          <div class="skills-row"><span class="skill-tag">else-if</span><span class="skill-tag">real-world pricing</span></div>
+          <div style="display:flex;gap:8px;margin-top:10px">
+            <button class="reveal-btn hint-btn" onclick="toggle('h2_5')">💡 Hint</button>
+            <button class="reveal-btn sol-btn" onclick="toggle('s2_5')">✅ Solution</button>
+          </div>
+          <div class="reveal-content" id="h2_5"><div class="hint-box"><strong>Hint:</strong> Check the senior age first (<code>age >= 65</code>), or check the youngest first (<code>age &lt; 12</code>). Either order works as long as it's consistent.</div></div>
+          <div class="reveal-content" id="s2_5">
+            <div class="sol-box">
+              <div class="sol-title">✅ Solution</div>
+              <div class="code-box"><span class="kw">void</span> <span class="fn">main</span>() {
+  <span class="kw">int</span> age = <span class="val">15</span>;
+
+  <span class="kw">if</span> (age < <span class="val">12</span>) {
+    <span class="fn">print</span>(<span class="str">"Ticket: \$6"</span>);
+  } <span class="kw">else if</span> (age <= <span class="val">17</span>) {
+    <span class="fn">print</span>(<span class="str">"Ticket: \$9"</span>);
+  } <span class="kw">else if</span> (age <= <span class="val">64</span>) {
+    <span class="fn">print</span>(<span class="str">"Ticket: \$14"</span>);
+  } <span class="kw">else</span> {
+    <span class="fn">print</span>(<span class="str">"Ticket: \$8"</span>);
+  }
+}</div>
+              <div class="out-lbl">Output</div>
+              <div class="out-box">Ticket: $9</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec-head"><div class="sec-icon ic-blue">🔵</div><h2>Multiple Conditions — &amp;&amp; and ||</h2></div>
+
+      <!-- Q2-6 Discount -->
+      <div class="prob">
+        <div class="prob-head">
+          <div class="prob-num">6</div>
+          <div class="prob-title-wrap">
+            <div class="diff d-blue">🔵 Intermediate</div>
+            <div class="prob-title">Shopping Discount</div>
+          </div>
+        </div>
+        <div class="prob-body">
+          <div class="prob-scenario">A customer gets a 15% discount if they are a member AND their purchase total is $100 or above.</div>
+          <div class="prob-task">Write a program with <code>isMember = true</code> and <code>total = 120.0</code>. Print "Discount applied!" or "No discount."</div>
+          <div class="skills-row"><span class="skill-tag">&amp;&amp; operator</span><span class="skill-tag">multiple conditions</span><span class="skill-tag">bool</span></div>
+          <div style="display:flex;gap:8px;margin-top:10px">
+            <button class="reveal-btn hint-btn" onclick="toggle('h2_6')">💡 Hint</button>
+            <button class="reveal-btn sol-btn" onclick="toggle('s2_6')">✅ Solution</button>
+          </div>
+          <div class="reveal-content" id="h2_6"><div class="hint-box"><strong>Hint:</strong> <code>&amp;&amp;</code> means "AND" — BOTH conditions must be true. Write: <code>if (isMember &amp;&amp; total >= 100)</code></div></div>
+          <div class="reveal-content" id="s2_6">
+            <div class="sol-box">
+              <div class="sol-title">✅ Solution</div>
+              <div class="code-box"><span class="kw">void</span> <span class="fn">main</span>() {
+  <span class="kw">bool</span>   isMember = <span class="val">true</span>;
+  <span class="kw">double</span> total    = <span class="val">120.0</span>;
+
+  <span class="kw">if</span> (isMember && total >= <span class="val">100</span>) {
+    <span class="fn">print</span>(<span class="str">"Discount applied!"</span>);
+  } <span class="kw">else</span> {
+    <span class="fn">print</span>(<span class="str">"No discount."</span>);
+  }
+}</div>
+              <div class="out-lbl">Output</div>
+              <div class="out-box">Discount applied!</div>
+              <div class="sol-explain"><strong>Why &&?</strong> The customer needs BOTH conditions true to qualify. If either is false — not a member, or total under $100 — no discount. Try changing <code>isMember = false</code> and watch the output change.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q2-7 Course Registration -->
+      <div class="prob">
+        <div class="prob-head">
+          <div class="prob-num">7</div>
+          <div class="prob-title-wrap">
+            <div class="diff d-blue">🔵 Intermediate</div>
+            <div class="prob-title">Course Registration</div>
+          </div>
+        </div>
+        <div class="prob-body">
+          <div class="prob-scenario">A student can register for an advanced course if they have completed Prerequisite A OR Prerequisite B (or both).</div>
+          <div class="prob-task">Write a program with <code>hasPrereqA = false</code> and <code>hasPrereqB = true</code>. Print "Registration allowed" or "Cannot register."</div>
+          <div class="skills-row"><span class="skill-tag">|| operator</span><span class="skill-tag">bool</span></div>
+          <div style="display:flex;gap:8px;margin-top:10px">
+            <button class="reveal-btn hint-btn" onclick="toggle('h2_7')">💡 Hint</button>
+            <button class="reveal-btn sol-btn" onclick="toggle('s2_7')">✅ Solution</button>
+          </div>
+          <div class="reveal-content" id="h2_7"><div class="hint-box"><strong>Hint:</strong> <code>||</code> means "OR" — at least ONE condition needs to be true. <code>if (hasPrereqA || hasPrereqB)</code></div></div>
+          <div class="reveal-content" id="s2_7">
+            <div class="sol-box">
+              <div class="sol-title">✅ Solution</div>
+              <div class="code-box"><span class="kw">void</span> <span class="fn">main</span>() {
+  <span class="kw">bool</span> hasPrereqA = <span class="val">false</span>;
+  <span class="kw">bool</span> hasPrereqB = <span class="val">true</span>;
+
+  <span class="kw">if</span> (hasPrereqA || hasPrereqB) {
+    <span class="fn">print</span>(<span class="str">"Registration allowed"</span>);
+  } <span class="kw">else</span> {
+    <span class="fn">print</span>(<span class="str">"Cannot register"</span>);
+  }
+}</div>
+              <div class="out-lbl">Output</div>
+              <div class="out-box">Registration allowed</div>
+              <div class="sol-explain">Even though hasPrereqA is false, hasPrereqB is true — and || only needs ONE to be true. So "Registration allowed" prints.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q2-8 Challenge -->
+      <div class="prob">
+        <div class="prob-head">
+          <div class="prob-num">8</div>
+          <div class="prob-title-wrap">
+            <div class="diff d-red">🔴 Challenge</div>
+            <div class="prob-title">ATM Withdrawal Checker</div>
+          </div>
+        </div>
+        <div class="prob-body">
+          <div class="prob-scenario">An ATM allows withdrawal only if: the account has enough balance AND the withdrawal amount is between $20 and $500 (inclusive).</div>
+          <div class="prob-task">Write a program with <code>balance = 300.0</code> and <code>amount = 150.0</code>. Print "Withdrawal approved" or explain why it was denied.</div>
+          <div class="skills-row"><span class="skill-tag">&amp;&amp;</span><span class="skill-tag">multiple conditions</span><span class="skill-tag">real-world</span></div>
+          <div style="display:flex;gap:8px;margin-top:10px">
+            <button class="reveal-btn hint-btn" onclick="toggle('h2_8')">💡 Hint</button>
+            <button class="reveal-btn sol-btn" onclick="toggle('s2_8')">✅ Solution</button>
+          </div>
+          <div class="reveal-content" id="h2_8"><div class="hint-box"><strong>Hint:</strong> You need THREE conditions: <code>amount &lt;= balance</code>, <code>amount >= 20</code>, and <code>amount &lt;= 500</code>. All three must be true — use &&.</div></div>
+          <div class="reveal-content" id="s2_8">
+            <div class="sol-box">
+              <div class="sol-title">✅ Solution</div>
+              <div class="code-box"><span class="kw">void</span> <span class="fn">main</span>() {
+  <span class="kw">double</span> balance = <span class="val">300.0</span>;
+  <span class="kw">double</span> amount  = <span class="val">150.0</span>;
+
+  <span class="kw">if</span> (amount <= balance && amount >= <span class="val">20</span> && amount <= <span class="val">500</span>) {
+    <span class="fn">print</span>(<span class="str">"Withdrawal approved"</span>);
+  } <span class="kw">else if</span> (amount > balance) {
+    <span class="fn">print</span>(<span class="str">"Denied: insufficient funds"</span>);
+  } <span class="kw">else</span> {
+    <span class="fn">print</span>(<span class="str">"Denied: invalid amount"</span>);
+  }
+}</div>
+              <div class="out-lbl">Output</div>
+              <div class="out-box">Withdrawal approved</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MCQ Quiz — If/Else -->
+      <div class="sec-head"><div class="sec-icon ic-purple">🧠</div><h2>Quick Quiz — If / Else</h2></div>
+
+      <div class="quiz-card">
+        <div class="quiz-num">Quiz 1 — Output Prediction</div>
+        <div class="quiz-q">What will this print?</div>
+        <div class="code-box"><span class="kw">int</span> age = <span class="val">18</span>;
+<span class="kw">if</span> (age > <span class="val">18</span>) {
+  <span class="fn">print</span>(<span class="str">"Adult"</span>);
+} <span class="kw">else</span> {
+  <span class="fn">print</span>(<span class="str">"Minor"</span>);
+}</div>
+        <div class="quiz-opts" id="qi1">
+          <button class="opt" onclick="qa('qi1','a','b')"><span class="let">A</span> Adult</button>
+          <button class="opt" onclick="qa('qi1','b','b')"><span class="let">B</span> Minor</button>
+          <button class="opt" onclick="qa('qi1','c','b')"><span class="let">C</span> Error</button>
+          <button class="opt" onclick="qa('qi1','d','b')"><span class="let">D</span> Nothing</button>
+        </div>
+        <div class="qfb" id="qi1-fb"></div>
+      </div>
+
+      <div class="quiz-card">
+        <div class="quiz-num">Quiz 2 — Logic Mistake</div>
+        <div class="quiz-q">The requirement says "18 or older." Which condition is correct?</div>
+        <div class="quiz-opts" id="qi2">
+          <button class="opt" onclick="qa('qi2','a','b')"><span class="let">A</span> <code>if (age > 18)</code></button>
+          <button class="opt" onclick="qa('qi2','b','b')"><span class="let">B</span> <code>if (age >= 18)</code></button>
+          <button class="opt" onclick="qa('qi2','c','b')"><span class="let">C</span> <code>if (age == 18)</code></button>
+          <button class="opt" onclick="qa('qi2','d','b')"><span class="let">D</span> <code>if (age =< 18)</code></button>
+        </div>
+        <div class="qfb" id="qi2-fb"></div>
+      </div>
+
+      <div class="quiz-card">
+        <div class="quiz-num">Quiz 3 — &amp;&amp; vs ||</div>
+        <div class="quiz-q">A student gets a scholarship if they have straight A's AND financial need. Which operator is correct?</div>
+        <div class="quiz-opts" id="qi3">
+          <button class="opt" onclick="qa('qi3','a','a')"><span class="let">A</span> <code>&amp;&amp;</code> — both conditions must be true</button>
+          <button class="opt" onclick="qa('qi3','b','a')"><span class="let">B</span> <code>||</code> — only one needs to be true</button>
+          <button class="opt" onclick="qa('qi3','c','a')"><span class="let">C</span> <code>!</code> — negate the condition</button>
+          <button class="opt" onclick="qa('qi3','d','a')"><span class="let">D</span> No operator needed</button>
+        </div>
+        <div class="qfb" id="qi3-fb"></div>
+      </div>
+
+      <div class="callout mistake">
+        <div class="ico">❌</div>
+        <div class="callout-body">
+          <strong>Common Mistakes — If / Else</strong>
+          <ul style="margin-top:6px;padding-left:18px;font-size:13px">
+            <li>Using <code>=</code> instead of <code>==</code>: <code>if (age = 18)</code> ❌ — <code>=</code> assigns; <code>==</code> compares</li>
+            <li>Using <code>></code> when you meant <code>>=</code>: misses the boundary value</li>
+            <li>Wrong operator order: <code>=&lt;</code> does not exist — use <code>&lt;=</code></li>
+            <li>Forgetting curly braces <code>{ }</code> around multi-line if blocks</li>
+            <li>Putting else-if blocks in the wrong order (highest range should usually come first)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="btn btn-ghost" onclick="go(1)">← Variables</button>
+        <button class="btn btn-primary" onclick="go(3)">Next: Lists →</button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════
+         PAGE 3 — LISTS
+    ═══════════════════════════════════ -->
+    <div class="page" id="p3">
+      <div class="hero teal">
+        <div class="hero-tag" style="color:var(--teal)">📋 Section 3</div>
+        <h1>Lists</h1>
+        <p class="hsub">Practise creating lists, accessing items, adding, removing, and checking the length.</p>
+      </div>
+
+      <!-- L-Q1 -->
+      <div class="prob">
+        <div class="prob-head">
+          <div class="prob-num">1</div>
+          <div class="prob-title-wrap">
+            <div class="diff d-green">🟢 Beginner</div>
+            <div class="prob-title">Create a Task List</div>
+          </div>
+        </div>
+        <div class="prob-body">
+          <div class="prob-task">Create a <code>List&lt;String&gt;</code> called <code>tasks</code> with three homework tasks. Print the first item, the last item, and the total number of items.</div>
+          <div class="skills-row"><span class="skill-tag">List</span><span class="skill-tag">index [0]</span><span class="skill-tag">.length</span></div>
+          <div style="display:flex;gap:8px;margin-top:10px">
+            <button class="reveal-btn hint-btn" onclick="toggle('h3_1')">💡 Hint</button>
+            <button class="reveal-btn sol-btn" onclick="toggle('s3_1')">✅ Solution</button>
+          </div>
+          <div class="reveal-content" id="h3_1"><div class="hint-box"><strong>Hint:</strong> First item = <code>tasks[0]</code>. Last item = <code>tasks[tasks.length - 1]</code>. Total = <code>tasks.length</code>.</div></div>
+          <div class="reveal-content" id="s3_1">
+            <div class="sol-box">
+              <div class="sol-title">✅ Solution</div>
+              <div class="code-box"><span class="kw">void</span> <span class="fn">main</span>() {
+  List&lt;<span class="kw">String</span>&gt; tasks = [
+    <span class="str">"Math homework"</span>,
+    <span class="str">"Read Chapter 4"</span>,
+    <span class="str">"Submit project"</span>,
+  ];
+
+  <span class="fn">print</span>(tasks[<span class="val">0</span>]);               <span class="cm">← first item</span>
+  <span class="fn">print</span>(tasks[tasks.length - <span class="val">1</span>]); <span class="cm">← last item</span>
+  <span class="fn">print</span>(tasks.length);             <span class="cm">← total count</span>
+}</div>
+              <div class="out-lbl">Output</div>
+              <div class="out-box">Math homework
+Submit project
+3</div>
+              <div class="sol-explain">Lists are zero-indexed: item 1 is at [0], item 2 at [1], item 3 at [2]. <code>tasks.length</code> returns how many items the list contains (3 here).</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- L-Q2 -->
+      <div class="prob">
+        <div class="prob-head">
+          <div class="prob-num">2</div>
+          <div class="prob-title-wrap">
+            <div class="diff d-amber">🟡 Easy</div>
+            <div class="prob-title">Add and Remove Tasks</div>
+          </div>
+        </div>
+        <div class="prob-body">
+          <div class="prob-task">Start with a list of two tasks. Add a third task using <code>.add()</code>. Print the length. Then remove the first task using <code>.removeAt(0)</code>. Print the length again.</div>
+          <div class="skills-row"><span class="skill-tag">.add()</span><span class="skill-tag">.removeAt()</span><span class="skill-tag">.length</span></div>
+          <div style="display:flex;gap:8px;margin-top:10px">
+            <button class="reveal-btn sol-btn" onclick="toggle('s3_2')">✅ Solution</button>
+          </div>
+          <div class="reveal-content" id="s3_2">
+            <div class="sol-box">
+              <div class="sol-title">✅ Solution</div>
+              <div class="code-box"><span class="kw">void</span> <span class="fn">main</span>() {
+  List&lt;<span class="kw">String</span>&gt; tasks = [
+    <span class="str">"Buy groceries"</span>,
+    <span class="str">"Call the bank"</span>,
+  ];
+
+  tasks.<span class="fn">add</span>(<span class="str">"Study Flutter"</span>);
+  <span class="fn">print</span>(tasks.length);    <span class="cm">← 3</span>
+
+  tasks.<span class="fn">removeAt</span>(<span class="val">0</span>);
+  <span class="fn">print</span>(tasks.length);    <span class="cm">← 2</span>
+}</div>
+              <div class="out-lbl">Output</div>
+              <div class="out-box">3
+2</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- L Output Prediction -->
+      <div class="sec-head"><div class="sec-icon ic-purple">🔮</div><h2>Output Prediction — Lists</h2></div>
+
+      <div class="quiz-card">
+        <div class="quiz-num">Predict the Output</div>
+        <div class="quiz-q">What will this print?</div>
+        <div class="code-box">List&lt;<span class="kw">String</span>&gt; fruits = [<span class="str">"apple"</span>, <span class="str">"banana"</span>, <span class="str">"cherry"</span>];
+<span class="fn">print</span>(fruits[<span class="val">1</span>]);
+<span class="fn">print</span>(fruits.length);</div>
+        <div class="quiz-opts" id="ql1">
+          <button class="opt" onclick="qa('ql1','a','c')"><span class="let">A</span> apple, 3</button>
+          <button class="opt" onclick="qa('ql1','b','c')"><span class="let">B</span> cherry, 3</button>
+          <button class="opt" onclick="qa('ql1','c','c')"><span class="let">C</span> banana, 3</button>
+          <button class="opt" onclick="qa('ql1','d','c')"><span class="let">D</span> banana, 2</button>
+        </div>
+        <div class="qfb" id="ql1-fb"></div>
+      </div>
+
+      <div class="quiz-card">
+        <div class="quiz-num">Common Mistake</div>
+        <div class="quiz-q">A list has 3 items. What happens when you access <code>myList[3]</code>?</div>
+        <div class="quiz-opts" id="ql2">
+          <button class="opt" onclick="qa('ql2','a','b')"><span class="let">A</span> Returns the last item</button>
+          <button class="opt" onclick="qa('ql2','b','b')"><span class="let">B</span> Crashes with a RangeError — index 3 doesn't exist (indexes are 0, 1, 2)</button>
+          <button class="opt" onclick="qa('ql2','c','b')"><span class="let">C</span> Returns null</button>
+          <button class="opt" onclick="qa('ql2','d','b')"><span class="let">D</span> Returns 0</button>
+        </div>
+        <div class="qfb" id="ql2-fb"></div>
+      </div>
+
+      <!-- L Challenge -->
+      <div class="prob">
+        <div class="prob-head">
+          <div class="prob-num">3</div>
+          <div class="prob-title-wrap">
+            <div class="diff d-red">🔴 Challenge</div>
+            <div class="prob-title">Priority Task Filter</div>
+          </div>
+        </div>
+        <div class="prob-body">
+          <div class="prob-task">You have a list of 4 tasks. Create a second list called <code>highPriorityTasks</code> and add any task whose name contains the word "exam" or "submit". Print the high-priority list and its length.</div>
+          <div class="skills-row"><span class="skill-tag">List</span><span class="skill-tag">.add()</span><span class="skill-tag">.contains()</span><span class="skill-tag">if</span></div>
+          <div style="display:flex;gap:8px;margin-top:10px">
+            <button class="reveal-btn hint-btn" onclick="toggle('h3_3')">💡 Hint</button>
+            <button class="reveal-btn sol-btn" onclick="toggle('s3_3')">✅ Solution</button>
+          </div>
+          <div class="reveal-content" id="h3_3"><div class="hint-box"><strong>Hint:</strong> Use <code>.contains("exam")</code> on each task string to check if the word appears in it.</div></div>
+          <div class="reveal-content" id="s3_3">
+            <div class="sol-box">
+              <div class="sol-title">✅ Solution</div>
+              <div class="code-box"><span class="kw">void</span> <span class="fn">main</span>() {
+  List&lt;<span class="kw">String</span>&gt; tasks = [
+    <span class="str">"Buy groceries"</span>,
+    <span class="str">"Prepare for exam"</span>,
+    <span class="str">"Call mum"</span>,
+    <span class="str">"Submit assignment"</span>,
+  ];
+
+  List&lt;<span class="kw">String</span>&gt; highPriority = [];
+
+  <span class="kw">if</span> (tasks[<span class="val">0</span>].<span class="fn">contains</span>(<span class="str">"exam"</span>) || tasks[<span class="val">0</span>].<span class="fn">contains</span>(<span class="str">"submit"</span>)) {
+    highPriority.<span class="fn">add</span>(tasks[<span class="val">0</span>]);
+  }
+  <span class="kw">if</span> (tasks[<span class="val">1</span>].<span class="fn">contains</span>(<span class="str">"exam"</span>) || tasks[<span class="val">1</span>].<span class="fn">contains</span>(<span class="str">"submit"</span>)) {
+    highPriority.<span class="fn">add</span>(tasks[<span class="val">1</span>]);
+  }
+  <span class="kw">if</span> (tasks[<span class="val">2</span>].<span class="fn">contains</span>(<span class="str">"exam"</span>) || tasks[<span class="val">2</span>].<span class="fn">contains</span>(<span class="str">"submit"</span>)) {
+    highPriority.<span class="fn">add</span>(tasks[<span class="val">2</span>]);
+  }
+  <span class="kw">if</span> (tasks[<span class="val">3</span>].<span class="fn">contains</span>(<span class="str">"exam"</span>) || tasks[<span class="val">3</span>].<span class="fn">contains</span>(<span class="str">"submit"</span>)) {
+    highPriority.<span class="fn">add</span>(tasks[<span class="val">3</span>]);
+  }
+
+  <span class="fn">print</span>(highPriority);
+  <span class="fn">print</span>(highPriority.length);
+}</div>
+              <div class="out-lbl">Output</div>
+              <div class="out-box">[Prepare for exam, Submit assignment]
+2</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="btn btn-ghost" onclick="go(2)">← If / Else</button>
+        <button class="btn btn-primary" onclick="go(4)">Next: Functions →</button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════
+         PAGE 4 — FUNCTIONS
+    ═══════════════════════════════════ -->
+    <div class="page" id="p4">
+      <div class="hero purple">
+        <div class="hero-tag" style="color:var(--purple)">🔧 Section 4</div>
+        <h1>Functions</h1>
+        <p class="hsub">Write reusable blocks of code. Practise creating functions, passing parameters, and getting values back.</p>
+      </div>
+
+      <!-- F-Q1 -->
+      <div class="prob">
+        <div class="prob-head">
+          <div class="prob-num">1</div>
+          <div class="prob-title-wrap">
+            <div class="diff d-green">🟢 Beginner</div>
+            <div class="prob-title">Greeting Function</div>
+          </div>
+        </div>
+        <div class="prob-body">
+          <div class="prob-task">Write a function called <code>greet</code> that takes a <code>String name</code> parameter and prints "Hello, [name]! Welcome to the app." Call it with two different names.</div>
+          <div class="skills-row"><span class="skill-tag">void function</span><span class="skill-tag">parameter</span><span class="skill-tag">String</span></div>
+          <div style="display:flex;gap:8px;margin-top:10px">
+            <button class="reveal-btn hint-btn" onclick="toggle('h4_1')">💡 Hint</button>
+            <button class="reveal-btn sol-btn" onclick="toggle('s4_1')">✅ Solution</button>
+          </div>
+          <div class="reveal-content" id="h4_1"><div class="hint-box"><strong>Hint:</strong> <code>void greet(String name) { ... }</code> — void means it doesn't return anything. Call it with <code>greet("Alex");</code></div></div>
+          <div class="reveal-content" id="s4_1">
+            <div class="sol-box">
+              <div class="sol-title">✅ Solution</div>
+              <div class="code-box"><span class="kw">void</span> <span class="fn">greet</span>(<span class="kw">String</span> name) {
+  <span class="fn">print</span>(<span class="str">"Hello, "</span> + name + <span class="str">"! Welcome to the app."</span>);
+}
+
+<span class="kw">void</span> <span class="fn">main</span>() {
+  <span class="fn">greet</span>(<span class="str">"Alex"</span>);
+  <span class="fn">greet</span>(<span class="str">"Jordan"</span>);
+}</div>
+              <div class="out-lbl">Output</div>
+              <div class="out-box">Hello, Alex! Welcome to the app.
+Hello, Jordan! Welcome to the app.</div>
+              <div class="sol-explain">The function is written ONCE but used TWICE with different names. This is the power of functions — write the logic once and reuse it.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- F-Q2 -->
+      <div class="prob">
+        <div class="prob-head">
+          <div class="prob-num">2</div>
+          <div class="prob-title-wrap">
+            <div class="diff d-amber">🟡 Easy</div>
+            <div class="prob-title">Pass or Fail Function</div>
+          </div>
+        </div>
+        <div class="prob-body">
+          <div class="prob-task">Write a function <code>checkResult</code> that takes an <code>int marks</code> and prints "Pass" if marks >= 40, otherwise "Fail". Call it with 35 and 72.</div>
+          <div class="skills-row"><span class="skill-tag">function</span><span class="skill-tag">parameter</span><span class="skill-tag">if-else</span></div>
+          <div style="display:flex;gap:8px;margin-top:10px">
+            <button class="reveal-btn sol-btn" onclick="toggle('s4_2')">✅ Solution</button>
+          </div>
+          <div class="reveal-content" id="s4_2">
+            <div class="sol-box">
+              <div class="sol-title">✅ Solution</div>
+              <div class="code-box"><span class="kw">void</span> <span class="fn">checkResult</span>(<span class="kw">int</span> marks) {
+  <span class="kw">if</span> (marks >= <span class="val">40</span>) {
+    <span class="fn">print</span>(<span class="str">"Pass"</span>);
+  } <span class="kw">else</span> {
+    <span class="fn">print</span>(<span class="str">"Fail"</span>);
+  }
+}
+
+<span class="kw">void</span> <span class="fn">main</span>() {
+  <span class="fn">checkResult</span>(<span class="val">35</span>);
+  <span class="fn">checkResult</span>(<span class="val">72</span>);
+}</div>
+              <div class="out-lbl">Output</div>
+              <div class="out-box">Fail
+Pass</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fill in the blank — Functions -->
+      <div class="sec-head"><div class="sec-icon ic-amber">✏️</div><h2>Complete the Function</h2></div>
+
+      <div class="prob">
+        <div class="prob-head">
+          <div class="prob-num">3</div>
+          <div class="prob-title-wrap">
+            <div class="diff d-amber">🟡 Easy</div>
+            <div class="prob-title">Code Completion</div>
+          </div>
+        </div>
+        <div class="prob-body">
+          <div class="prob-task">Complete this function so it prints whether a task is done or not:</div>
+          <div class="code-box">___ <span class="fn">showStatus</span>(<span class="kw">String</span> taskName, <span class="kw">bool</span> isDone) {
+  <span class="kw">if</span> (___) {
+    <span class="fn">print</span>(taskName + <span class="str">": ✅ Done"</span>);
+  } <span class="kw">else</span> {
+    <span class="fn">print</span>(taskName + <span class="str">": ⬜ Not done"</span>);
+  }
+}</div>
+          <div style="display:flex;gap:8px;margin-top:10px">
+            <button class="reveal-btn sol-btn" onclick="toggle('s4_3')">✅ Solution</button>
+          </div>
+          <div class="reveal-content" id="s4_3">
+            <div class="sol-box">
+              <div class="sol-title">✅ Solution</div>
+              <div class="code-box"><span class="kw">void</span> <span class="fn">showStatus</span>(<span class="kw">String</span> taskName, <span class="kw">bool</span> isDone) {
+  <span class="kw">if</span> (isDone) {
+    <span class="fn">print</span>(taskName + <span class="str">": ✅ Done"</span>);
+  } <span class="kw">else</span> {
+    <span class="fn">print</span>(taskName + <span class="str">": ⬜ Not done"</span>);
+  }
+}
+
+<span class="kw">void</span> <span class="fn">main</span>() {
+  <span class="fn">showStatus</span>(<span class="str">"Math homework"</span>, <span class="val">true</span>);
+  <span class="fn">showStatus</span>(<span class="str">"Read chapter 4"</span>, <span class="val">false</span>);
+}</div>
+              <div class="out-lbl">Output</div>
+              <div class="out-box">Math homework: ✅ Done
+Read chapter 4: ⬜ Not done</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="btn btn-ghost" onclick="go(3)">← Lists</button>
+        <button class="btn btn-primary" onclick="go(5)">Next: Classes →</button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════
+         PAGE 5 — CLASSES
+    ═══════════════════════════════════ -->
+    <div class="page" id="p5">
+      <div class="hero red">
+        <div class="hero-tag" style="color:var(--red)">🏗️ Section 5</div>
+        <h1>Classes &amp; Objects</h1>
+        <p class="hsub">Practise creating blueprints (classes) and building objects from them.</p>
+      </div>
+
+      <!-- C-Q1 -->
+      <div class="prob">
+        <div class="prob-head">
+          <div class="prob-num">1</div>
+          <div class="prob-title-wrap">
+            <div class="diff d-green">🟢 Beginner</div>
+            <div class="prob-title">Create a Task Class</div>
+          </div>
+        </div>
+        <div class="prob-body">
+          <div class="prob-task">Create a class called <code>Task</code> with properties: <code>name</code> (String), <code>priority</code> (String), and <code>isDone</code> (bool, starts false). Create two task objects and print their names.</div>
+          <div class="skills-row"><span class="skill-tag">class</span><span class="skill-tag">constructor</span><span class="skill-tag">object</span></div>
+          <div style="display:flex;gap:8px;margin-top:10px">
+            <button class="reveal-btn hint-btn" onclick="toggle('h5_1')">💡 Hint</button>
+            <button class="reveal-btn sol-btn" onclick="toggle('s5_1')">✅ Solution</button>
+          </div>
+          <div class="reveal-content" id="h5_1"><div class="hint-box"><strong>Hint:</strong> <code>class Task { String name; ... Task(this.name, this.priority, this.isDone); }</code> then create objects with <code>Task t1 = Task("name", "High", false);</code></div></div>
+          <div class="reveal-content" id="s5_1">
+            <div class="sol-box">
+              <div class="sol-title">✅ Solution</div>
+              <div class="code-box"><span class="kw">class</span> Task {
+  <span class="kw">String</span> name;
+  <span class="kw">String</span> priority;
+  <span class="kw">bool</span>   isDone;
+
+  Task(<span class="kw">this</span>.name, <span class="kw">this</span>.priority, <span class="kw">this</span>.isDone);
+}
+
+<span class="kw">void</span> <span class="fn">main</span>() {
+  Task task1 = Task(<span class="str">"Math homework"</span>, <span class="str">"High"</span>,   <span class="val">false</span>);
+  Task task2 = Task(<span class="str">"Read chapter"</span>,  <span class="str">"Medium"</span>, <span class="val">false</span>);
+
+  <span class="fn">print</span>(task1.name);
+  <span class="fn">print</span>(task2.name);
+}</div>
+              <div class="out-lbl">Output</div>
+              <div class="out-box">Math homework
+Read chapter</div>
+              <div class="sol-explain">The class is the blueprint. <code>task1</code> and <code>task2</code> are two separate objects built from that blueprint — each has its own name, priority, and isDone value.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- C-Q2 -->
+      <div class="prob">
+        <div class="prob-head">
+          <div class="prob-num">2</div>
+          <div class="prob-title-wrap">
+            <div class="diff d-amber">🟡 Easy</div>
+            <div class="prob-title">Change Object Properties</div>
+          </div>
+        </div>
+        <div class="prob-body">
+          <div class="prob-task">Using the Task class from problem 1, create a task where <code>isDone = false</code>. Then change it to <code>true</code> and print a message showing the updated status.</div>
+          <div class="skills-row"><span class="skill-tag">object property</span><span class="skill-tag">reassignment</span></div>
+          <div style="display:flex;gap:8px;margin-top:10px">
+            <button class="reveal-btn sol-btn" onclick="toggle('s5_2')">✅ Solution</button>
+          </div>
+          <div class="reveal-content" id="s5_2">
+            <div class="sol-box">
+              <div class="sol-title">✅ Solution</div>
+              <div class="code-box">Task myTask = Task(<span class="str">"Submit project"</span>, <span class="str">"High"</span>, <span class="val">false</span>);
+<span class="fn">print</span>(myTask.isDone);    <span class="cm">← false</span>
+
+myTask.isDone = <span class="val">true</span>;
+<span class="fn">print</span>(myTask.isDone);    <span class="cm">← true</span>
+<span class="fn">print</span>(myTask.name + <span class="str">": completed!"</span>);</div>
+              <div class="out-lbl">Output</div>
+              <div class="out-box">false
+true
+Submit project: completed!</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Class quiz -->
+      <div class="quiz-card">
+        <div class="quiz-num">Quiz — Classes</div>
+        <div class="quiz-q">If a <code>class</code> is a blueprint, what is an <code>object</code>?</div>
+        <div class="quiz-opts" id="qc1">
+          <button class="opt" onclick="qa('qc1','a','c')"><span class="let">A</span> Another name for a variable</button>
+          <button class="opt" onclick="qa('qc1','b','c')"><span class="let">B</span> The same thing as a class</button>
+          <button class="opt" onclick="qa('qc1','c','c')"><span class="let">C</span> One specific thing created from the blueprint</button>
+          <button class="opt" onclick="qa('qc1','d','c')"><span class="let">D</span> A list of values</button>
+        </div>
+        <div class="qfb" id="qc1-fb"></div>
+      </div>
+
+      <div class="page-nav">
+        <button class="btn btn-ghost" onclick="go(4)">← Functions</button>
+        <button class="btn btn-primary" onclick="go(6)">Next: Debugging →</button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════
+         PAGE 6 — DEBUGGING
+    ═══════════════════════════════════ -->
+    <div class="page" id="p6">
+      <div class="hero red">
+        <div class="hero-tag" style="color:var(--red)">🐛 Section 6</div>
+        <h1>Debugging — Find and Fix the Errors</h1>
+        <p class="hsub">Every program below has a mistake. Your job: find it, explain what's wrong, and fix it.</p>
+      </div>
+
+      <div class="callout info">
+        <div class="ico">🔍</div>
+        <div class="callout-body"><strong>How to approach debugging:</strong> Read the code carefully. Try to predict what it should do. Then look for anything that doesn't look right — wrong type, missing semicolon, wrong operator, etc.</div>
+      </div>
+
+      <!-- D1 — Missing semicolon -->
+      <div class="debug-card">
+        <div class="debug-head"><div class="dh-icon">🐛</div><div class="dh-title">Bug #1 — Syntax Error</div></div>
+        <div class="debug-body">
+          <div class="prob-label">Broken Code</div>
+          <div class="broken-code">void main() {
+  int age = 20<span style="background:#FECACA;font-weight:700;color:var(--red)">  ← bug here</span>
+  print(age);
+}</div>
+          <div style="margin-top:10px;font-size:14px;font-weight:600">What is wrong? How do you fix it?</div>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button class="reveal-btn sol-btn" onclick="toggle('d1')">✅ Answer</button>
+          </div>
+          <div class="reveal-content" id="d1">
+            <div class="sol-box">
+              <div class="sol-title">✅ Bug Found</div>
+              <p style="font-size:13.5px;color:var(--muted);margin-bottom:8px"><strong>Problem:</strong> Missing semicolon after <code>int age = 20</code>. Every statement in Dart must end with <code>;</code></p>
+              <div class="code-box"><span class="kw">void</span> <span class="fn">main</span>() {
+  <span class="kw">int</span> age = <span class="val">20</span>;  <span class="cm">← semicolon added ✅</span>
+  <span class="fn">print</span>(age);
+}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- D2 — Wrong type -->
+      <div class="debug-card">
+        <div class="debug-head"><div class="dh-icon">🐛</div><div class="dh-title">Bug #2 — Wrong Type</div></div>
+        <div class="debug-body">
+          <div class="broken-code">void main() {
+  int score = "ninety";
+  print(score);
+}</div>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button class="reveal-btn sol-btn" onclick="toggle('d2')">✅ Answer</button>
+          </div>
+          <div class="reveal-content" id="d2">
+            <div class="sol-box">
+              <div class="sol-title">✅ Bug Found</div>
+              <p style="font-size:13.5px;color:var(--muted);margin-bottom:8px"><strong>Problem:</strong> <code>int</code> can only hold whole numbers, not text. "ninety" is a String.</p>
+              <div class="code-box"><span class="cm">// Fix option 1: use the number</span>
+<span class="kw">int</span> score = <span class="val">90</span>;
+
+<span class="cm">// Fix option 2: use a String variable</span>
+<span class="kw">String</span> score = <span class="str">"ninety"</span>;</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- D3 — = instead of == -->
+      <div class="debug-card">
+        <div class="debug-head"><div class="dh-icon">🐛</div><div class="dh-title">Bug #3 — Assignment Instead of Comparison</div></div>
+        <div class="debug-body">
+          <div class="broken-code">void main() {
+  int age = 20;
+  if (age = 18) {
+    print("Adult");
+  }
+}</div>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button class="reveal-btn sol-btn" onclick="toggle('d3')">✅ Answer</button>
+          </div>
+          <div class="reveal-content" id="d3">
+            <div class="sol-box">
+              <div class="sol-title">✅ Bug Found</div>
+              <p style="font-size:13.5px;color:var(--muted);margin-bottom:8px"><strong>Problem:</strong> <code>age = 18</code> tries to assign the value 18 to age inside the if condition. To compare, you need <code>==</code> (double equals).</p>
+              <div class="code-box"><span class="kw">if</span> (age == <span class="val">18</span>) { <span class="cm">← double equals for comparison ✅</span>
+  <span class="fn">print</span>(<span class="str">"Adult"</span>);
+}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- D4 — Logic error -->
+      <div class="debug-card">
+        <div class="debug-head"><div class="dh-icon">🐛</div><div class="dh-title">Bug #4 — Logic Error (code runs, but wrong answer)</div></div>
+        <div class="debug-body">
+          <div class="prob-scenario">Requirement: "Adults are 18 or older."</div>
+          <div class="broken-code">void main() {
+  int age = 18;
+  if (age > 18) {
+    print("Adult");
+  } else {
+    print("Minor");
+  }
+}</div>
+          <p style="font-size:13.5px;color:var(--muted);margin-top:8px">The code runs without errors, but the output is wrong. What's the bug?</p>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button class="reveal-btn sol-btn" onclick="toggle('d4')">✅ Answer</button>
+          </div>
+          <div class="reveal-content" id="d4">
+            <div class="sol-box">
+              <div class="sol-title">✅ Logic Bug Found</div>
+              <p style="font-size:13.5px;color:var(--muted);margin-bottom:8px"><strong>Problem:</strong> <code>age > 18</code> means "strictly greater than 18." Someone who is exactly 18 would print "Minor" — which is wrong! The requirement says "18 or older" = <code>>=</code>.</p>
+              <div class="code-box"><span class="kw">if</span> (age >= <span class="val">18</span>) { <span class="cm">← >= includes 18 itself ✅</span>
+  <span class="fn">print</span>(<span class="str">"Adult"</span>);
+}</div>
+              <div class="sol-explain">This is a <strong>logic error</strong> — the most dangerous kind because Dart doesn't warn you. The code runs fine but produces the wrong result. Always re-read the requirements carefully and check boundary values.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- D5 — Missing braces -->
+      <div class="debug-card">
+        <div class="debug-head"><div class="dh-icon">🐛</div><div class="dh-title">Bug #5 — Missing Curly Braces</div></div>
+        <div class="debug-body">
+          <div class="broken-code">void main() {
+  int marks = 55;
+  if (marks >= 40)
+    print("Pass");
+    print("Well done!");
+}</div>
+          <p style="font-size:13.5px;color:var(--muted);margin-top:8px">The student expects "Well done!" to only print when marks >= 40. What's wrong?</p>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button class="reveal-btn sol-btn" onclick="toggle('d5')">✅ Answer</button>
+          </div>
+          <div class="reveal-content" id="d5">
+            <div class="sol-box">
+              <div class="sol-title">✅ Bug Found</div>
+              <p style="font-size:13.5px;color:var(--muted);margin-bottom:8px"><strong>Problem:</strong> Without curly braces, only the <em>first</em> statement after the if belongs to it. "Well done!" always prints, regardless of marks.</p>
+              <div class="code-box"><span class="kw">if</span> (marks >= <span class="val">40</span>) {   <span class="cm">← add curly braces ✅</span>
+  <span class="fn">print</span>(<span class="str">"Pass"</span>);
+  <span class="fn">print</span>(<span class="str">"Well done!"</span>);
+}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="btn btn-ghost" onclick="go(5)">← Classes</button>
+        <button class="btn btn-primary" onclick="go(7)">Next: Mini Projects →</button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════
+         PAGE 7 — MINI PROJECTS
+    ═══════════════════════════════════ -->
+    <div class="page" id="p7">
+      <div class="hero blue">
+        <div class="hero-tag" style="color:var(--blue)">🏗️ Section 7</div>
+        <h1>Real-World Mini Projects</h1>
+        <p class="hsub">Combine everything you've learned. Each project uses multiple concepts in a realistic scenario.</p>
+      </div>
+
+      <!-- Project 1 — Grade Calculator -->
+      <div class="prob" style="border:2px solid var(--blue)">
+        <div class="prob-head" style="background:var(--blue-pale)">
+          <div class="prob-num" style="background:var(--blue);color:#fff">P1</div>
+          <div class="prob-title-wrap">
+            <div class="diff d-blue">🔵 Intermediate</div>
+            <div class="prob-title">🎓 Student Grade Calculator</div>
+          </div>
+        </div>
+        <div class="prob-body">
+          <div class="prob-label">Scenario</div>
+          <div class="prob-scenario">A university needs a program to assign letter grades to students based on their exam marks.</div>
+          <div class="prob-label" style="margin-top:10px">Requirements</div>
+          <div class="prob-task">
+            <ul style="padding-left:18px;font-size:14px;color:var(--muted)">
+              <li>90–100 → Grade A</li>
+              <li>80–89 → Grade B</li>
+              <li>70–79 → Grade C</li>
+              <li>60–69 → Grade D</li>
+              <li>Below 60 → Grade F</li>
+            </ul>
+            Create a function <code>calculateGrade(int marks)</code> that prints the grade. Test it with marks: 95, 82, 71, 65, 45.
+          </div>
+          <div class="skills-row"><span class="skill-tag">function</span><span class="skill-tag">else-if</span><span class="skill-tag">int</span></div>
+          <div style="display:flex;gap:8px;margin-top:10px">
+            <button class="reveal-btn sol-btn" onclick="toggle('sp1')">✅ Full Solution</button>
+          </div>
+          <div class="reveal-content" id="sp1">
+            <div class="sol-box">
+              <div class="sol-title">✅ Complete Solution</div>
+              <div class="code-box"><span class="kw">void</span> <span class="fn">calculateGrade</span>(<span class="kw">int</span> marks) {
+  <span class="kw">if</span> (marks >= <span class="val">90</span>) {
+    <span class="fn">print</span>(<span class="str">"Marks: "</span> + marks.toString() + <span class="str">" → Grade A"</span>);
+  } <span class="kw">else if</span> (marks >= <span class="val">80</span>) {
+    <span class="fn">print</span>(<span class="str">"Marks: "</span> + marks.toString() + <span class="str">" → Grade B"</span>);
+  } <span class="kw">else if</span> (marks >= <span class="val">70</span>) {
+    <span class="fn">print</span>(<span class="str">"Marks: "</span> + marks.toString() + <span class="str">" → Grade C"</span>);
+  } <span class="kw">else if</span> (marks >= <span class="val">60</span>) {
+    <span class="fn">print</span>(<span class="str">"Marks: "</span> + marks.toString() + <span class="str">" → Grade D"</span>);
+  } <span class="kw">else</span> {
+    <span class="fn">print</span>(<span class="str">"Marks: "</span> + marks.toString() + <span class="str">" → Grade F"</span>);
+  }
+}
+
+<span class="kw">void</span> <span class="fn">main</span>() {
+  <span class="fn">calculateGrade</span>(<span class="val">95</span>);
+  <span class="fn">calculateGrade</span>(<span class="val">82</span>);
+  <span class="fn">calculateGrade</span>(<span class="val">71</span>);
+  <span class="fn">calculateGrade</span>(<span class="val">65</span>);
+  <span class="fn">calculateGrade</span>(<span class="val">45</span>);
+}</div>
+              <div class="out-lbl">Output</div>
+              <div class="out-box">Marks: 95 → Grade A
+Marks: 82 → Grade B
+Marks: 71 → Grade C
+Marks: 65 → Grade D
+Marks: 45 → Grade F</div>
+              <div class="sol-explain"><strong>Concepts used:</strong> Function with a parameter, else-if chain. The function can be called as many times as needed — this is exactly how functions save you from repeating code.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Project 2 — Task Manager Logic -->
+      <div class="prob" style="border:2px solid var(--green)">
+        <div class="prob-head" style="background:var(--green-bg)">
+          <div class="prob-num" style="background:var(--green);color:#fff">P2</div>
+          <div class="prob-title-wrap">
+            <div class="diff d-blue">🔵 Intermediate</div>
+            <div class="prob-title">✅ Task Manager Logic</div>
+          </div>
+        </div>
+        <div class="prob-body">
+          <div class="prob-scenario">Build the core data logic for a Student Task Manager — just the Dart, no Flutter yet.</div>
+          <div class="prob-task">Create a <code>Task</code> class. Create a list of 3 tasks. Write a function <code>showAllTasks()</code> that prints each task's name and whether it's done. Then mark task 1 as done and call showAllTasks() again.</div>
+          <div class="skills-row"><span class="skill-tag">class</span><span class="skill-tag">List</span><span class="skill-tag">function</span><span class="skill-tag">bool</span><span class="skill-tag">if-else</span></div>
+          <div style="display:flex;gap:8px;margin-top:10px">
+            <button class="reveal-btn sol-btn" onclick="toggle('sp2')">✅ Full Solution</button>
+          </div>
+          <div class="reveal-content" id="sp2">
+            <div class="sol-box">
+              <div class="sol-title">✅ Complete Solution</div>
+              <div class="code-box"><span class="kw">class</span> Task {
+  <span class="kw">String</span> name;
+  <span class="kw">bool</span>   isDone;
+  Task(<span class="kw">this</span>.name, <span class="kw">this</span>.isDone);
+}
+
+List&lt;Task&gt; tasks = [];
+
+<span class="kw">void</span> <span class="fn">showAllTasks</span>() {
+  <span class="fn">print</span>(<span class="str">"--- My Tasks ---"</span>);
+  <span class="kw">if</span> (tasks[<span class="val">0</span>].isDone) {
+    <span class="fn">print</span>(<span class="str">"✅ "</span> + tasks[<span class="val">0</span>].name);
+  } <span class="kw">else</span> {
+    <span class="fn">print</span>(<span class="str">"⬜ "</span> + tasks[<span class="val">0</span>].name);
+  }
+  <span class="kw">if</span> (tasks[<span class="val">1</span>].isDone) {
+    <span class="fn">print</span>(<span class="str">"✅ "</span> + tasks[<span class="val">1</span>].name);
+  } <span class="kw">else</span> {
+    <span class="fn">print</span>(<span class="str">"⬜ "</span> + tasks[<span class="val">1</span>].name);
+  }
+  <span class="kw">if</span> (tasks[<span class="val">2</span>].isDone) {
+    <span class="fn">print</span>(<span class="str">"✅ "</span> + tasks[<span class="val">2</span>].name);
+  } <span class="kw">else</span> {
+    <span class="fn">print</span>(<span class="str">"⬜ "</span> + tasks[<span class="val">2</span>].name);
+  }
+}
+
+<span class="kw">void</span> <span class="fn">main</span>() {
+  tasks.<span class="fn">add</span>(Task(<span class="str">"Math homework"</span>,  <span class="val">false</span>));
+  tasks.<span class="fn">add</span>(Task(<span class="str">"Read chapter 4"</span>, <span class="val">false</span>));
+  tasks.<span class="fn">add</span>(Task(<span class="str">"Submit project"</span>,  <span class="val">false</span>));
+
+  <span class="fn">showAllTasks</span>();
+
+  <span class="cm">// Mark first task as done</span>
+  tasks[<span class="val">0</span>].isDone = <span class="val">true</span>;
+
+  <span class="fn">print</span>(<span class="str">""</span>);
+  <span class="fn">showAllTasks</span>();
+}</div>
+              <div class="out-lbl">Output</div>
+              <div class="out-box">--- My Tasks ---
+⬜ Math homework
+⬜ Read chapter 4
+⬜ Submit project
+
+--- My Tasks ---
+✅ Math homework
+⬜ Read chapter 4
+⬜ Submit project</div>
+              <div class="sol-explain">This combines every concept from the Dart tutorial: class, list, function, bool, and if-else. This is the logic that powers the Task Manager app you'll build in Flutter!</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Project 3 — Shopping Discount -->
+      <div class="prob" style="border:2px solid var(--purple)">
+        <div class="prob-head" style="background:var(--purple-bg)">
+          <div class="prob-num" style="background:var(--purple);color:#fff">P3</div>
+          <div class="prob-title-wrap">
+            <div class="diff d-red">🔴 Challenge</div>
+            <div class="prob-title">🛍️ Shopping Discount Calculator</div>
+          </div>
+        </div>
+        <div class="prob-body">
+          <div class="prob-scenario">An online store applies discounts: spend $200+ and get 20% off; spend $100–$199 and get 10% off; spend $50–$99 and get 5% off; below $50 no discount.</div>
+          <div class="prob-task">Write a function <code>calculateDiscount(double total)</code> that prints the discount percentage, discount amount, and final price. Test with totals: $250, $150, $75, $30.</div>
+          <div class="skills-row"><span class="skill-tag">function</span><span class="skill-tag">else-if</span><span class="skill-tag">double</span><span class="skill-tag">arithmetic</span></div>
+          <div style="display:flex;gap:8px;margin-top:10px">
+            <button class="reveal-btn sol-btn" onclick="toggle('sp3')">✅ Full Solution</button>
+          </div>
+          <div class="reveal-content" id="sp3">
+            <div class="sol-box">
+              <div class="sol-title">✅ Complete Solution</div>
+              <div class="code-box"><span class="kw">void</span> <span class="fn">calculateDiscount</span>(<span class="kw">double</span> total) {
+  <span class="kw">double</span> discountPct = <span class="val">0</span>;
+
+  <span class="kw">if</span> (total >= <span class="val">200</span>) {
+    discountPct = <span class="val">0.20</span>;
+  } <span class="kw">else if</span> (total >= <span class="val">100</span>) {
+    discountPct = <span class="val">0.10</span>;
+  } <span class="kw">else if</span> (total >= <span class="val">50</span>) {
+    discountPct = <span class="val">0.05</span>;
+  }
+
+  <span class="kw">double</span> discountAmt = total * discountPct;
+  <span class="kw">double</span> finalPrice   = total - discountAmt;
+
+  <span class="fn">print</span>(<span class="str">"Total: \$"</span>     + total.toString());
+  <span class="fn">print</span>(<span class="str">"Discount: "</span>   + (discountPct * <span class="val">100</span>).toString() + <span class="str">"%"</span>);
+  <span class="fn">print</span>(<span class="str">"You save: \$"</span> + discountAmt.toString());
+  <span class="fn">print</span>(<span class="str">"Final: \$"</span>    + finalPrice.toString());
+  <span class="fn">print</span>(<span class="str">"---"</span>);
+}
+
+<span class="kw">void</span> <span class="fn">main</span>() {
+  <span class="fn">calculateDiscount</span>(<span class="val">250</span>);
+  <span class="fn">calculateDiscount</span>(<span class="val">150</span>);
+  <span class="fn">calculateDiscount</span>(<span class="val">75</span>);
+  <span class="fn">calculateDiscount</span>(<span class="val">30</span>);
+}</div>
+              <div class="out-lbl">Output</div>
+              <div class="out-box">Total: $250.0
+Discount: 20.0%
+You save: $50.0
+Final: $200.0
+---
+Total: $150.0
+Discount: 10.0%
+You save: $15.0
+Final: $135.0
+---
+Total: $75.0
+Discount: 5.0%
+You save: $3.75
+Final: $71.25
+---
+Total: $30.0
+Discount: 0.0%
+You save: $0.0
+Final: $30.0
+---</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <button class="btn btn-ghost" onclick="go(6)">← Debugging</button>
+        <button class="btn btn-primary" onclick="go(8)">Final Quiz →</button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════
+         PAGE 8 — FINAL QUIZ
+    ═══════════════════════════════════ -->
+    <div class="page" id="p8">
+      <div class="hero purple">
+        <div class="hero-tag" style="color:var(--purple)">📝 Final Quiz</div>
+        <h1>Final Mixed Quiz</h1>
+        <p class="hsub">30 questions covering everything. MCQs, output prediction, debugging, and code reading.</p>
+      </div>
+
+      <div class="score-display" id="quizScore">
+        <div>
+          <div class="score-num" id="scoreNum">0</div>
+          <div class="score-label">out of <span id="scoreTotal">0</span> answered</div>
+        </div>
+        <div style="flex:1">
+          <div class="score-bar-wrap"><div class="score-bar" id="scoreBar" style="width:0%"></div></div>
+          <div style="font-size:11px;color:var(--muted);margin-top:4px" id="scoreMsg">Answer questions to see your score</div>
+        </div>
+      </div>
+
+      <!-- Q1 -->
+      <div class="quiz-card">
+        <div class="quiz-num">Question 1 — Variables</div>
+        <div class="quiz-q">Which Dart type stores a decimal number like 3.14?</div>
+        <div class="quiz-opts" id="fq1">
+          <button class="opt" onclick="fqa('fq1','a','c')"><span class="let">A</span> int</button>
+          <button class="opt" onclick="fqa('fq1','b','c')"><span class="let">B</span> String</button>
+          <button class="opt" onclick="fqa('fq1','c','c')"><span class="let">C</span> double</button>
+          <button class="opt" onclick="fqa('fq1','d','c')"><span class="let">D</span> bool</button>
+        </div>
+        <div class="qfb" id="fq1-fb"></div>
+      </div>
+
+      <!-- Q2 -->
+      <div class="quiz-card">
+        <div class="quiz-num">Question 2 — Output</div>
+        <div class="quiz-q">What does this print?</div>
+        <div class="code-box"><span class="kw">String</span> city = <span class="str">"London"</span>;
+city = <span class="str">"Tokyo"</span>;
+<span class="fn">print</span>(city);</div>
+        <div class="quiz-opts" id="fq2">
+          <button class="opt" onclick="fqa('fq2','a','b')"><span class="let">A</span> London</button>
+          <button class="opt" onclick="fqa('fq2','b','b')"><span class="let">B</span> Tokyo</button>
+          <button class="opt" onclick="fqa('fq2','c','b')"><span class="let">C</span> London Tokyo</button>
+          <button class="opt" onclick="fqa('fq2','d','b')"><span class="let">D</span> Error</button>
+        </div>
+        <div class="qfb" id="fq2-fb"></div>
+      </div>
+
+      <!-- Q3 -->
+      <div class="quiz-card">
+        <div class="quiz-num">Question 3 — If / Else</div>
+        <div class="quiz-q">What will this print?</div>
+        <div class="code-box"><span class="kw">int</span> x = <span class="val">10</span>;
+<span class="kw">if</span> (x > <span class="val">10</span>) {
+  <span class="fn">print</span>(<span class="str">"Big"</span>);
+} <span class="kw">else if</span> (x == <span class="val">10</span>) {
+  <span class="fn">print</span>(<span class="str">"Exactly ten"</span>);
+} <span class="kw">else</span> {
+  <span class="fn">print</span>(<span class="str">"Small"</span>);
+}</div>
+        <div class="quiz-opts" id="fq3">
+          <button class="opt" onclick="fqa('fq3','a','b')"><span class="let">A</span> Big</button>
+          <button class="opt" onclick="fqa('fq3','b','b')"><span class="let">B</span> Exactly ten</button>
+          <button class="opt" onclick="fqa('fq3','c','b')"><span class="let">C</span> Small</button>
+          <button class="opt" onclick="fqa('fq3','d','b')"><span class="let">D</span> Error</button>
+        </div>
+        <div class="qfb" id="fq3-fb"></div>
+      </div>
+
+      <!-- Q4 -->
+      <div class="quiz-card">
+        <div class="quiz-num">Question 4 — && vs ||</div>
+        <div class="quiz-q">A student can join a sports team if they are under 25 AND have a GPA above 2.0. Which operator correctly combines these?</div>
+        <div class="quiz-opts" id="fq4">
+          <button class="opt" onclick="fqa('fq4','a','a')"><span class="let">A</span> <code>&amp;&amp;</code> — both must be true</button>
+          <button class="opt" onclick="fqa('fq4','b','a')"><span class="let">B</span> <code>||</code> — at least one must be true</button>
+          <button class="opt" onclick="fqa('fq4','c','a')"><span class="let">C</span> <code>!</code> — negate the condition</button>
+          <button class="opt" onclick="fqa('fq4','d','a')"><span class="let">D</span> <code>==</code> — check equality</button>
+        </div>
+        <div class="qfb" id="fq4-fb"></div>
+      </div>
+
+      <!-- Q5 -->
+      <div class="quiz-card">
+        <div class="quiz-num">Question 5 — Lists</div>
+        <div class="quiz-q">A list has items ["red", "green", "blue"]. What does <code>colors[2]</code> return?</div>
+        <div class="quiz-opts" id="fq5">
+          <button class="opt" onclick="fqa('fq5','a','c')"><span class="let">A</span> red</button>
+          <button class="opt" onclick="fqa('fq5','b','c')"><span class="let">B</span> green</button>
+          <button class="opt" onclick="fqa('fq5','c','c')"><span class="let">C</span> blue</button>
+          <button class="opt" onclick="fqa('fq5','d','c')"><span class="let">D</span> Error — index out of range</button>
+        </div>
+        <div class="qfb" id="fq5-fb"></div>
+      </div>
+
+      <!-- Q6 -->
+      <div class="quiz-card">
+        <div class="quiz-num">Question 6 — Debug</div>
+        <div class="quiz-q">What is wrong here?<br><br><code>bool done = "false";</code></div>
+        <div class="quiz-opts" id="fq6">
+          <button class="opt" onclick="fqa('fq6','a','b')"><span class="let">A</span> Nothing — this is correct</button>
+          <button class="opt" onclick="fqa('fq6','b','b')"><span class="let">B</span> "false" in quotes is a String, not a bool. Should be: <code>bool done = false;</code></button>
+          <button class="opt" onclick="fqa('fq6','c','b')"><span class="let">C</span> The variable name "done" is not allowed</button>
+          <button class="opt" onclick="fqa('fq6','d','b')"><span class="let">D</span> Missing semicolon</button>
+        </div>
+        <div class="qfb" id="fq6-fb"></div>
+      </div>
+
+      <!-- Q7 -->
+      <div class="quiz-card">
+        <div class="quiz-num">Question 7 — Functions</div>
+        <div class="quiz-q">What does <code>void</code> mean on a function?</div>
+        <div class="quiz-opts" id="fq7">
+          <button class="opt" onclick="fqa('fq7','a','c')"><span class="let">A</span> The function is empty</button>
+          <button class="opt" onclick="fqa('fq7','b','c')"><span class="let">B</span> The function is broken</button>
+          <button class="opt" onclick="fqa('fq7','c','c')"><span class="let">C</span> The function does not return a value</button>
+          <button class="opt" onclick="fqa('fq7','d','c')"><span class="let">D</span> The function can only be called once</button>
+        </div>
+        <div class="qfb" id="fq7-fb"></div>
+      </div>
+
+      <!-- Q8 -->
+      <div class="quiz-card">
+        <div class="quiz-num">Question 8 — Output Prediction</div>
+        <div class="quiz-q">What will this print?</div>
+        <div class="code-box">List&lt;<span class="kw">String</span>&gt; items = [<span class="str">"a"</span>, <span class="str">"b"</span>, <span class="str">"c"</span>];
+items.<span class="fn">add</span>(<span class="str">"d"</span>);
+<span class="fn">print</span>(items.length);</div>
+        <div class="quiz-opts" id="fq8">
+          <button class="opt" onclick="fqa('fq8','a','c')"><span class="let">A</span> 3</button>
+          <button class="opt" onclick="fqa('fq8','b','c')"><span class="let">B</span> 1</button>
+          <button class="opt" onclick="fqa('fq8','c','c')"><span class="let">C</span> 4</button>
+          <button class="opt" onclick="fqa('fq8','d','c')"><span class="let">D</span> Error</button>
+        </div>
+        <div class="qfb" id="fq8-fb"></div>
+      </div>
+
+      <!-- Q9 -->
+      <div class="quiz-card">
+        <div class="quiz-num">Question 9 — Classes</div>
+        <div class="quiz-q">In <code>class Task { String name; bool isDone; ... }</code> — what is <code>name</code> called?</div>
+        <div class="quiz-opts" id="fq9">
+          <button class="opt" onclick="fqa('fq9','a','b')"><span class="let">A</span> A function</button>
+          <button class="opt" onclick="fqa('fq9','b','b')"><span class="let">B</span> A property (or field) of the class</button>
+          <button class="opt" onclick="fqa('fq9','c','b')"><span class="let">C</span> A loop</button>
+          <button class="opt" onclick="fqa('fq9','d','b')"><span class="let">D</span> A condition</button>
+        </div>
+        <div class="qfb" id="fq9-fb"></div>
+      </div>
+
+      <!-- Q10 -->
+      <div class="quiz-card">
+        <div class="quiz-num">Question 10 — Logic</div>
+        <div class="quiz-q">Requirement: "Show a warning if the temperature is below 0 OR above 40." Which condition is correct?</div>
+        <div class="quiz-opts" id="fq10">
+          <button class="opt" onclick="fqa('fq10','a','b')"><span class="let">A</span> <code>if (temp &lt; 0 &amp;&amp; temp > 40)</code></button>
+          <button class="opt" onclick="fqa('fq10','b','b')"><span class="let">B</span> <code>if (temp &lt; 0 || temp > 40)</code></button>
+          <button class="opt" onclick="fqa('fq10','c','b')"><span class="let">C</span> <code>if (temp == 0 || temp == 40)</code></button>
+          <button class="opt" onclick="fqa('fq10','d','b')"><span class="let">D</span> <code>if (temp &lt; 0 &amp;&amp; temp &lt; 40)</code></button>
+        </div>
+        <div class="qfb" id="fq10-fb"></div>
+      </div>
+
+      <!-- Q11-Q15 — more variety -->
+      <div class="quiz-card">
+        <div class="quiz-num">Question 11 — True or False?</div>
+        <div class="quiz-q">In Dart, <code>=</code> and <code>==</code> do the same thing. True or False?</div>
+        <div class="quiz-opts" id="fq11">
+          <button class="opt" onclick="fqa('fq11','a','b')"><span class="let">A</span> True</button>
+          <button class="opt" onclick="fqa('fq11','b','b')"><span class="let">B</span> False — <code>=</code> assigns a value; <code>==</code> compares two values</button>
+        </div>
+        <div class="qfb" id="fq11-fb"></div>
+      </div>
+
+      <div class="quiz-card">
+        <div class="quiz-num">Question 12 — Output</div>
+        <div class="quiz-q">What does this output?</div>
+        <div class="code-box"><span class="kw">bool</span> a = <span class="val">true</span>;
+<span class="kw">bool</span> b = <span class="val">false</span>;
+<span class="fn">print</span>(a && b);
+<span class="fn">print</span>(a || b);</div>
+        <div class="quiz-opts" id="fq12">
+          <button class="opt" onclick="fqa('fq12','a','c')"><span class="let">A</span> true, true</button>
+          <button class="opt" onclick="fqa('fq12','b','c')"><span class="let">B</span> false, false</button>
+          <button class="opt" onclick="fqa('fq12','c','c')"><span class="let">C</span> false, true</button>
+          <button class="opt" onclick="fqa('fq12','d','c')"><span class="let">D</span> true, false</button>
+        </div>
+        <div class="qfb" id="fq12-fb"></div>
+      </div>
+
+      <div class="quiz-card">
+        <div class="quiz-num">Question 13 — Reverse Engineering</div>
+        <div class="quiz-q">In plain English, what rule does this code implement?</div>
+        <div class="code-box"><span class="kw">if</span> (amount >= <span class="val">100</span>) {
+  <span class="fn">print</span>(<span class="str">"Free delivery"</span>);
+} <span class="kw">else</span> {
+  <span class="fn">print</span>(<span class="str">"Delivery charge applies"</span>);
+}</div>
+        <div class="quiz-opts" id="fq13">
+          <button class="opt" onclick="fqa('fq13','a','b')"><span class="let">A</span> Free delivery when the amount is exactly $100</button>
+          <button class="opt" onclick="fqa('fq13','b','b')"><span class="let">B</span> Free delivery when the amount is $100 or more; otherwise delivery is charged</button>
+          <button class="opt" onclick="fqa('fq13','c','b')"><span class="let">C</span> Always give free delivery</button>
+          <button class="opt" onclick="fqa('fq13','d','b')"><span class="let">D</span> Free delivery when the amount is less than $100</button>
+        </div>
+        <div class="qfb" id="fq13-fb"></div>
+      </div>
+
+      <div class="quiz-card">
+        <div class="quiz-num">Question 14 — Functions</div>
+        <div class="quiz-q">What does this function output when called as <code>add(3, 4)</code>?</div>
+        <div class="code-box"><span class="kw">void</span> <span class="fn">add</span>(<span class="kw">int</span> a, <span class="kw">int</span> b) {
+  <span class="fn">print</span>(a + b);
+}</div>
+        <div class="quiz-opts" id="fq14">
+          <button class="opt" onclick="fqa('fq14','a','c')"><span class="let">A</span> 34</button>
+          <button class="opt" onclick="fqa('fq14','b','c')"><span class="let">B</span> 3 + 4</button>
+          <button class="opt" onclick="fqa('fq14','c','c')"><span class="let">C</span> 7</button>
+          <button class="opt" onclick="fqa('fq14','d','c')"><span class="let">D</span> Error</button>
+        </div>
+        <div class="qfb" id="fq14-fb"></div>
+      </div>
+
+      <div class="quiz-card">
+        <div class="quiz-num">Question 15 — Convert to Code</div>
+        <div class="quiz-q">Requirement: "A user can log in if their username is 'admin' AND their password is 'pass123'." Which condition is correct?</div>
+        <div class="quiz-opts" id="fq15">
+          <button class="opt" onclick="fqa('fq15','a','b')"><span class="let">A</span> <code>if (username == "admin" || password == "pass123")</code></button>
+          <button class="opt" onclick="fqa('fq15','b','b')"><span class="let">B</span> <code>if (username == "admin" &amp;&amp; password == "pass123")</code></button>
+          <button class="opt" onclick="fqa('fq15','c','b')"><span class="let">C</span> <code>if (username = "admin" &amp;&amp; password = "pass123")</code></button>
+          <button class="opt" onclick="fqa('fq15','d','b')"><span class="let">D</span> <code>if (username &amp;&amp; password)</code></button>
+        </div>
+        <div class="qfb" id="fq15-fb"></div>
+      </div>
+
+      <div class="callout tip" style="margin-top:20px">
+        <div class="ico">🎉</div>
+        <div class="callout-body"><strong>Well done for completing the practice bank!</strong> Check your score above. For any question you got wrong, go back to the relevant section and re-read the explanation — then try a similar problem on DartPad.</div>
+      </div>
+
+      <div class="page-nav">
+        <button class="btn btn-ghost" onclick="go(7)">← Mini Projects</button>
+        <button class="btn btn-green" onclick="go(0)">🔄 Start Again</button>
+      </div>
+    </div>
+
+  </div><!-- content -->
+</main>
+</div>
+
+<button class="mob-btn" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+
+<script>
+// ── NAVIGATION ──
+const titles = [
+  'How to Use This Bank',
+  'Section 1 — Variables & Types',
+  'Section 2 — If / Else',
+  'Section 3 — Lists',
+  'Section 4 — Functions',
+  'Section 5 — Classes',
+  'Section 6 — Debugging',
+  'Section 7 — Mini Projects',
+  'Final Quiz',
+];
+const total = titles.length;
+let visited = new Set();
+
+function go(idx) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('p' + idx).classList.add('active');
+  const nav = document.getElementById('n' + idx);
+  if (nav) nav.classList.add('active');
+  visited.add(idx);
+  for (let i of visited) {
+    const n = document.getElementById('n' + i);
+    if (n && i !== idx) n.classList.add('done');
+  }
+  document.getElementById('topTitle').innerHTML = '<strong>' + titles[idx] + '</strong>';
+  const pct = Math.round(visited.size / total * 100);
+  document.getElementById('progFill').style.width = pct + '%';
+  document.getElementById('progLbl').textContent = visited.size + ' of ' + total + ' sections visited';
+  const dotsEl = document.getElementById('dots');
+  dotsEl.innerHTML = titles.map((t, i) => {
+    let c = 'dot';
+    if (i === idx) c += ' active';
+    else if (visited.has(i)) c += ' done';
+    return '<div class="' + c + '" onclick="go(' + i + ')" title="' + t + '"></div>';
+  }).join('');
+  window.scrollTo(0, 0);
+  if (window.innerWidth < 800) document.getElementById('sidebar').classList.remove('open');
+}
+
+// ── REVEAL TOGGLE ──
+function toggle(id) {
+  const el = document.getElementById(id);
+  el.classList.toggle('open');
+  const btn = el.previousElementSibling;
+  if (btn && btn.classList.contains('reveal-btn')) {
+    btn.textContent = el.classList.contains('open')
+      ? btn.textContent.replace('▼','').trim()
+      : btn.textContent;
+  }
+}
+
+// ── QUIZ ANSWERS ──
+const qAnswers = {
+  qv1:{c:'c',e:'score starts at 85, then 85+10=95.'},
+  qv2:{c:'b',e:'isRaining starts false (prints false), then changes to true (prints true).'},
+  qv3:{c:'d',e:'bool stores only true or false — perfect for done/not-done.'},
+  qv4:{c:'b',e:'int variables hold whole numbers. "twenty" is text (String), not a number.'},
+  qi1:{c:'b',e:'age is exactly 18. The condition is age > 18 (strictly greater), which is false for 18. So else runs — "Minor".'},
+  qi2:{c:'b',e:'>= means "greater than or equal to," which correctly includes 18 itself.'},
+  qi3:{c:'a',e:'Both conditions must be true — use && (AND). || would allow someone with only financial need and poor grades.'},
+  ql1:{c:'c',e:'fruits[1] is the second item — "banana". And the list has 3 items so length is 3.'},
+  ql2:{c:'b',e:'A list of 3 items uses indexes 0, 1, 2. Index 3 does not exist — Dart throws a RangeError.'},
+  qc1:{c:'c',e:'A class is the blueprint. An object (instance) is one specific thing built from that blueprint.'},
+};
+
+function qa(id, chosen, correct) {
+  const btns = document.getElementById(id).querySelectorAll('.opt');
+  btns.forEach(b => { b.disabled = true; b.onclick = null; });
+  btns.forEach((b, i) => {
+    const l = ['a','b','c','d'][i];
+    if (l === correct) b.classList.add('correct');
+    else if (l === chosen && chosen !== correct) b.classList.add('wrong');
+  });
+  const fb = document.getElementById(id + '-fb');
+  const ok = chosen === correct;
+  fb.className = 'qfb show ' + (ok ? 'ok' : 'no');
+  fb.textContent = (ok ? '✅ Correct! ' : '❌ Not quite. ') + (qAnswers[id] ? qAnswers[id].e : '');
+}
+
+// ── FINAL QUIZ SCORING ──
+let fqScore = 0;
+let fqAnswered = 0;
+const fqTotal = 15;
+const fqAns = {
+  fq1:{c:'c',e:'double stores decimal numbers like 3.14.'},
+  fq2:{c:'b',e:'The variable is reassigned to "Tokyo", so print shows the latest value.'},
+  fq3:{c:'b',e:'x is not >10, but it IS ==10, so "Exactly ten" prints.'},
+  fq4:{c:'a',e:'Both conditions (age AND GPA) must be true — so use &&.'},
+  fq5:{c:'c',e:'Index 0=red, 1=green, 2=blue. So colors[2] = "blue".'},
+  fq6:{c:'b',e:'"false" in quotes is text (String). A bool value must be written without quotes: false.'},
+  fq7:{c:'c',e:'void means the function returns nothing — it just performs an action.'},
+  fq8:{c:'c',e:'Starts with 3 items, .add() adds one more → length is 4.'},
+  fq9:{c:'b',e:'name is a property (field) of the class — a variable that belongs to each object.'},
+  fq10:{c:'b',e:'Below 0 OR above 40 — only one needs to be true, so use ||.'},
+  fq11:{c:'b',e:'= assigns a value. == compares two values. They are different operators!'},
+  fq12:{c:'c',e:'true && false = false (both must be true). true || false = true (at least one is true).'},
+  fq13:{c:'b',e:'amount >= 100 means $100 or more gets free delivery, otherwise a charge applies.'},
+  fq14:{c:'c',e:'3 + 4 = 7. The + operator adds the two int parameters.'},
+  fq15:{c:'b',e:'Both username AND password must match — use &&. Using = instead of == is an assignment, not comparison.'},
+};
+
+function fqa(id, chosen, correct) {
+  const btns = document.getElementById(id).querySelectorAll('.opt');
+  btns.forEach(b => { b.disabled = true; b.onclick = null; });
+  btns.forEach((b, i) => {
+    const l = ['a','b','c','d'][i];
+    if (l === correct) b.classList.add('correct');
+    else if (l === chosen && chosen !== correct) b.classList.add('wrong');
+  });
+  const fb = document.getElementById(id + '-fb');
+  const ok = chosen === correct;
+  fb.className = 'qfb show ' + (ok ? 'ok' : 'no');
+  fb.textContent = (ok ? '✅ Correct! ' : '❌ Not quite. ') + (fqAns[id] ? fqAns[id].e : '');
+  if (ok) fqScore++;
+  fqAnswered++;
+  document.getElementById('scoreNum').textContent = fqScore;
+  document.getElementById('scoreTotal').textContent = fqAnswered;
+  const pct = Math.round(fqScore / fqAnswered * 100);
+  document.getElementById('scoreBar').style.width = pct + '%';
+  document.getElementById('scoreMsg').textContent = pct + '% correct so far';
+  document.getElementById('scoreBadge').textContent = 'Score: ' + fqScore + '/' + fqAnswered;
+}
+
+// ── FILL IN THE BLANK ──
+function checkBlanks() {
+  const b1 = document.getElementById('b1').value.trim().toLowerCase();
+  const b2 = document.getElementById('b2').value.trim().toLowerCase();
+  const b3 = document.getElementById('b3').value.trim();
+  const b4 = document.getElementById('b4').value.trim().toLowerCase();
+
+  const a1 = b1 === 'string';
+  const a2 = b2 === 'credits' || b2 === 'numcredits' || b2 === 'num' || b2.length > 0;
+  const a3 = !isNaN(parseFloat(b3)) && b3.includes('.');
+  const a4 = b4 === 'true' || b4 === 'false';
+
+  document.getElementById('b1').className = 'blank-input ' + (a1 ? 'correct' : 'wrong');
+  document.getElementById('b2').className = 'blank-input ' + (a2 ? 'correct' : 'wrong');
+  document.getElementById('b3').className = 'blank-input ' + (a3 ? 'correct' : 'wrong');
+  document.getElementById('b4').className = 'blank-input ' + (a4 ? 'correct' : 'wrong');
+
+  const res = document.getElementById('blank-result');
+  res.style.display = 'block';
+  res.innerHTML = `
+    <div style="font-size:13px;line-height:1.8;color:var(--muted)">
+      <div>${a1 ? '✅' : '❌'} Line 1: type should be <strong>String</strong></div>
+      <div>${a2 ? '✅' : '❌'} Line 2: any valid variable name (e.g. <strong>credits</strong>)</div>
+      <div>${a3 ? '✅' : '❌'} Line 3: a decimal value like <strong>9.99</strong></div>
+      <div>${a4 ? '✅' : '❌'} Line 4: either <strong>true</strong> or <strong>false</strong></div>
+    </div>
+  `;
+}
+
+go(0);
+</script>
+</body>
+</html>
