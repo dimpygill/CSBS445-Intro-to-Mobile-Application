@@ -1,0 +1,1518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>End-to-End Flutter App — From Idea to GitHub</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F7F8FC;--white:#FFFFFF;--border:#E2E8F0;--surface:#EFF2F9;
+  --text:#18202E;--muted:#546070;--light:#8D99AE;
+  --blue:#3060F0;--blue-bg:#EBF0FE;--blue-pale:#F4F6FF;
+  --green:#15A065;--green-bg:#E2F5EE;
+  --amber:#C87C10;--amber-bg:#FEF2E1;
+  --purple:#6840D0;--purple-bg:#EFE9FC;
+  --red:#CE2E2E;--red-bg:#FDEAEA;
+  --teal:#0891A8;--teal-bg:#DFF4F7;
+  --sql:#1565C0;--sql-bg:#E3F0FB;
+  --git:#D35400;--git-bg:#FEF0E6;
+  --font:'DM Sans',sans-serif;--mono:'DM Mono',monospace;
+  --r:12px;--rs:8px;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:15.5px;line-height:1.75}
+
+/* ── SHELL ── */
+.shell{display:flex;min-height:100vh}
+
+/* ── SIDEBAR ── */
+.sidebar{width:265px;flex-shrink:0;background:var(--white);border-right:1px solid var(--border);position:fixed;top:0;left:0;height:100vh;overflow-y:auto;z-index:100}
+.sb-head{padding:20px 18px 14px;border-bottom:1px solid var(--border)}
+.sb-badge{display:inline-block;background:var(--blue-bg);color:var(--blue);font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;border-radius:20px;padding:3px 10px;margin-bottom:7px}
+.sb-head h2{font-size:13px;font-weight:700;line-height:1.35}
+.sb-head p{font-size:11px;color:var(--muted);margin-top:2px}
+.prog-wrap{padding:10px 18px 0}
+.prog-bar{height:4px;background:var(--surface);border-radius:2px;overflow:hidden}
+.prog-fill{height:100%;background:var(--blue);border-radius:2px;transition:width .4s;width:0%}
+.prog-lbl{font-size:11px;color:var(--light);margin-top:4px;padding-bottom:8px}
+.sb-nav{padding:4px 0 28px}
+.sb-grp{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--light);padding:13px 18px 5px}
+.sb-item{display:flex;align-items:center;gap:9px;padding:8px 18px;font-size:12.5px;font-weight:500;color:var(--muted);cursor:pointer;border-left:3px solid transparent;transition:all .15s}
+.sb-item:hover{background:var(--surface);color:var(--text)}
+.sb-item.active{background:var(--blue-bg);color:var(--blue);border-left-color:var(--blue)}
+.sb-item.done .sb-num{background:var(--green);color:#fff}
+.sb-num{width:20px;height:20px;border-radius:50%;background:var(--surface);color:var(--light);font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
+.sb-item.active .sb-num{background:var(--blue);color:#fff}
+
+/* ── MAIN ── */
+.main{margin-left:265px;flex:1}
+.topbar{background:var(--white);border-bottom:1px solid var(--border);padding:12px 44px;display:flex;align-items:center;position:sticky;top:0;z-index:50}
+.topbar-title{font-size:13px;color:var(--muted);flex:1}
+.topbar-title strong{color:var(--text);font-weight:700}
+.step-badge{background:var(--blue-bg);color:var(--blue);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:700}
+
+/* ── CONTENT ── */
+.content{padding:40px 44px;max-width:840px}
+.page{display:none}
+.page.active{display:block}
+
+/* ── DOTS ── */
+.dots{display:flex;gap:4px;margin-bottom:22px;flex-wrap:wrap}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--border);cursor:pointer;transition:background .2s}
+.dot.active{background:var(--blue)}
+.dot.done{background:var(--green)}
+
+/* ── HERO ── */
+.hero{border-radius:var(--r);padding:28px 32px;margin-bottom:28px}
+.hero.blue  {background:linear-gradient(135deg,#EBF0FE,#E2EBFD);border:1px solid #BED0F8}
+.hero.green {background:linear-gradient(135deg,#E2F5EE,#D5F0E5);border:1px solid #A5DCC5}
+.hero.purple{background:linear-gradient(135deg,#EFE9FC,#E7DFF8);border:1px solid #C0ACF0}
+.hero.amber {background:linear-gradient(135deg,#FEF2E1,#FDEACF);border:1px solid #EFC99A}
+.hero.teal  {background:linear-gradient(135deg,#DFF4F7,#D0EFF3);border:1px solid #9CD2DA}
+.hero.red   {background:linear-gradient(135deg,#FDEAEA,#FBDFDF);border:1px solid #F0B4B4}
+.hero.sql   {background:linear-gradient(135deg,#E3F0FB,#D5E8F8);border:1px solid #98C4F0}
+.hero.git   {background:linear-gradient(135deg,#FEF0E6,#FDE8D5);border:1px solid #F0C090}
+.hero-tag{display:inline-block;background:#fff;border-radius:20px;padding:3px 12px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.hero h1{font-size:21px;font-weight:700;line-height:1.3;margin-bottom:8px}
+.hero .hsub{font-size:13.5px;color:var(--muted);max-width:540px;line-height:1.6}
+
+/* ── SECTION HEADER ── */
+.sec-head{display:flex;align-items:center;gap:10px;margin:28px 0 14px}
+.sec-icon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.ic-blue{background:var(--blue-bg)} .ic-green{background:var(--green-bg)} .ic-amber{background:var(--amber-bg)} .ic-purple{background:var(--purple-bg)} .ic-teal{background:var(--teal-bg)} .ic-red{background:var(--red-bg)} .ic-sql{background:var(--sql-bg)} .ic-git{background:var(--git-bg)}
+.sec-head h2{font-size:16.5px;font-weight:700}
+
+/* ── PROSE ── */
+.prose p{margin-bottom:12px;color:#2A3344;line-height:1.75}
+.prose ul,.prose ol{padding-left:20px;margin-bottom:12px}
+.prose li{margin-bottom:6px;color:#2A3344;line-height:1.65}
+.prose strong{font-weight:600;color:var(--text)}
+code{font-family:var(--mono);font-size:12px;background:var(--surface);color:var(--blue);border:1px solid var(--border);border-radius:4px;padding:1px 5px}
+
+/* ── CODE BOX ── */
+.code-box{background:#F0F4FF;border:1.5px solid #C5D3F8;border-radius:var(--rs);padding:14px 18px;font-family:var(--mono);font-size:13px;line-height:1.9;color:#1C2333;overflow-x:auto;white-space:pre;margin:10px 0}
+.code-label{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--blue);margin-bottom:4px;margin-top:14px}
+.sql-box{background:#E8F1FB;border:1.5px solid #90C0F0;border-radius:var(--rs);padding:14px 18px;font-family:var(--mono);font-size:13px;line-height:1.9;color:#1C2333;overflow-x:auto;white-space:pre;margin:10px 0}
+.sql-label{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--sql);margin-bottom:4px;margin-top:14px}
+.cmd-box{background:#1C2333;border-radius:var(--rs);padding:12px 18px;font-family:var(--mono);font-size:13px;line-height:1.8;color:#E2F5EE;overflow-x:auto;white-space:pre;margin:10px 0}
+.cmd-label{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;margin-top:14px}
+.cmd-box .prompt{color:#A5DCC5;user-select:none}
+.git-box{background:#FEF5EE;border:1.5px solid #F0C090;border-radius:var(--rs);padding:14px 18px;font-family:var(--mono);font-size:13px;line-height:1.9;color:#1C2333;overflow-x:auto;white-space:pre;margin:10px 0}
+.git-label{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--git);margin-bottom:4px;margin-top:14px}
+
+/* Dart keyword highlighting */
+.kw{color:#2550CC;font-weight:700}.str{color:#167A4A}.val{color:#C97D10;font-weight:600}.fn{color:#6C48D4}.cm{color:#8EA0C8;font-style:italic}.sq{color:#1565C0;font-weight:700}.gt{color:#D35400;font-weight:700}
+
+/* ── STEP CARD ── */
+.step-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:18px}
+.step-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:12px}
+.step-num{width:32px;height:32px;border-radius:50%;background:var(--blue-bg);color:var(--blue);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.step-head-title{font-size:14.5px;font-weight:700;margin-bottom:2px}
+.step-head-sub{font-size:12.5px;color:var(--muted)}
+.step-body{padding:16px 18px}
+
+/* ── EXPLANATION TABLE ── */
+.exp-table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13px}
+.exp-table th{background:var(--surface);padding:7px 12px;font-weight:700;text-align:left;border:1px solid var(--border);font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+.exp-table td{padding:8px 12px;border:1px solid var(--border);color:#2A3344;vertical-align:top;line-height:1.55}
+.exp-table td:first-child{font-family:var(--mono);font-size:12px;color:var(--blue);background:#FAFBFF;white-space:nowrap}
+.exp-table tr:nth-child(even) td{background:#FAFBFD}
+.exp-table tr:nth-child(even) td:first-child{background:#F5F7FF}
+
+/* ── CALLOUT ── */
+.callout{border-radius:var(--rs);padding:12px 15px;margin:14px 0;display:flex;gap:10px;font-size:13.5px;line-height:1.6}
+.callout .ico{font-size:16px;flex-shrink:0;margin-top:1px}
+.callout-body{flex:1;color:#2A3344}
+.callout-body strong{display:block;margin-bottom:2px;color:var(--text)}
+.callout.tip{background:var(--green-bg);border-left:3px solid var(--green)}
+.callout.info{background:var(--blue-bg);border-left:3px solid var(--blue)}
+.callout.warn{background:var(--amber-bg);border-left:3px solid var(--amber)}
+.callout.note{background:var(--purple-bg);border-left:3px solid var(--purple)}
+.callout.sql{background:var(--sql-bg);border-left:3px solid var(--sql)}
+.callout.git{background:var(--git-bg);border-left:3px solid var(--git)}
+
+/* ── ARCHITECTURE DIAGRAM ── */
+.arch{background:var(--bg);border:1.5px solid var(--border);border-radius:var(--r);padding:20px 24px;margin:14px 0}
+.arch-title{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--light);margin-bottom:14px;text-align:center}
+.arch-row{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.arch-box{background:var(--white);border:2px solid var(--border);border-radius:var(--rs);padding:10px 16px;text-align:center;min-width:110px}
+.arch-box .ab-icon{font-size:20px;margin-bottom:4px}
+.arch-box .ab-name{font-size:12px;font-weight:700;margin-bottom:1px}
+.arch-box .ab-sub{font-size:10.5px;color:var(--muted)}
+.arch-box.blue-box{border-color:var(--blue);background:var(--blue-pale)}
+.arch-box.green-box{border-color:var(--green);background:var(--green-bg)}
+.arch-box.sql-box-a{border-color:var(--sql);background:var(--sql-bg)}
+.arch-box.git-box-a{border-color:var(--git);background:var(--git-bg)}
+.arch-arrow{font-size:18px;color:var(--border);flex-shrink:0}
+
+/* ── FILE TREE ── */
+.file-tree{background:var(--bg);border:1.5px solid var(--border);border-radius:var(--rs);padding:14px 18px;font-family:var(--mono);font-size:13px;line-height:2;color:#2A3344;margin:10px 0}
+.ft-dir{color:var(--blue);font-weight:600}
+.ft-file{color:var(--muted)}
+.ft-new{color:var(--green);font-weight:600}
+.ft-comment{color:var(--light);font-style:italic}
+
+/* ── FLOW ── */
+.flow{display:flex;flex-direction:column;align-items:center;gap:0;margin:16px 0}
+.flow-step{display:flex;align-items:center;gap:14px;width:100%;max-width:520px}
+.flow-bubble{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+.flow-text{flex:1}
+.flow-title{font-size:13.5px;font-weight:700}
+.flow-desc{font-size:12.5px;color:var(--muted);line-height:1.45}
+.flow-connector{width:2px;height:16px;background:var(--border);margin-left:22px}
+
+/* ── CHIPS ROW ── */
+.chip-row{display:flex;flex-wrap:wrap;gap:7px;margin:10px 0}
+.chip{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:500;color:var(--muted)}
+.chip.blue{background:var(--blue-bg);color:var(--blue);border-color:#BED0F8}
+.chip.green{background:var(--green-bg);color:var(--green);border-color:#A5DCC5}
+.chip.git{background:var(--git-bg);color:var(--git);border-color:#F0C090}
+.chip.sql{background:var(--sql-bg);color:var(--sql);border-color:#98C4F0}
+
+/* ── PHONE MOCKUP ── */
+.phone-wrap{display:flex;justify-content:center;margin:20px 0}
+.phone{width:160px;border:3px solid #2A3344;border-radius:24px;overflow:hidden;background:#fff;box-shadow:0 8px 24px rgba(0,0,0,.12)}
+.phone-bar{background:#2A3344;height:22px;display:flex;align-items:center;justify-content:center}
+.phone-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.4)}
+.phone-screen{padding:12px 10px;min-height:180px;background:#FAFAFA}
+.phone-title{font-size:11px;font-weight:700;background:var(--blue);color:#fff;padding:6px 10px;margin:-12px -10px 10px;text-align:center}
+.phone-task{display:flex;align-items:center;gap:6px;padding:6px 4px;border-bottom:1px solid var(--border);font-size:9.5px;color:#2A3344}
+.phone-task .t-check{width:12px;height:12px;border-radius:2px;border:1.5px solid var(--blue);flex-shrink:0}
+.phone-task .t-check.done{background:var(--blue);display:flex;align-items:center;justify-content:center;color:#fff;font-size:7px}
+.phone-task.done-task .t-name{text-decoration:line-through;color:var(--light)}
+.phone-fab{width:24px;height:24px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;margin:8px auto 0;box-shadow:0 2px 6px rgba(48,96,240,.4)}
+
+/* ── NAV BUTTONS ── */
+.page-nav{display:flex;gap:10px;margin-top:36px;padding-top:16px;border-top:1px solid var(--border)}
+.btn{display:inline-flex;align-items:center;gap:6px;border-radius:var(--rs);padding:9px 18px;font-size:13.5px;font-weight:600;cursor:pointer;border:none;font-family:var(--font);transition:all .15s}
+.btn-primary{background:var(--blue);color:#fff}.btn-primary:hover{background:#2040C0}
+.btn-green{background:var(--green);color:#fff}.btn-green:hover{background:#118A58}
+.btn-ghost{background:var(--white);color:var(--muted);border:1.5px solid var(--border)}.btn-ghost:hover{background:var(--surface);color:var(--text)}
+.btn-ghost:disabled{opacity:.4;cursor:not-allowed}
+
+/* ── MILESTONE BADGE ── */
+.milestone{background:var(--green-bg);border:2px solid var(--green);border-radius:var(--r);padding:14px 18px;margin:20px 0;display:flex;gap:12px;align-items:flex-start}
+.milestone .ms-icon{font-size:22px;flex-shrink:0}
+.milestone .ms-body strong{font-size:14px;font-weight:700;color:var(--green);display:block;margin-bottom:3px}
+.milestone .ms-body p{font-size:13px;color:var(--muted);margin:0;line-height:1.55}
+
+hr{border:none;border-top:1px solid var(--border);margin:22px 0}
+
+/* ── MOBILE ── */
+.mob-btn{display:none;position:fixed;bottom:16px;right:16px;width:42px;height:42px;border-radius:50%;background:var(--blue);color:#fff;border:none;font-size:18px;box-shadow:0 4px 14px rgba(48,96,240,.4);cursor:pointer;z-index:200;align-items:center;justify-content:center}
+@media(max-width:800px){
+  .sidebar{transform:translateX(-100%);transition:transform .25s}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0}
+  .content{padding:20px 16px}
+  .topbar{padding:11px 16px}
+  .mob-btn{display:flex}
+  .arch-row{gap:6px}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- ── SIDEBAR ── -->
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <div class="sb-badge">📱 Full Project</div>
+    <h2>End-to-End Flutter App</h2>
+    <p>Dart · Flutter · MS SQL · Git</p>
+  </div>
+  <div class="prog-wrap">
+    <div class="prog-bar"><div class="prog-fill" id="progFill"></div></div>
+    <div class="prog-lbl" id="progLbl">0 of 10 steps visited</div>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-grp">Getting Started</div>
+    <div class="sb-item" onclick="go(0)" id="n0"><div class="sb-num">0</div>Project Overview</div>
+    <div class="sb-item" onclick="go(1)" id="n1"><div class="sb-num">1</div>Plan the App</div>
+
+    <div class="sb-grp">Database</div>
+    <div class="sb-item" onclick="go(2)" id="n2"><div class="sb-num">2</div>🗄️ Set Up MS SQL</div>
+
+    <div class="sb-grp">Git &amp; GitHub</div>
+    <div class="sb-item" onclick="go(3)" id="n3"><div class="sb-num">3</div>🐙 Git + GitHub Setup</div>
+
+    <div class="sb-grp">Flutter App</div>
+    <div class="sb-item" onclick="go(4)" id="n4"><div class="sb-num">4</div>Create Flutter Project</div>
+    <div class="sb-item" onclick="go(5)" id="n5"><div class="sb-num">5</div>Task Model &amp; Data Layer</div>
+    <div class="sb-item" onclick="go(6)" id="n6"><div class="sb-num">6</div>Connect to MS SQL</div>
+    <div class="sb-item" onclick="go(7)" id="n7"><div class="sb-num">7</div>Build the UI</div>
+    <div class="sb-item" onclick="go(8)" id="n8"><div class="sb-num">8</div>Add Task Screen</div>
+
+    <div class="sb-grp">Finish Up</div>
+    <div class="sb-item" onclick="go(9)" id="n9"><div class="sb-num">9</div>Test &amp; Push to GitHub</div>
+  </div>
+</aside>
+
+<!-- ── MAIN ── -->
+<main class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="topTitle"><strong>Project Overview</strong></div>
+    <div class="step-badge" id="stepBadge">Step 0 of 9</div>
+  </div>
+
+  <div class="content">
+    <div class="dots" id="dots"></div>
+
+    <!-- ════════════════════════════════
+         PAGE 0 — OVERVIEW
+    ════════════════════════════════ -->
+    <div class="page active" id="p0">
+      <div class="hero blue">
+        <div class="hero-tag" style="color:var(--blue)">📱 End-to-End Project</div>
+        <h1>Building a Task Manager App — From Idea to GitHub</h1>
+        <p class="hsub">A complete walkthrough: plan the app → set up MS SQL → create the Flutter project → connect them → build the UI → push everything to GitHub.</p>
+      </div>
+
+      <div class="chip-row">
+        <span class="chip blue">🐦 Flutter</span>
+        <span class="chip blue">💻 Dart</span>
+        <span class="chip sql">🗄️ MS SQL Server</span>
+        <span class="chip git">🐙 Git + GitHub</span>
+      </div>
+
+      <div class="sec-head"><div class="sec-icon ic-blue">🗺️</div><h2>What We Are Building</h2></div>
+      <div class="prose">
+        <p>We are building a <strong>Student Task Manager</strong> — a simple mobile app that lets a student create tasks, mark them as done, and delete them. The tasks are stored in a <strong>Microsoft SQL Server database</strong>.</p>
+      </div>
+
+      <div class="phone-wrap">
+        <div class="phone">
+          <div class="phone-bar"><div class="phone-dot"></div></div>
+          <div class="phone-screen">
+            <div class="phone-title">📋 My Tasks</div>
+            <div class="phone-task"><div class="t-check done">✓</div><div class="t-name" style="text-decoration:line-through;color:var(--light)">Math homework</div></div>
+            <div class="phone-task"><div class="t-check"></div><div class="t-name">Read Chapter 4</div></div>
+            <div class="phone-task"><div class="t-check"></div><div class="t-name">Submit project</div></div>
+            <div class="phone-fab">+</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec-head"><div class="sec-icon ic-blue">🏗️</div><h2>How It All Fits Together</h2></div>
+      <div class="arch">
+        <div class="arch-title">System Architecture</div>
+        <div class="arch-row">
+          <div class="arch-box blue-box"><div class="ab-icon">📱</div><div class="ab-name">Flutter App</div><div class="ab-sub">UI on Android / iOS</div></div>
+          <div class="arch-arrow">⟷</div>
+          <div class="arch-box blue-box"><div class="ab-icon">💻</div><div class="ab-name">Dart Code</div><div class="ab-sub">App logic &amp; SQL calls</div></div>
+          <div class="arch-arrow">⟷</div>
+          <div class="arch-box sql-box-a"><div class="ab-icon">🗄️</div><div class="ab-name">MS SQL Server</div><div class="ab-sub">Stores the tasks</div></div>
+        </div>
+        <div class="arch-row" style="margin-top:10px">
+          <div class="arch-box git-box-a"><div class="ab-icon">🐙</div><div class="ab-name">GitHub</div><div class="ab-sub">Stores &amp; shares code</div></div>
+        </div>
+      </div>
+
+      <div class="sec-head"><div class="sec-icon ic-green">📋</div><h2>What You Will Do — Step by Step</h2></div>
+      <div class="flow">
+        <div class="flow-step"><div class="flow-bubble" style="background:var(--blue-bg)">📋</div><div class="flow-text"><div class="flow-title">Step 1 — Plan the App</div><div class="flow-desc">Decide what the app does and what data it needs.</div></div></div>
+        <div class="flow-connector"></div>
+        <div class="flow-step"><div class="flow-bubble" style="background:var(--sql-bg)">🗄️</div><div class="flow-text"><div class="flow-title">Step 2 — Set Up MS SQL</div><div class="flow-desc">Create the database and the Tasks table.</div></div></div>
+        <div class="flow-connector"></div>
+        <div class="flow-step"><div class="flow-bubble" style="background:var(--git-bg)">🐙</div><div class="flow-text"><div class="flow-title">Step 3 — Git + GitHub</div><div class="flow-desc">Create a repository and connect your local project to it.</div></div></div>
+        <div class="flow-connector"></div>
+        <div class="flow-step"><div class="flow-bubble" style="background:var(--blue-bg)">🐦</div><div class="flow-text"><div class="flow-title">Step 4 — Create Flutter Project</div><div class="flow-desc">Set up the Flutter project and install dependencies.</div></div></div>
+        <div class="flow-connector"></div>
+        <div class="flow-step"><div class="flow-bubble" style="background:var(--purple-bg)">💻</div><div class="flow-text"><div class="flow-title">Steps 5–6 — Dart + SQL Connection</div><div class="flow-desc">Write the Task class and the database connection code.</div></div></div>
+        <div class="flow-connector"></div>
+        <div class="flow-step"><div class="flow-bubble" style="background:var(--green-bg)">📱</div><div class="flow-text"><div class="flow-title">Steps 7–8 — Build the UI</div><div class="flow-desc">Create the task list screen and the add task screen.</div></div></div>
+        <div class="flow-connector"></div>
+        <div class="flow-step"><div class="flow-bubble" style="background:var(--amber-bg)">🚀</div><div class="flow-text"><div class="flow-title">Step 9 — Test + Push to GitHub</div><div class="flow-desc">Run the app, test it, and push the finished code to GitHub.</div></div></div>
+      </div>
+
+      <div class="callout info">
+        <div class="ico">📌</div>
+        <div class="callout-body"><strong>Read this first, then follow along step by step.</strong> Each step builds on the previous one. Do not skip ahead — especially the database and Git steps.</div>
+      </div>
+
+      <div class="page-nav">
+        <button class="btn btn-ghost" disabled>← Back</button>
+        <button class="btn btn-primary" onclick="go(1)">Start: Plan the App →</button>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════
+         PAGE 1 — PLAN
+    ════════════════════════════════ -->
+    <div class="page" id="p1">
+      <div class="hero green">
+        <div class="hero-tag" style="color:var(--green)">📋 Step 1</div>
+        <h1>Plan the App</h1>
+        <p class="hsub">Before writing any code, decide what the app does and what data it needs. This is how real developers start.</p>
+      </div>
+
+      <div class="sec-head"><div class="sec-icon ic-green">🎯</div><h2>What the App Will Do</h2></div>
+      <div class="prose">
+        <p>Our app is intentionally simple. A student can:</p>
+        <ul>
+          <li>See a list of their tasks</li>
+          <li>Add a new task (name + priority)</li>
+          <li>Mark a task as done (checkbox)</li>
+          <li>Delete a task</li>
+        </ul>
+        <p>That's it. Nothing more. Simple is the goal — because understanding the <strong>complete process</strong> matters more than the number of features.</p>
+      </div>
+
+      <div class="sec-head"><div class="sec-icon ic-sql">🗄️</div><h2>What Data Do We Need?</h2></div>
+      <div class="prose"><p>Each task in our app needs to store:</p></div>
+      <table class="exp-table">
+        <tr><th>Field</th><th>Type</th><th>What It Stores</th></tr>
+        <tr><td>id</td><td>int (auto)</td><td>A unique number that identifies each task</td></tr>
+        <tr><td>taskName</td><td>nvarchar(200)</td><td>The text description of the task</td></tr>
+        <tr><td>priority</td><td>nvarchar(20)</td><td>"High", "Medium", or "Low"</td></tr>
+        <tr><td>isDone</td><td>bit</td><td>0 = not done, 1 = done</td></tr>
+      </table>
+
+      <div class="sec-head"><div class="sec-icon ic-blue">📱</div><h2>What Screens Do We Need?</h2></div>
+      <div style="display:flex;gap:20px;flex-wrap:wrap;justify-content:center;margin:14px 0">
+        <div>
+          <div style="text-align:center;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:8px">Screen 1 — Task List</div>
+          <div class="phone">
+            <div class="phone-bar"><div class="phone-dot"></div></div>
+            <div class="phone-screen">
+              <div class="phone-title">📋 My Tasks</div>
+              <div class="phone-task"><div class="t-check done">✓</div><div class="t-name" style="text-decoration:line-through;color:var(--light)">Math homework</div></div>
+              <div class="phone-task"><div class="t-check"></div><div class="t-name">Read Chapter 4</div></div>
+              <div class="phone-task"><div class="t-check"></div><div class="t-name">Submit project</div></div>
+              <div class="phone-fab">+</div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div style="text-align:center;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:8px">Screen 2 — Add Task</div>
+          <div class="phone">
+            <div class="phone-bar"><div class="phone-dot"></div></div>
+            <div class="phone-screen">
+              <div class="phone-title">➕ Add Task</div>
+              <div style="background:#fff;border:1px solid var(--border);border-radius:4px;padding:5px 7px;margin-bottom:7px;font-size:9px;color:var(--light)">Task name...</div>
+              <div style="background:#fff;border:1px solid var(--border);border-radius:4px;padding:5px 7px;margin-bottom:10px;font-size:9px;color:var(--light)">Priority: High ▾</div>
+              <div style="background:var(--blue);color:#fff;border-radius:4px;padding:5px;text-align:center;font-size:9px;font-weight:700">Save Task</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout tip">
+        <div class="ico">✏️</div>
+        <div class="callout-body"><strong>Planning before coding is always the right order.</strong> Real app projects spend days or weeks on planning. We're keeping ours simple on purpose — but the habit of planning first is one you should always keep.</div>
+      </div>
+
+      <div class="milestone">
+        <div class="ms-icon">✅</div>
+        <div class="ms-body"><strong>Milestone 1 Complete</strong><p>We know what the app does, what data it stores, and what screens it needs.</p></div>
+      </div>
+
+      <div class="page-nav">
+        <button class="btn btn-ghost" onclick="go(0)">← Overview</button>
+        <button class="btn btn-primary" onclick="go(2)">Step 2: Set Up MS SQL →</button>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════
+         PAGE 2 — MS SQL
+    ════════════════════════════════ -->
+    <div class="page" id="p2">
+      <div class="hero sql">
+        <div class="hero-tag" style="color:var(--sql)">🗄️ Step 2</div>
+        <h1>Set Up the MS SQL Database</h1>
+        <p class="hsub">Create the database and the Tasks table. This is where all task data will be permanently stored.</p>
+      </div>
+
+      <div class="callout sql">
+        <div class="ico">🗄️</div>
+        <div class="callout-body"><strong>What tool to use:</strong> Open <strong>SQL Server Management Studio (SSMS)</strong> and connect to your local SQL Server instance.</div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-head">
+          <div class="step-num">1</div>
+          <div><div class="step-head-title">Create the Database</div><div class="step-head-sub">Run this SQL to create a new database called TaskManagerDB</div></div>
+        </div>
+        <div class="step-body">
+          <div class="sql-label">📄 SQL — Create Database</div>
+          <div class="sql-box"><span class="sq">CREATE DATABASE</span> TaskManagerDB;
+
+<span class="sq">USE</span> TaskManagerDB;</div>
+          <table class="exp-table" style="margin-top:12px">
+            <tr><th>Statement</th><th>What It Does</th></tr>
+            <tr><td>CREATE DATABASE TaskManagerDB</td><td>Creates a brand new empty database with this name</td></tr>
+            <tr><td>USE TaskManagerDB</td><td>Switches to that database so the next statements run inside it</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-head">
+          <div class="step-num">2</div>
+          <div><div class="step-head-title">Create the Tasks Table</div><div class="step-head-sub">Run this SQL to create the table that stores all tasks</div></div>
+        </div>
+        <div class="step-body">
+          <div class="sql-label">📄 SQL — Create Table</div>
+          <div class="sql-box"><span class="sq">CREATE TABLE</span> Tasks (
+  id        <span class="sq">INT IDENTITY(1,1) PRIMARY KEY</span>,
+  taskName  <span class="sq">NVARCHAR</span>(200) <span class="sq">NOT NULL</span>,
+  priority  <span class="sq">NVARCHAR</span>(20)  <span class="sq">NOT NULL DEFAULT</span> <span class="str">'Medium'</span>,
+  isDone    <span class="sq">BIT</span>            <span class="sq">NOT NULL DEFAULT</span> 0
+);</div>
+          <table class="exp-table" style="margin-top:12px">
+            <tr><th>Part</th><th>What It Means</th></tr>
+            <tr><td>INT IDENTITY(1,1)</td><td>Automatically creates a new number for each row: 1, 2, 3 ...</td></tr>
+            <tr><td>PRIMARY KEY</td><td>Makes id the unique identifier — no two tasks can have the same id</td></tr>
+            <tr><td>NVARCHAR(200)</td><td>Text up to 200 characters long. N means it supports all languages.</td></tr>
+            <tr><td>NOT NULL</td><td>This field is required — you cannot leave it empty</td></tr>
+            <tr><td>DEFAULT 'Medium'</td><td>If no priority is provided, the database automatically uses "Medium"</td></tr>
+            <tr><td>BIT</td><td>Stores only 0 (false/not done) or 1 (true/done)</td></tr>
+            <tr><td>DEFAULT 0</td><td>Every new task starts as not done (0)</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-head">
+          <div class="step-num">3</div>
+          <div><div class="step-head-title">Add Some Test Data</div><div class="step-head-sub">Insert a few rows to verify the table works correctly</div></div>
+        </div>
+        <div class="step-body">
+          <div class="sql-label">📄 SQL — Insert Test Rows</div>
+          <div class="sql-box"><span class="sq">INSERT INTO</span> Tasks (taskName, priority, isDone)
+<span class="sq">VALUES</span>
+  (<span class="str">'Math homework'</span>,  <span class="str">'High'</span>,   0),
+  (<span class="str">'Read Chapter 4'</span>, <span class="str">'Medium'</span>, 0),
+  (<span class="str">'Submit project'</span>,  <span class="str">'High'</span>,   1);</div>
+          <div class="sql-label">📄 SQL — Check the Data</div>
+          <div class="sql-box"><span class="sq">SELECT</span> * <span class="sq">FROM</span> Tasks;</div>
+          <div class="callout tip" style="margin-top:10px">
+            <div class="ico">✅</div>
+            <div class="callout-body">You should see 3 rows appear in SSMS. If you do, the database is working correctly. Notice that <strong>id</strong> was automatically set to 1, 2, 3 — you never had to set it yourself.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-head">
+          <div class="step-num">4</div>
+          <div><div class="step-head-title">Note Your Connection Details</div><div class="step-head-sub">You will need these to connect Flutter to the database</div></div>
+        </div>
+        <div class="step-body">
+          <div class="prose"><p>Write down the following. You will need them in Step 6.</p></div>
+          <table class="exp-table">
+            <tr><th>Setting</th><th>Your Value</th><th>Where to Find It</th></tr>
+            <tr><td>Server name</td><td><code>localhost</code> or <code>.\SQLEXPRESS</code></td><td>Top of the SSMS connection dialog</td></tr>
+            <tr><td>Database name</td><td><code>TaskManagerDB</code></td><td>The database we just created</td></tr>
+            <tr><td>Username</td><td>your SQL login</td><td>SQL Server Authentication in SSMS</td></tr>
+            <tr><td>Password</td><td>your SQL password</td><td>SQL Server Authentication in SSMS</td></tr>
+          </table>
+          <div class="callout warn">
+            <div class="ico">⚠️</div>
+            <div class="callout-body"><strong>Windows Authentication users:</strong> If you log in to SSMS using Windows Authentication (no username/password), you will need to enable SQL Server Authentication in the server settings. Ask your instructor if you are unsure.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="milestone">
+        <div class="ms-icon">✅</div>
+        <div class="ms-body"><strong>Milestone 2 Complete</strong><p>TaskManagerDB exists, the Tasks table is created, and test data is inside it.</p></div>
+      </div>
+
+      <div class="page-nav">
+        <button class="btn btn-ghost" onclick="go(1)">← Plan</button>
+        <button class="btn btn-primary" onclick="go(3)">Step 3: Git + GitHub →</button>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════
+         PAGE 3 — GIT + GITHUB
+    ════════════════════════════════ -->
+    <div class="page" id="p3">
+      <div class="hero git">
+        <div class="hero-tag" style="color:var(--git)">🐙 Step 3</div>
+        <h1>Git and GitHub — Share Your Code</h1>
+        <p class="hsub">Set up version control so every change is tracked and your code can be shared from anywhere.</p>
+      </div>
+
+      <div class="sec-head"><div class="sec-icon ic-git">❓</div><h2>What Is Git? What Is GitHub?</h2></div>
+      <div class="arch">
+        <div class="arch-title">Git vs GitHub</div>
+        <div class="arch-row">
+          <div class="arch-box git-box-a"><div class="ab-icon">🐙</div><div class="ab-name">Git</div><div class="ab-sub">The tool on your computer that tracks changes to your code</div></div>
+          <div class="arch-arrow">≠</div>
+          <div class="arch-box git-box-a"><div class="ab-icon">🌐</div><div class="ab-name">GitHub</div><div class="ab-sub">A website that stores your code online so you can share it</div></div>
+        </div>
+      </div>
+      <div class="prose" style="margin-top:8px">
+        <p>Think of Git as your save history — every time you <strong>commit</strong>, Git takes a snapshot of your code. GitHub is like a cloud drive that stores all those snapshots online.</p>
+      </div>
+
+      <div class="step-card">
+        <div class="step-head">
+          <div class="step-num">1</div>
+          <div><div class="step-head-title">Install Git</div><div class="step-head-sub">If you have not installed Git yet</div></div>
+        </div>
+        <div class="step-body">
+          <div class="prose">
+            <p>Go to <strong>git-scm.com</strong> and download Git for your operating system. Install it with default settings.</p>
+            <p>Verify it worked by opening a terminal and running:</p>
+          </div>
+          <div class="cmd-label">💻 Terminal</div>
+          <div class="cmd-box"><span class="prompt">$ </span>git --version
+<span style="color:#A5DCC5">git version 2.44.0</span></div>
+          <div class="prose"><p>Any version number means Git is installed correctly.</p></div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-head">
+          <div class="step-num">2</div>
+          <div><div class="step-head-title">Configure Git with Your Name and Email</div><div class="step-head-sub">Git needs to know who is making each commit</div></div>
+        </div>
+        <div class="step-body">
+          <div class="cmd-label">💻 Terminal — run once on your computer</div>
+          <div class="cmd-box"><span class="prompt">$ </span>git config --global user.name "Your Name"
+<span class="prompt">$ </span>git config --global user.email "you@example.com"</div>
+          <table class="exp-table" style="margin-top:10px">
+            <tr><th>Command</th><th>What It Does</th></tr>
+            <tr><td>git config --global</td><td>Sets this setting for all Git projects on your computer</td></tr>
+            <tr><td>user.name</td><td>The name that appears on your commits</td></tr>
+            <tr><td>user.email</td><td>Your email — use the same one you sign up to GitHub with</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-head">
+          <div class="step-num">3</div>
+          <div><div class="step-head-title">Create a GitHub Repository</div><div class="step-head-sub">This is where your code will live online</div></div>
+        </div>
+        <div class="step-body">
+          <div class="prose">
+            <ol>
+              <li>Go to <strong>github.com</strong> and sign in (or create an account)</li>
+              <li>Click the green <strong>New</strong> button</li>
+              <li>Name it <code>task-manager-app</code></li>
+              <li>Set it to <strong>Public</strong> (so your instructor can see it)</li>
+              <li>Check <strong>Add a README file</strong></li>
+              <li>Click <strong>Create repository</strong></li>
+            </ol>
+          </div>
+          <div class="callout tip">
+            <div class="ico">📋</div>
+            <div class="callout-body">After creating it, GitHub will show you the repository URL. It looks like: <code>https://github.com/yourname/task-manager-app.git</code>. Copy it — you will need it in the next step.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-head">
+          <div class="step-num">4</div>
+          <div><div class="step-head-title">Clone the Repository to Your Computer</div><div class="step-head-sub">Download it so you can work on it locally</div></div>
+        </div>
+        <div class="step-body">
+          <div class="prose"><p>Open a terminal, navigate to where you want the project folder, and run:</p></div>
+          <div class="cmd-label">💻 Terminal</div>
+          <div class="cmd-box"><span class="prompt">$ </span>git clone https://github.com/yourname/task-manager-app.git
+<span class="prompt">$ </span>cd task-manager-app</div>
+          <table class="exp-table" style="margin-top:10px">
+            <tr><th>Command</th><th>What It Does</th></tr>
+            <tr><td>git clone [url]</td><td>Downloads a copy of the GitHub repository to your computer</td></tr>
+            <tr><td>cd task-manager-app</td><td>Moves your terminal inside the project folder</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="callout note">
+        <div class="ico">💡</div>
+        <div class="callout-body"><strong>The Git workflow you will use throughout this project:</strong><br>
+        Make changes to code → <code>git add .</code> → <code>git commit -m "message"</code> → <code>git push</code><br>
+        This is covered in detail in Step 9.</div>
+      </div>
+
+      <div class="milestone">
+        <div class="ms-icon">✅</div>
+        <div class="ms-body"><strong>Milestone 3 Complete</strong><p>Git is installed, GitHub repository is created, and it is cloned to your computer.</p></div>
+      </div>
+
+      <div class="page-nav">
+        <button class="btn btn-ghost" onclick="go(2)">← MS SQL</button>
+        <button class="btn btn-primary" onclick="go(4)">Step 4: Flutter Project →</button>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════
+         PAGE 4 — CREATE FLUTTER PROJECT
+    ════════════════════════════════ -->
+    <div class="page" id="p4">
+      <div class="hero blue">
+        <div class="hero-tag" style="color:var(--blue)">🐦 Step 4</div>
+        <h1>Create the Flutter Project</h1>
+        <p class="hsub">Set up the Flutter project inside the GitHub folder and add the dependency for connecting to SQL Server.</p>
+      </div>
+
+      <div class="step-card">
+        <div class="step-head">
+          <div class="step-num">1</div>
+          <div><div class="step-head-title">Create the Flutter App Inside Your Cloned Folder</div><div class="step-head-sub">Run this in the terminal from inside task-manager-app/</div></div>
+        </div>
+        <div class="step-body">
+          <div class="cmd-label">💻 Terminal</div>
+          <div class="cmd-box"><span class="prompt">$ </span>flutter create task_manager
+<span class="prompt">$ </span>cd task_manager</div>
+          <div class="callout info" style="margin-top:10px">
+            <div class="ico">📁</div>
+            <div class="callout-body">Flutter creates a folder called <code>task_manager</code> inside your Git repository. Your project folder structure will look like this:</div>
+          </div>
+          <div class="file-tree">
+<span class="ft-dir">task-manager-app/</span>           ← GitHub repository root
+  README.md
+  <span class="ft-dir">task_manager/</span>              ← Flutter project
+    <span class="ft-dir">lib/</span>
+      main.dart              ← Starting point of the app
+    <span class="ft-dir">android/</span>                   ← Android platform files
+    <span class="ft-dir">ios/</span>                       ← iOS platform files
+    pubspec.yaml             ← Dependencies (like package.json)
+  </div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-head">
+          <div class="step-num">2</div>
+          <div><div class="step-head-title">Add the SQL Server Package</div><div class="step-head-sub">Open pubspec.yaml and add one dependency</div></div>
+        </div>
+        <div class="step-body">
+          <div class="prose"><p>Open <code>task_manager/pubspec.yaml</code> in VS Code. Find the <code>dependencies:</code> section and add the <code>sqflite_sqlserver</code>... actually, for MS SQL Server from Flutter we use the <strong>dart_mssql</strong> package.</p></div>
+          <div class="code-label">📄 pubspec.yaml</div>
+          <div class="code-box">name: task_manager
+description: A student task manager app.
+
+dependencies:
+  flutter:
+    sdk: flutter
+  mssql_connection: ^0.0.5   <span class="cm">← add this line</span>
+
+flutter:
+  uses-material-design: <span class="val">true</span></div>
+          <div class="cmd-label">💻 Terminal — install the package</div>
+          <div class="cmd-box"><span class="prompt">$ </span>flutter pub get</div>
+          <table class="exp-table" style="margin-top:10px">
+            <tr><th>What</th><th>Why</th></tr>
+            <tr><td>mssql_connection</td><td>A Dart package that lets your app connect to a Microsoft SQL Server database</td></tr>
+            <tr><td>flutter pub get</td><td>Downloads and installs all packages listed in pubspec.yaml</td></tr>
+          </table>
+          <div class="callout warn">
+            <div class="ico">⚠️</div>
+            <div class="callout-body"><strong>Indentation matters in pubspec.yaml!</strong> YAML uses spaces (not tabs) for structure. Make sure <code>mssql_connection</code> is indented with exactly 2 spaces, on the same level as <code>flutter:</code>.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-head">
+          <div class="step-num">3</div>
+          <div><div class="step-head-title">Open the Project in VS Code</div></div>
+        </div>
+        <div class="step-body">
+          <div class="cmd-label">💻 Terminal</div>
+          <div class="cmd-box"><span class="prompt">$ </span>code .</div>
+          <div class="prose" style="margin-top:10px"><p>VS Code opens the Flutter project. You should see the <code>lib/</code> folder in the file explorer on the left. All our code will go inside <code>lib/</code>.</p></div>
+        </div>
+      </div>
+
+      <div class="milestone">
+        <div class="ms-icon">✅</div>
+        <div class="ms-body"><strong>Milestone 4 Complete</strong><p>Flutter project created, mssql_connection package installed, project open in VS Code.</p></div>
+      </div>
+
+      <div class="page-nav">
+        <button class="btn btn-ghost" onclick="go(3)">← Git + GitHub</button>
+        <button class="btn btn-primary" onclick="go(5)">Step 5: Task Model →</button>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════
+         PAGE 5 — TASK MODEL
+    ════════════════════════════════ -->
+    <div class="page" id="p5">
+      <div class="hero purple">
+        <div class="hero-tag" style="color:var(--purple)">💻 Step 5</div>
+        <h1>The Task Model — Dart Class</h1>
+        <p class="hsub">Create a Dart class that represents one task. This is the bridge between your database row and your Flutter UI.</p>
+      </div>
+
+      <div class="sec-head"><div class="sec-icon ic-purple">❓</div><h2>What Is a Model?</h2></div>
+      <div class="arch">
+        <div class="arch-title">Database Row → Dart Object → Flutter Widget</div>
+        <div class="arch-row">
+          <div class="arch-box sql-box-a"><div class="ab-icon">🗄️</div><div class="ab-name">Database Row</div><div class="ab-sub">id=1, name="Math", isDone=0</div></div>
+          <div class="arch-arrow">→</div>
+          <div class="arch-box blue-box"><div class="ab-icon">💻</div><div class="ab-name">Task Object</div><div class="ab-sub">Dart class with same fields</div></div>
+          <div class="arch-arrow">→</div>
+          <div class="arch-box green-box"><div class="ab-icon">📱</div><div class="ab-name">Flutter Widget</div><div class="ab-sub">Shown on screen</div></div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-head">
+          <div class="step-num">1</div>
+          <div><div class="step-head-title">Create the File</div><div class="step-head-sub">Create lib/models/task.dart</div></div>
+        </div>
+        <div class="step-body">
+          <div class="file-tree">
+<span class="ft-dir">lib/</span>
+  <span class="ft-dir">models/</span>           ← create this folder
+    <span class="ft-new">task.dart</span>         ← create this file
+  main.dart
+</div>
+          <div class="prose"><p>In VS Code, right-click the <code>lib</code> folder → New Folder → name it <code>models</code>. Then right-click <code>models</code> → New File → name it <code>task.dart</code>.</p></div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-head">
+          <div class="step-num">2</div>
+          <div><div class="step-head-title">Write the Task Class</div><div class="step-head-sub">lib/models/task.dart — the full file</div></div>
+        </div>
+        <div class="step-body">
+          <div class="code-label">📄 lib/models/task.dart</div>
+          <div class="code-box"><span class="cm">// A Task object represents one row from the database</span>
+<span class="kw">class</span> Task {
+  <span class="kw">int</span>    id;
+  <span class="kw">String</span> taskName;
+  <span class="kw">String</span> priority;
+  <span class="kw">bool</span>   isDone;
+
+  <span class="cm">// Constructor — creates a Task object</span>
+  Task({
+    <span class="kw">required this</span>.id,
+    <span class="kw">required this</span>.taskName,
+    <span class="kw">required this</span>.priority,
+    <span class="kw">required this</span>.isDone,
+  });
+
+  <span class="cm">// Factory — converts a database row (Map) into a Task object</span>
+  <span class="kw">factory</span> Task.fromMap(Map&lt;<span class="kw">String</span>, <span class="kw">dynamic</span>&gt; row) {
+    <span class="kw">return</span> Task(
+      id:       row[<span class="str">'id'</span>],
+      taskName: row[<span class="str">'taskName'</span>],
+      priority: row[<span class="str">'priority'</span>],
+      isDone:   row[<span class="str">'isDone'</span>] == <span class="val">1</span>,  <span class="cm">// BIT 0/1 → Dart bool</span>
+    );
+  }
+}</div>
+          <table class="exp-table" style="margin-top:12px">
+            <tr><th>Part</th><th>Plain English Meaning</th></tr>
+            <tr><td>class Task</td><td>Define a blueprint for what a Task looks like in code</td></tr>
+            <tr><td>int id;</td><td>Every task has an integer ID that matches the database row</td></tr>
+            <tr><td>required this.taskName</td><td>taskName is a required field — you must provide it when creating a Task</td></tr>
+            <tr><td>factory Task.fromMap()</td><td>A special way to create a Task from a Map (which is what the database returns)</td></tr>
+            <tr><td>row['isDone'] == 1</td><td>The database stores 0 or 1. We convert: 1 → true, 0 → false</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="milestone">
+        <div class="ms-icon">✅</div>
+        <div class="ms-body"><strong>Milestone 5 Complete</strong><p>The Task class exists. It mirrors the database table exactly and can convert a database row into a Dart object.</p></div>
+      </div>
+
+      <div class="page-nav">
+        <button class="btn btn-ghost" onclick="go(4)">← Flutter Project</button>
+        <button class="btn btn-primary" onclick="go(6)">Step 6: Connect to SQL →</button>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════
+         PAGE 6 — SQL CONNECTION
+    ════════════════════════════════ -->
+    <div class="page" id="p6">
+      <div class="hero sql">
+        <div class="hero-tag" style="color:var(--sql)">🔌 Step 6</div>
+        <h1>Connect Flutter to MS SQL Server</h1>
+        <p class="hsub">Write the database service — the code that opens a connection and runs SQL queries.</p>
+      </div>
+
+      <div class="step-card">
+        <div class="step-head">
+          <div class="step-num">1</div>
+          <div><div class="step-head-title">Create the Database Service File</div><div class="step-head-sub">Create lib/services/database_service.dart</div></div>
+        </div>
+        <div class="step-body">
+          <div class="file-tree">
+<span class="ft-dir">lib/</span>
+  <span class="ft-dir">models/</span>
+    task.dart
+  <span class="ft-dir">services/</span>         ← create this folder
+    <span class="ft-new">database_service.dart</span>  ← create this file
+  main.dart
+</div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-head">
+          <div class="step-num">2</div>
+          <div><div class="step-head-title">Write the Database Service</div><div class="step-head-sub">lib/services/database_service.dart — the full file</div></div>
+        </div>
+        <div class="step-body">
+          <div class="code-label">📄 lib/services/database_service.dart</div>
+          <div class="code-box"><span class="kw">import</span> <span class="str">'package:mssql_connection/mssql_connection.dart'</span>;
+<span class="kw">import</span> <span class="str">'../models/task.dart'</span>;
+
+<span class="kw">class</span> DatabaseService {
+  <span class="cm">// ── CONNECTION SETTINGS ─────────────────────────</span>
+  <span class="kw">static const</span> <span class="kw">String</span> _server   = <span class="str">'localhost'</span>;
+  <span class="kw">static const</span> <span class="kw">String</span> _database = <span class="str">'TaskManagerDB'</span>;
+  <span class="kw">static const</span> <span class="kw">String</span> _username = <span class="str">'your_sql_username'</span>;
+  <span class="kw">static const</span> <span class="kw">String</span> _password = <span class="str">'your_sql_password'</span>;
+
+  <span class="kw">late</span> MssqlConnection _connection;
+
+  <span class="cm">// ── OPEN CONNECTION ─────────────────────────────</span>
+  <span class="kw">Future</span>&lt;<span class="kw">void</span>&gt; <span class="fn">connect</span>() <span class="kw">async</span> {
+    _connection = MssqlConnection.getInstance();
+    <span class="kw">await</span> _connection.<span class="fn">connect</span>(
+      ip:       _server,
+      port:     <span class="str">'1433'</span>,
+      databaseName: _database,
+      username: _username,
+      password: _password,
+    );
+  }
+
+  <span class="cm">// ── GET ALL TASKS ────────────────────────────────</span>
+  <span class="kw">Future</span>&lt;List&lt;Task&gt;&gt; <span class="fn">getTasks</span>() <span class="kw">async</span> {
+    <span class="kw">final</span> result = <span class="kw">await</span> _connection.<span class="fn">getData</span>(
+      <span class="str">'SELECT id, taskName, priority, isDone FROM Tasks'</span>
+    );
+    <span class="kw">return</span> result.<span class="fn">map</span>((row) =&gt; Task.<span class="fn">fromMap</span>(row)).<span class="fn">toList</span>();
+  }
+
+  <span class="cm">// ── ADD A TASK ───────────────────────────────────</span>
+  <span class="kw">Future</span>&lt;<span class="kw">void</span>&gt; <span class="fn">addTask</span>(<span class="kw">String</span> name, <span class="kw">String</span> priority) <span class="kw">async</span> {
+    <span class="kw">await</span> _connection.<span class="fn">writeData</span>(
+      <span class="str">"INSERT INTO Tasks (taskName, priority) VALUES ('</span><span class="val">$name</span><span class="str">', '</span><span class="val">$priority</span><span class="str">')"</span>
+    );
+  }
+
+  <span class="cm">// ── MARK TASK DONE ───────────────────────────────</span>
+  <span class="kw">Future</span>&lt;<span class="kw">void</span>&gt; <span class="fn">markDone</span>(<span class="kw">int</span> id, <span class="kw">bool</span> isDone) <span class="kw">async</span> {
+    <span class="kw">int</span> bit = isDone ? <span class="val">1</span> : <span class="val">0</span>;
+    <span class="kw">await</span> _connection.<span class="fn">writeData</span>(
+      <span class="str">'UPDATE Tasks SET isDone = </span><span class="val">$bit</span><span class="str"> WHERE id = </span><span class="val">$id</span><span class="str">'</span>
+    );
+  }
+
+  <span class="cm">// ── DELETE A TASK ────────────────────────────────</span>
+  <span class="kw">Future</span>&lt;<span class="kw">void</span>&gt; <span class="fn">deleteTask</span>(<span class="kw">int</span> id) <span class="kw">async</span> {
+    <span class="kw">await</span> _connection.<span class="fn">writeData</span>(
+      <span class="str">'DELETE FROM Tasks WHERE id = </span><span class="val">$id</span><span class="str">'</span>
+    );
+  }
+}</div>
+          <table class="exp-table" style="margin-top:12px">
+            <tr><th>Function</th><th>What SQL It Runs</th><th>Returns</th></tr>
+            <tr><td>connect()</td><td>Opens the connection to SQL Server</td><td>Nothing — just connects</td></tr>
+            <tr><td>getTasks()</td><td>SELECT all rows from Tasks</td><td>A List of Task objects</td></tr>
+            <tr><td>addTask()</td><td>INSERT a new row into Tasks</td><td>Nothing — just inserts</td></tr>
+            <tr><td>markDone()</td><td>UPDATE isDone for a specific row</td><td>Nothing — just updates</td></tr>
+            <tr><td>deleteTask()</td><td>DELETE a row by its id</td><td>Nothing — just deletes</td></tr>
+          </table>
+          <div class="callout warn">
+            <div class="ico">⚠️</div>
+            <div class="callout-body"><strong>Replace the connection settings!</strong> Change <code>'your_sql_username'</code> and <code>'your_sql_password'</code> to your actual SQL Server credentials from Step 2.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout note">
+        <div class="ico">🔍</div>
+        <div class="callout-body"><strong>What is async / await?</strong><br>
+        Connecting to a database takes a moment. <code>async</code> tells Dart "this function might take time." <code>await</code> tells Dart "wait here until the database responds before continuing." Without these, the app would try to use data before it had arrived.</div>
+      </div>
+
+      <div class="milestone">
+        <div class="ms-icon">✅</div>
+        <div class="ms-body"><strong>Milestone 6 Complete</strong><p>DatabaseService is written. It can connect to MS SQL, read tasks, add tasks, update tasks, and delete tasks.</p></div>
+      </div>
+
+      <div class="page-nav">
+        <button class="btn btn-ghost" onclick="go(5)">← Task Model</button>
+        <button class="btn btn-primary" onclick="go(7)">Step 7: Build the UI →</button>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════
+         PAGE 7 — HOME SCREEN UI
+    ════════════════════════════════ -->
+    <div class="page" id="p7">
+      <div class="hero green">
+        <div class="hero-tag" style="color:var(--green)">📱 Step 7</div>
+        <h1>Build the Task List Screen</h1>
+        <p class="hsub">The main screen shows all tasks from the database. Checkboxes update the database. A delete button removes tasks.</p>
+      </div>
+
+      <div class="step-card">
+        <div class="step-head">
+          <div class="step-num">1</div>
+          <div><div class="step-head-title">Create the Home Screen File</div></div>
+        </div>
+        <div class="step-body">
+          <div class="file-tree">
+<span class="ft-dir">lib/</span>
+  <span class="ft-dir">models/</span>
+    task.dart
+  <span class="ft-dir">services/</span>
+    database_service.dart
+  <span class="ft-dir">screens/</span>           ← create this folder
+    <span class="ft-new">home_screen.dart</span>    ← create this file
+    <span class="ft-new">add_task_screen.dart</span> ← will create in Step 8
+  main.dart
+</div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-head">
+          <div class="step-num">2</div>
+          <div><div class="step-head-title">Write the Home Screen</div><div class="step-head-sub">lib/screens/home_screen.dart</div></div>
+        </div>
+        <div class="step-body">
+          <div class="code-label">📄 lib/screens/home_screen.dart</div>
+          <div class="code-box"><span class="kw">import</span> <span class="str">'package:flutter/material.dart'</span>;
+<span class="kw">import</span> <span class="str">'../models/task.dart'</span>;
+<span class="kw">import</span> <span class="str">'../services/database_service.dart'</span>;
+<span class="kw">import</span> <span class="str">'add_task_screen.dart'</span>;
+
+<span class="kw">class</span> HomeScreen <span class="kw">extends</span> StatefulWidget {
+  <span class="kw">const</span> HomeScreen({<span class="kw">super</span>.key});
+
+  @override
+  State&lt;HomeScreen&gt; <span class="fn">createState</span>() =&gt; _HomeScreenState();
+}
+
+<span class="kw">class</span> _HomeScreenState <span class="kw">extends</span> State&lt;HomeScreen&gt; {
+  <span class="kw">final</span> DatabaseService _db = DatabaseService();
+  List&lt;Task&gt; _tasks = [];
+  <span class="kw">bool</span> _loading = <span class="val">true</span>;
+
+  @override
+  <span class="kw">void</span> <span class="fn">initState</span>() {
+    <span class="kw">super</span>.<span class="fn">initState</span>();
+    <span class="fn">_loadTasks</span>();
+  }
+
+  <span class="cm">// ── Load all tasks from the database ─────────────</span>
+  <span class="kw">Future</span>&lt;<span class="kw">void</span>&gt; <span class="fn">_loadTasks</span>() <span class="kw">async</span> {
+    <span class="kw">await</span> _db.<span class="fn">connect</span>();
+    <span class="kw">final</span> tasks = <span class="kw">await</span> _db.<span class="fn">getTasks</span>();
+    <span class="fn">setState</span>(() {
+      _tasks = tasks;
+      _loading = <span class="val">false</span>;
+    });
+  }
+
+  <span class="cm">// ── Toggle a task done/undone ─────────────────────</span>
+  <span class="kw">Future</span>&lt;<span class="kw">void</span>&gt; <span class="fn">_toggleDone</span>(Task task) <span class="kw">async</span> {
+    <span class="kw">await</span> _db.<span class="fn">markDone</span>(task.id, !task.isDone);
+    <span class="fn">_loadTasks</span>();
+  }
+
+  <span class="cm">// ── Delete a task ─────────────────────────────────</span>
+  <span class="kw">Future</span>&lt;<span class="kw">void</span>&gt; <span class="fn">_deleteTask</span>(<span class="kw">int</span> id) <span class="kw">async</span> {
+    <span class="kw">await</span> _db.<span class="fn">deleteTask</span>(id);
+    <span class="fn">_loadTasks</span>();
+  }
+
+  @override
+  Widget <span class="fn">build</span>(BuildContext context) {
+    <span class="kw">return</span> Scaffold(
+      appBar: AppBar(
+        title: <span class="kw">const</span> Text(<span class="str">'📋 My Tasks'</span>),
+        backgroundColor: Colors.indigo,
+        foregroundColor: Colors.white,
+      ),
+
+      <span class="cm">// ── Show spinner while loading ─────────────────</span>
+      body: _loading
+          ? <span class="kw">const</span> Center(child: CircularProgressIndicator())
+          : _tasks.isEmpty
+              ? <span class="kw">const</span> Center(child: Text(<span class="str">'No tasks yet. Tap + to add one.'</span>))
+              : ListView.<span class="fn">builder</span>(
+                  itemCount: _tasks.length,
+                  itemBuilder: (context, index) {
+                    <span class="kw">final</span> task = _tasks[index];
+                    <span class="kw">return</span> ListTile(
+                      <span class="cm">// ── Checkbox on the left ────────────────</span>
+                      leading: Checkbox(
+                        value: task.isDone,
+                        onChanged: (_) =&gt; <span class="fn">_toggleDone</span>(task),
+                      ),
+                      <span class="cm">// ── Task name (strike-through if done) ──</span>
+                      title: Text(
+                        task.taskName,
+                        style: TextStyle(
+                          decoration: task.isDone
+                              ? TextDecoration.lineThrough
+                              : TextDecoration.none,
+                          color: task.isDone ? Colors.grey : Colors.black,
+                        ),
+                      ),
+                      subtitle: Text(task.priority),
+                      <span class="cm">// ── Delete button on the right ──────────</span>
+                      trailing: IconButton(
+                        icon: <span class="kw">const</span> Icon(Icons.delete, color: Colors.red),
+                        onPressed: () =&gt; <span class="fn">_deleteTask</span>(task.id),
+                      ),
+                    );
+                  },
+                ),
+
+      <span class="cm">// ── Floating + button → navigates to Add screen ──</span>
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.indigo,
+        child: <span class="kw">const</span> Icon(Icons.add, color: Colors.white),
+        onPressed: () <span class="kw">async</span> {
+          <span class="kw">await</span> Navigator.<span class="fn">push</span>(
+            context,
+            MaterialPageRoute(builder: (_) =&gt; <span class="kw">const</span> AddTaskScreen()),
+          );
+          <span class="fn">_loadTasks</span>(); <span class="cm">// refresh after returning</span>
+        },
+      ),
+    );
+  }
+}</div>
+          <table class="exp-table" style="margin-top:12px">
+            <tr><th>Widget / Part</th><th>Plain English Meaning</th></tr>
+            <tr><td>StatefulWidget</td><td>This screen can change — it holds a list of tasks that updates</td></tr>
+            <tr><td>initState()</td><td>Runs once when the screen opens — loads tasks from database</td></tr>
+            <tr><td>setState()</td><td>Tells Flutter "the data changed — please redraw the screen"</td></tr>
+            <tr><td>CircularProgressIndicator</td><td>The spinning wheel shown while data is loading</td></tr>
+            <tr><td>ListView.builder</td><td>Creates a scrollable list — one item per task</td></tr>
+            <tr><td>ListTile</td><td>One row in the list: checkbox + task name + delete button</td></tr>
+            <tr><td>TextDecoration.lineThrough</td><td>Strikes through the text when a task is done</td></tr>
+            <tr><td>FloatingActionButton</td><td>The blue + button in the bottom right corner</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="milestone">
+        <div class="ms-icon">✅</div>
+        <div class="ms-body"><strong>Milestone 7 Complete</strong><p>The home screen loads tasks from MS SQL, shows them in a list, and handles checkbox toggling and deletion.</p></div>
+      </div>
+
+      <div class="page-nav">
+        <button class="btn btn-ghost" onclick="go(6)">← SQL Connection</button>
+        <button class="btn btn-primary" onclick="go(8)">Step 8: Add Task Screen →</button>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════
+         PAGE 8 — ADD TASK SCREEN
+    ════════════════════════════════ -->
+    <div class="page" id="p8">
+      <div class="hero amber">
+        <div class="hero-tag" style="color:var(--amber)">➕ Step 8</div>
+        <h1>Add Task Screen + Wire Up main.dart</h1>
+        <p class="hsub">Build the form screen where students type a new task, then connect everything together in main.dart.</p>
+      </div>
+
+      <div class="step-card">
+        <div class="step-head">
+          <div class="step-num">1</div>
+          <div><div class="step-head-title">Write the Add Task Screen</div><div class="step-head-sub">lib/screens/add_task_screen.dart</div></div>
+        </div>
+        <div class="step-body">
+          <div class="code-label">📄 lib/screens/add_task_screen.dart</div>
+          <div class="code-box"><span class="kw">import</span> <span class="str">'package:flutter/material.dart'</span>;
+<span class="kw">import</span> <span class="str">'../services/database_service.dart'</span>;
+
+<span class="kw">class</span> AddTaskScreen <span class="kw">extends</span> StatefulWidget {
+  <span class="kw">const</span> AddTaskScreen({<span class="kw">super</span>.key});
+
+  @override
+  State&lt;AddTaskScreen&gt; <span class="fn">createState</span>() =&gt; _AddTaskScreenState();
+}
+
+<span class="kw">class</span> _AddTaskScreenState <span class="kw">extends</span> State&lt;AddTaskScreen&gt; {
+  <span class="kw">final</span> DatabaseService _db       = DatabaseService();
+  <span class="kw">final</span> TextEditingController _ctrl = TextEditingController();
+  <span class="kw">String</span> _priority = <span class="str">'Medium'</span>;
+  <span class="kw">bool</span>   _saving   = <span class="val">false</span>;
+
+  <span class="cm">// ── Save the task to the database ─────────────────</span>
+  <span class="kw">Future</span>&lt;<span class="kw">void</span>&gt; <span class="fn">_save</span>() <span class="kw">async</span> {
+    <span class="kw">if</span> (_ctrl.text.<span class="fn">isEmpty</span>) <span class="kw">return</span>; <span class="cm">// do nothing if blank</span>
+
+    <span class="fn">setState</span>(() =&gt; _saving = <span class="val">true</span>);
+    <span class="kw">await</span> _db.<span class="fn">connect</span>();
+    <span class="kw">await</span> _db.<span class="fn">addTask</span>(_ctrl.text, _priority);
+
+    <span class="kw">if</span> (mounted) Navigator.<span class="fn">pop</span>(context); <span class="cm">// go back to home screen</span>
+  }
+
+  @override
+  Widget <span class="fn">build</span>(BuildContext context) {
+    <span class="kw">return</span> Scaffold(
+      appBar: AppBar(
+        title: <span class="kw">const</span> Text(<span class="str">'➕ Add Task'</span>),
+        backgroundColor: Colors.indigo,
+        foregroundColor: Colors.white,
+      ),
+      body: Padding(
+        padding: <span class="kw">const</span> EdgeInsets.<span class="fn">all</span>(<span class="val">20</span>),
+        child: Column(
+          children: [
+            <span class="cm">// ── Task name input ──────────────────────</span>
+            TextField(
+              controller: _ctrl,
+              decoration: <span class="kw">const</span> InputDecoration(
+                labelText:  <span class="str">'Task name'</span>,
+                hintText:   <span class="str">'e.g. Read Chapter 4'</span>,
+                border:     OutlineInputBorder(),
+              ),
+            ),
+            <span class="kw">const</span> SizedBox(height: <span class="val">16</span>),
+
+            <span class="cm">// ── Priority dropdown ─────────────────────</span>
+            DropdownButtonFormField&lt;<span class="kw">String</span>&gt;(
+              value: _priority,
+              decoration: <span class="kw">const</span> InputDecoration(
+                labelText: <span class="str">'Priority'</span>,
+                border: OutlineInputBorder(),
+              ),
+              items: [<span class="str">'High'</span>, <span class="str">'Medium'</span>, <span class="str">'Low'</span>]
+                  .<span class="fn">map</span>((p) =&gt; DropdownMenuItem(value: p, child: Text(p)))
+                  .<span class="fn">toList</span>(),
+              onChanged: (v) =&gt; <span class="fn">setState</span>(() =&gt; _priority = v!),
+            ),
+            <span class="kw">const</span> SizedBox(height: <span class="val">24</span>),
+
+            <span class="cm">// ── Save button ──────────────────────────</span>
+            SizedBox(
+              width: <span class="kw">double</span>.infinity,
+              child: ElevatedButton(
+                style: ElevatedButton.<span class="fn">styleFrom</span>(
+                  backgroundColor: Colors.indigo,
+                  foregroundColor: Colors.white,
+                  padding: <span class="kw">const</span> EdgeInsets.<span class="fn">symmetric</span>(vertical: <span class="val">14</span>),
+                ),
+                onPressed: _saving ? <span class="val">null</span> : <span class="fn">_save</span>,
+                child: _saving
+                    ? <span class="kw">const</span> CircularProgressIndicator(color: Colors.white)
+                    : <span class="kw">const</span> Text(<span class="str">'Save Task'</span>, style: TextStyle(fontSize: <span class="val">16</span>)),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}</div>
+          <table class="exp-table" style="margin-top:12px">
+            <tr><th>Widget / Part</th><th>Plain English Meaning</th></tr>
+            <tr><td>TextEditingController</td><td>Attached to the TextField so we can read what the user typed</td></tr>
+            <tr><td>_ctrl.text.isEmpty</td><td>Check if the user left the field blank — if so, do nothing</td></tr>
+            <tr><td>DropdownButtonFormField</td><td>A dropdown menu — the user picks High, Medium, or Low</td></tr>
+            <tr><td>Navigator.pop(context)</td><td>Goes back to the previous screen (the home screen)</td></tr>
+            <tr><td>if (mounted)</td><td>Safety check — make sure the widget is still on screen before navigating</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-head">
+          <div class="step-num">2</div>
+          <div><div class="step-head-title">Update main.dart</div><div class="step-head-sub">Replace the default Flutter demo code</div></div>
+        </div>
+        <div class="step-body">
+          <div class="code-label">📄 lib/main.dart — full file</div>
+          <div class="code-box"><span class="kw">import</span> <span class="str">'package:flutter/material.dart'</span>;
+<span class="kw">import</span> <span class="str">'screens/home_screen.dart'</span>;
+
+<span class="kw">void</span> <span class="fn">main</span>() {
+  <span class="fn">runApp</span>(<span class="kw">const</span> TaskManagerApp());
+}
+
+<span class="kw">class</span> TaskManagerApp <span class="kw">extends</span> StatelessWidget {
+  <span class="kw">const</span> TaskManagerApp({<span class="kw">super</span>.key});
+
+  @override
+  Widget <span class="fn">build</span>(BuildContext context) {
+    <span class="kw">return</span> MaterialApp(
+      title:          <span class="str">'Task Manager'</span>,
+      debugShowCheckedModeBanner: <span class="val">false</span>,
+      theme: ThemeData(
+        colorScheme: ColorScheme.<span class="fn">fromSeed</span>(seedColor: Colors.indigo),
+        useMaterial3: <span class="val">true</span>,
+      ),
+      home: <span class="kw">const</span> HomeScreen(),
+    );
+  }
+}</div>
+          <table class="exp-table" style="margin-top:12px">
+            <tr><th>Part</th><th>Plain English Meaning</th></tr>
+            <tr><td>runApp()</td><td>Starts the Flutter app — everything begins here</td></tr>
+            <tr><td>MaterialApp</td><td>The top-level widget that sets up the theme and routing</td></tr>
+            <tr><td>debugShowCheckedModeBanner: false</td><td>Removes the red DEBUG banner in the top right corner</td></tr>
+            <tr><td>home: const HomeScreen()</td><td>The very first screen shown when the app opens</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="sec-head"><div class="sec-icon ic-blue">📁</div><h2>Complete Project File Structure</h2></div>
+      <div class="file-tree">
+<span class="ft-dir">task-manager-app/</span>             ← GitHub repository root
+  README.md
+  <span class="ft-dir">task_manager/</span>
+    pubspec.yaml              ← mssql_connection package listed here
+    <span class="ft-dir">lib/</span>
+      <span class="ft-new">main.dart</span>               ← entry point
+      <span class="ft-dir">models/</span>
+        <span class="ft-new">task.dart</span>             ← Task data class
+      <span class="ft-dir">services/</span>
+        <span class="ft-new">database_service.dart</span>  ← all SQL queries
+      <span class="ft-dir">screens/</span>
+        <span class="ft-new">home_screen.dart</span>       ← task list UI
+        <span class="ft-new">add_task_screen.dart</span>   ← add task form
+    <span class="ft-dir">android/</span>
+    <span class="ft-dir">ios/</span>
+</div>
+
+      <div class="milestone">
+        <div class="ms-icon">✅</div>
+        <div class="ms-body"><strong>Milestone 8 Complete</strong><p>All files are written. The app is fully connected: Flutter UI ↔ Dart code ↔ MS SQL Server.</p></div>
+      </div>
+
+      <div class="page-nav">
+        <button class="btn btn-ghost" onclick="go(7)">← Home Screen</button>
+        <button class="btn btn-primary" onclick="go(9)">Step 9: Test + GitHub →</button>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════
+         PAGE 9 — TEST + GIT PUSH
+    ════════════════════════════════ -->
+    <div class="page" id="p9">
+      <div class="hero git">
+        <div class="hero-tag" style="color:var(--git)">🚀 Step 9</div>
+        <h1>Test the App and Push to GitHub</h1>
+        <p class="hsub">Run the app on an emulator or device. Test every feature. Then commit and push your finished code to GitHub.</p>
+      </div>
+
+      <div class="step-card">
+        <div class="step-head">
+          <div class="step-num">1</div>
+          <div><div class="step-head-title">Run the App</div><div class="step-head-sub">Start an emulator or connect a physical Android device</div></div>
+        </div>
+        <div class="step-body">
+          <div class="cmd-label">💻 Terminal — from inside task_manager/</div>
+          <div class="cmd-box"><span class="prompt">$ </span>flutter run</div>
+          <div class="prose" style="margin-top:10px"><p>The app will compile and launch. The first time takes a little longer. You should see the task list screen with the 3 test tasks you inserted in Step 2.</p></div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-head">
+          <div class="step-num">2</div>
+          <div><div class="step-head-title">Test Every Feature</div><div class="step-head-sub">Work through this checklist — do not skip it</div></div>
+        </div>
+        <div class="step-body">
+          <table class="exp-table">
+            <tr><th>Test</th><th>What to Do</th><th>Expected Result</th></tr>
+            <tr><td>Task list loads</td><td>Open the app</td><td>3 tasks appear (from Step 2 test data)</td></tr>
+            <tr><td>Mark done</td><td>Tap a checkbox</td><td>Task gets strikethrough; database updates</td></tr>
+            <tr><td>Unmark done</td><td>Tap the checkbox again</td><td>Strikethrough disappears</td></tr>
+            <tr><td>Add a task</td><td>Tap +, type a name, pick priority, save</td><td>New task appears in the list</td></tr>
+            <tr><td>Empty name</td><td>Tap + and tap Save without typing</td><td>Nothing happens (name is required)</td></tr>
+            <tr><td>Delete a task</td><td>Tap the red trash icon</td><td>Task disappears from the list</td></tr>
+            <tr><td>Data persists</td><td>Close and reopen the app</td><td>All tasks still there (stored in SQL)</td></tr>
+          </table>
+          <div class="callout tip">
+            <div class="ico">🐛</div>
+            <div class="callout-body"><strong>If the app crashes on start:</strong> Check that your SQL Server is running and that the server name, username, and password in <code>database_service.dart</code> are correct. Check the VS Code terminal for the error message — it usually tells you exactly what is wrong.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-head">
+          <div class="step-num">3</div>
+          <div><div class="step-head-title">Create a .gitignore File</div><div class="step-head-sub">Tell Git to ignore files that should not be pushed to GitHub</div></div>
+        </div>
+        <div class="step-body">
+          <div class="prose"><p>In the root of <code>task-manager-app/</code>, create a file called <code>.gitignore</code> and paste this:</p></div>
+          <div class="git-label">📄 .gitignore</div>
+          <div class="git-box"># Flutter / Dart build output
+build/
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+*.g.dart
+
+# VS Code settings
+.vscode/
+
+# Environment / secrets
+*.env
+
+# macOS
+.DS_Store</div>
+          <div class="callout warn">
+            <div class="ico">🔒</div>
+            <div class="callout-body"><strong>Never push passwords to GitHub.</strong> In a real project, you would store your database credentials in an environment file (.env) and list it in .gitignore. For this learning project, your credentials are in database_service.dart — that is acceptable here but not in production.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-head">
+          <div class="step-num">4</div>
+          <div><div class="step-head-title">Commit and Push to GitHub</div><div class="step-head-sub">Save your code to the GitHub repository</div></div>
+        </div>
+        <div class="step-body">
+          <div class="cmd-label">💻 Terminal — from task-manager-app/ root</div>
+          <div class="cmd-box"><span class="prompt">$ </span>git add .
+<span class="prompt">$ </span>git commit -m "Complete task manager app with MS SQL connection"
+<span class="prompt">$ </span>git push origin main</div>
+          <table class="exp-table" style="margin-top:12px">
+            <tr><th>Command</th><th>What It Does</th></tr>
+            <tr><td>git add .</td><td>Stages ALL changed files — the . means "everything in this folder"</td></tr>
+            <tr><td>git commit -m "..."</td><td>Takes a snapshot of the staged files with a descriptive message</td></tr>
+            <tr><td>git push origin main</td><td>Uploads your committed changes to the GitHub repository</td></tr>
+          </table>
+          <div class="callout tip">
+            <div class="ico">✅</div>
+            <div class="callout-body">After pushing, go to <strong>github.com/yourname/task-manager-app</strong> in a browser. You should see all your files there. Your instructor can now see your code.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-head">
+          <div class="step-num">5</div>
+          <div><div class="step-head-title">The Everyday Git Workflow</div><div class="step-head-sub">Use this whenever you make changes going forward</div></div>
+        </div>
+        <div class="step-body">
+          <div class="prose"><p>Every time you make meaningful changes — add a feature, fix a bug, write new code — run these three commands:</p></div>
+          <div class="cmd-label">💻 The 3-command Git workflow</div>
+          <div class="cmd-box"><span class="prompt">$ </span>git add .                          <span style="color:#6A7F8C"># stage all changes</span>
+<span class="prompt">$ </span>git commit -m "Describe what you did"  <span style="color:#6A7F8C"># save a snapshot</span>
+<span class="prompt">$ </span>git push                              <span style="color:#6A7F8C"># send to GitHub</span></div>
+          <div class="prose" style="margin-top:12px"><p>Good commit messages make it easy to understand the history of your project. Use short, clear descriptions:</p></div>
+          <table class="exp-table">
+            <tr><th>❌ Vague message</th><th>✅ Clear message</th></tr>
+            <tr><td>fixed stuff</td><td>Fix: checkbox no longer crashes when task has no priority</td></tr>
+            <tr><td>update</td><td>Add: delete confirmation dialog before removing a task</td></tr>
+            <tr><td>changes</td><td>Style: update app bar color to match university theme</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="milestone">
+        <div class="ms-icon">🎉</div>
+        <div class="ms-body"><strong>Project Complete!</strong><p>Your Task Manager app is built, tested, and published on GitHub. It connects Flutter → Dart → MS SQL Server and every piece of the process has been covered end to end.</p></div>
+      </div>
+
+      <!-- FINAL SUMMARY -->
+      <div class="sec-head"><div class="sec-icon ic-blue">🗺️</div><h2>What You Built — The Complete Picture</h2></div>
+      <div class="arch">
+        <div class="arch-title">Complete System — All Pieces Connected</div>
+        <div class="arch-row">
+          <div class="arch-box git-box-a"><div class="ab-icon">🐙</div><div class="ab-name">GitHub</div><div class="ab-sub">Code stored &amp; shared online</div></div>
+          <div class="arch-arrow">↓</div>
+          <div class="arch-box blue-box"><div class="ab-icon">🐦</div><div class="ab-name">Flutter</div><div class="ab-sub">Task list + Add task screens</div></div>
+        </div>
+        <div class="arch-row" style="margin-top:8px">
+          <div class="arch-box blue-box"><div class="ab-icon">💻</div><div class="ab-name">Dart</div><div class="ab-sub">Task model + DatabaseService</div></div>
+          <div class="arch-arrow">⟷</div>
+          <div class="arch-box sql-box-a"><div class="ab-icon">🗄️</div><div class="ab-name">MS SQL Server</div><div class="ab-sub">Tasks table — persistent data</div></div>
+        </div>
+      </div>
+
+      <div class="sec-head"><div class="sec-icon ic-green">📋</div><h2>Skills You Used in This Project</h2></div>
+      <div class="chip-row">
+        <span class="chip blue">Dart classes</span>
+        <span class="chip blue">async / await</span>
+        <span class="chip blue">StatefulWidget</span>
+        <span class="chip blue">setState()</span>
+        <span class="chip blue">ListView.builder</span>
+        <span class="chip blue">Navigation</span>
+        <span class="chip sql">CREATE TABLE</span>
+        <span class="chip sql">SELECT</span>
+        <span class="chip sql">INSERT</span>
+        <span class="chip sql">UPDATE</span>
+        <span class="chip sql">DELETE</span>
+        <span class="chip git">git init</span>
+        <span class="chip git">git add</span>
+        <span class="chip git">git commit</span>
+        <span class="chip git">git push</span>
+        <span class="chip git">GitHub repository</span>
+      </div>
+
+      <div class="page-nav">
+        <button class="btn btn-ghost" onclick="go(8)">← Add Task Screen</button>
+        <button class="btn btn-green" onclick="go(0)">🔄 Review from Start</button>
+      </div>
+    </div>
+
+  </div><!-- content -->
+</main>
+</div>
+
+<button class="mob-btn" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+
+<script>
+const titles = [
+  'Project Overview',
+  'Step 1 — Plan the App',
+  'Step 2 — Set Up MS SQL',
+  'Step 3 — Git + GitHub',
+  'Step 4 — Create Flutter Project',
+  'Step 5 — Task Model',
+  'Step 6 — Connect to MS SQL',
+  'Step 7 — Build the UI',
+  'Step 8 — Add Task Screen',
+  'Step 9 — Test + Push to GitHub',
+];
+const total = titles.length;
+let visited = new Set();
+
+function go(idx) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('p' + idx).classList.add('active');
+  const nav = document.getElementById('n' + idx);
+  if (nav) { nav.classList.add('active'); }
+  visited.add(idx);
+  for (let i of visited) {
+    const n = document.getElementById('n' + i);
+    if (n && i !== idx) n.classList.add('done');
+  }
+  document.getElementById('topTitle').innerHTML = '<strong>' + titles[idx] + '</strong>';
+  document.getElementById('stepBadge').textContent = 'Step ' + idx + ' of ' + (total - 1);
+  const pct = Math.round(visited.size / total * 100);
+  document.getElementById('progFill').style.width = pct + '%';
+  document.getElementById('progLbl').textContent = visited.size + ' of ' + total + ' steps visited';
+  const dotsEl = document.getElementById('dots');
+  dotsEl.innerHTML = titles.map((t, i) => {
+    let c = 'dot';
+    if (i === idx) c += ' active';
+    else if (visited.has(i)) c += ' done';
+    return '<div class="' + c + '" onclick="go(' + i + ')" title="' + t + '"></div>';
+  }).join('');
+  window.scrollTo(0, 0);
+  if (window.innerWidth < 800) document.getElementById('sidebar').classList.remove('open');
+}
+
+go(0);
+</script>
+</body>
+</html>
