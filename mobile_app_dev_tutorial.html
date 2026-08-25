@@ -1,0 +1,2144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mobile Application Development with Dart &amp; Flutter</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F7F8FC;--white:#FFFFFF;--border:#E2E8F0;--surface:#EFF2F9;
+  --text:#18202E;--muted:#546070;--light:#8D99AE;
+  --blue:#3060F0;--blue-bg:#EBF0FE;--blue-pale:#F4F6FF;
+  --green:#15A065;--green-bg:#E2F5EE;
+  --amber:#C87C10;--amber-bg:#FEF2E1;
+  --purple:#6840D0;--purple-bg:#EFE9FC;
+  --red:#CE2E2E;--red-bg:#FDEAEA;
+  --teal:#0891A8;--teal-bg:#DFF4F7;
+  --font:'DM Sans',sans-serif;--display:'DM Serif Display',Georgia,serif;--mono:'DM Mono',monospace;
+  --r:12px;--rs:8px;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:15.5px;line-height:1.78}
+
+/* ── SHELL ── */
+.shell{display:flex;min-height:100vh}
+
+/* ── SIDEBAR ── */
+.sidebar{width:272px;flex-shrink:0;background:var(--white);border-right:1px solid var(--border);position:fixed;top:0;left:0;height:100vh;overflow-y:auto;z-index:100}
+.sb-head{padding:22px 18px 14px;border-bottom:1px solid var(--border)}
+.sb-logo{font-family:var(--display);font-size:15px;color:var(--blue);margin-bottom:4px}
+.sb-head h2{font-size:12.5px;font-weight:700;line-height:1.4;color:var(--text)}
+.sb-head p{font-size:11px;color:var(--muted);margin-top:2px}
+.prog-wrap{padding:10px 18px 0}
+.prog-bar{height:3px;background:var(--surface);border-radius:2px;overflow:hidden}
+.prog-fill{height:100%;background:var(--blue);border-radius:2px;transition:width .4s;width:0%}
+.prog-lbl{font-size:11px;color:var(--light);margin-top:4px;padding-bottom:8px}
+.sb-nav{padding:4px 0 32px}
+.sb-grp{font-size:9.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--light);padding:13px 18px 4px}
+.sb-item{display:flex;align-items:center;gap:8px;padding:7px 18px;font-size:12px;font-weight:500;color:var(--muted);cursor:pointer;border-left:3px solid transparent;transition:all .15s;line-height:1.35}
+.sb-item:hover{background:var(--surface);color:var(--text)}
+.sb-item.active{background:var(--blue-bg);color:var(--blue);border-left-color:var(--blue)}
+.sb-item.done .sb-num{background:var(--green);color:#fff}
+.sb-num{width:18px;height:18px;border-radius:50%;background:var(--surface);color:var(--light);font-size:8px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
+.sb-item.active .sb-num{background:var(--blue);color:#fff}
+
+/* ── MAIN ── */
+.main{margin-left:272px;flex:1}
+.topbar{background:var(--white);border-bottom:1px solid var(--border);padding:11px 44px;display:flex;align-items:center;position:sticky;top:0;z-index:50}
+.topbar-title{font-size:12.5px;color:var(--muted);flex:1}
+.topbar-title strong{color:var(--text);font-weight:700}
+.ch-badge{background:var(--blue-bg);color:var(--blue);border-radius:20px;padding:3px 11px;font-size:11px;font-weight:700}
+
+/* ── CONTENT ── */
+.content{padding:44px 48px;max-width:860px}
+.page{display:none}
+.page.active{display:block}
+
+/* ── DOTS ── */
+.dots{display:flex;gap:4px;margin-bottom:22px;flex-wrap:wrap}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--border);cursor:pointer;transition:background .2s}
+.dot.active{background:var(--blue)}
+.dot.done{background:var(--green)}
+
+/* ── CHAPTER HERO ── */
+.ch-hero{border-radius:var(--r);padding:32px 36px;margin-bottom:32px;position:relative;overflow:hidden}
+.ch-hero::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.ch-hero.blue  {background:linear-gradient(135deg,#EBF0FE,#E2EBFD);border:1px solid #BED0F8}
+.ch-hero.blue::before{background:var(--blue)}
+.ch-hero.green {background:linear-gradient(135deg,#E2F5EE,#D5F0E5);border:1px solid #A5DCC5}
+.ch-hero.green::before{background:var(--green)}
+.ch-hero.purple{background:linear-gradient(135deg,#EFE9FC,#E7DFF8);border:1px solid #C0ACF0}
+.ch-hero.purple::before{background:var(--purple)}
+.ch-hero.amber {background:linear-gradient(135deg,#FEF2E1,#FDEACF);border:1px solid #EFC99A}
+.ch-hero.amber::before{background:var(--amber)}
+.ch-hero.teal  {background:linear-gradient(135deg,#DFF4F7,#D0EFF3);border:1px solid #9CD2DA}
+.ch-hero.teal::before{background:var(--teal)}
+.ch-hero.red   {background:linear-gradient(135deg,#FDEAEA,#FBDFDF);border:1px solid #F0B4B4}
+.ch-hero.red::before{background:var(--red)}
+.ch-eyebrow{font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;margin-bottom:10px;opacity:.7}
+.ch-hero h1{font-family:var(--display);font-size:26px;font-weight:400;line-height:1.2;margin-bottom:10px}
+.ch-hero .ch-sub{font-size:14px;color:var(--muted);max-width:560px;line-height:1.65}
+
+/* ── TYPOGRAPHY ── */
+.prose h2{font-family:var(--display);font-size:21px;font-weight:400;margin:36px 0 12px;color:var(--text);line-height:1.2}
+.prose h3{font-size:15px;font-weight:700;margin:26px 0 8px;color:var(--text)}
+.prose h4{font-size:13.5px;font-weight:700;margin:20px 0 6px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.prose p{margin-bottom:13px;color:#2A3344;line-height:1.78}
+.prose ul,.prose ol{padding-left:22px;margin-bottom:13px}
+.prose li{margin-bottom:6px;color:#2A3344;line-height:1.65}
+.prose strong{font-weight:600;color:var(--text)}
+.prose em{font-style:italic;color:var(--muted)}
+.prose hr{border:none;border-top:1px solid var(--border);margin:28px 0}
+code{font-family:var(--mono);font-size:11.5px;background:var(--surface);color:var(--blue);border:1px solid var(--border);border-radius:4px;padding:1px 5px}
+
+/* ── SECTION HEAD ── */
+.sec-head{display:flex;align-items:center;gap:10px;margin:32px 0 14px}
+.sec-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.ic-blue{background:var(--blue-bg)}.ic-green{background:var(--green-bg)}.ic-amber{background:var(--amber-bg)}.ic-purple{background:var(--purple-bg)}.ic-teal{background:var(--teal-bg)}.ic-red{background:var(--red-bg)}
+.sec-head h2{font-family:var(--display);font-size:20px;font-weight:400}
+
+/* ── CODE BOXES ── */
+.code-box{background:#F0F4FF;border:1.5px solid #C5D3F8;border-radius:var(--rs);padding:16px 18px;font-family:var(--mono);font-size:13px;line-height:1.9;color:#1C2333;overflow-x:auto;white-space:pre;margin:12px 0}
+.code-lbl{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--blue);margin-bottom:5px;margin-top:16px}
+.sql-box{background:#E8F1FB;border:1.5px solid #90C0F0;border-radius:var(--rs);padding:16px 18px;font-family:var(--mono);font-size:13px;line-height:1.9;color:#1C2333;overflow-x:auto;white-space:pre;margin:12px 0}
+.sql-lbl{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#1565C0;margin-bottom:5px;margin-top:16px}
+.cmd-box{background:#1C2333;border-radius:var(--rs);padding:14px 18px;font-family:var(--mono);font-size:13px;line-height:1.8;color:#E2F5EE;overflow-x:auto;white-space:pre;margin:12px 0}
+.cmd-lbl{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;margin-top:16px}
+.cmd-box .p{color:#A5DCC5;user-select:none}
+
+/* Dart syntax tokens */
+.kw{color:#2550CC;font-weight:700}.str{color:#167A4A}.val{color:#C97D10;font-weight:600}.fn{color:#6C48D4}.cm{color:#8EA0C8;font-style:italic}.sq{color:#1565C0;font-weight:700}
+
+/* ── TABLES ── */
+.tbl{width:100%;border-collapse:collapse;margin:14px 0;font-size:13.5px}
+.tbl th{background:var(--surface);padding:9px 13px;font-weight:700;text-align:left;border:1px solid var(--border);font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+.tbl td{padding:9px 13px;border:1px solid var(--border);color:#2A3344;vertical-align:top;line-height:1.55}
+.tbl tr:nth-child(even) td{background:#FAFBFD}
+
+/* ── EXPLANATION TABLE ── */
+.exp-tbl{width:100%;border-collapse:collapse;margin:12px 0;font-size:13px}
+.exp-tbl th{background:var(--surface);padding:7px 12px;font-weight:700;text-align:left;border:1px solid var(--border);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+.exp-tbl td{padding:8px 12px;border:1px solid var(--border);color:#2A3344;vertical-align:top;line-height:1.55}
+.exp-tbl td:first-child{font-family:var(--mono);font-size:11.5px;color:var(--blue);background:#FAFBFF;white-space:nowrap}
+.exp-tbl tr:nth-child(even) td{background:#FAFBFD}
+.exp-tbl tr:nth-child(even) td:first-child{background:#F5F7FF}
+
+/* ── CALLOUT ── */
+.callout{border-radius:var(--rs);padding:13px 16px;margin:14px 0;display:flex;gap:11px;font-size:13.5px;line-height:1.65}
+.callout .ico{font-size:16px;flex-shrink:0;margin-top:2px}
+.callout-body{flex:1;color:#2A3344}
+.callout-body strong{display:block;margin-bottom:3px;color:var(--text)}
+.callout.info{background:var(--blue-bg);border-left:3px solid var(--blue)}
+.callout.tip{background:var(--green-bg);border-left:3px solid var(--green)}
+.callout.warn{background:var(--amber-bg);border-left:3px solid var(--amber)}
+.callout.note{background:var(--purple-bg);border-left:3px solid var(--purple)}
+.callout.err{background:var(--red-bg);border-left:3px solid var(--red)}
+
+/* ── DEFINITION CARD ── */
+.def-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);padding:16px 18px;margin:14px 0}
+.def-term{font-size:14px;font-weight:700;color:var(--blue);margin-bottom:4px}
+.def-simple{font-size:13px;color:var(--green);font-style:italic;margin-bottom:6px}
+.def-tech{font-size:13.5px;color:#2A3344;line-height:1.6}
+
+/* ── FLOW DIAGRAM ── */
+.flow-diag{background:var(--blue-pale);border:1.5px solid #C5D3F8;border-radius:var(--rs);padding:18px 22px;margin:14px 0;font-family:var(--mono);font-size:13px;line-height:2.1;color:var(--muted);white-space:pre;overflow-x:auto}
+
+/* ── ARCH BOXES ── */
+.arch{background:var(--bg);border:1.5px solid var(--border);border-radius:var(--r);padding:20px 24px;margin:14px 0}
+.arch-title{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--light);margin-bottom:16px;text-align:center}
+.arch-row{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.arch-box{background:var(--white);border:1.5px solid var(--border);border-radius:var(--rs);padding:10px 16px;text-align:center;min-width:100px}
+.arch-box .ab-icon{font-size:19px;margin-bottom:3px}
+.arch-box .ab-name{font-size:12px;font-weight:700;margin-bottom:1px}
+.arch-box .ab-sub{font-size:10.5px;color:var(--muted);line-height:1.4}
+.arch-box.b{border-color:var(--blue);background:var(--blue-pale)}
+.arch-box.g{border-color:var(--green);background:var(--green-bg)}
+.arch-box.p{border-color:var(--purple);background:var(--purple-bg)}
+.arch-box.a{border-color:var(--amber);background:var(--amber-bg)}
+.arch-box.t{border-color:var(--teal);background:var(--teal-bg)}
+.arch-arrow{font-size:20px;color:var(--border);flex-shrink:0}
+
+/* ── FILE TREE ── */
+.file-tree{background:var(--bg);border:1.5px solid var(--border);border-radius:var(--rs);padding:14px 18px;font-family:var(--mono);font-size:13px;line-height:2;color:#2A3344;margin:12px 0}
+.ft-dir{color:var(--blue);font-weight:600}
+.ft-imp{color:var(--green);font-weight:600}
+.ft-cm{color:var(--light);font-style:italic}
+
+/* ── MISCONCEPTION ── */
+.misconception{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:14px}
+.mis-head{background:var(--red-bg);padding:10px 16px;display:flex;align-items:center;gap:8px;border-bottom:1px solid #F0B4B4}
+.mis-wrong{font-size:13px;font-weight:700;color:var(--red)}
+.mis-body{padding:12px 16px;font-size:13.5px;color:#2A3344;line-height:1.6}
+.mis-correct{background:var(--green-bg);border-top:1px solid #A5DCC5;padding:10px 16px;font-size:13px;color:#0D5535;font-weight:600}
+
+/* ── QUIZ ── */
+.quiz-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);padding:18px 20px;margin-bottom:12px}
+.quiz-num{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--light);margin-bottom:6px}
+.quiz-q{font-size:14px;font-weight:600;margin-bottom:10px;line-height:1.5}
+.quiz-opts{display:flex;flex-direction:column;gap:5px}
+.opt-item{display:flex;align-items:flex-start;gap:9px;padding:8px 12px;border:1.5px solid var(--border);border-radius:var(--rs);font-size:13.5px;background:var(--white);line-height:1.5;cursor:pointer;transition:all .15s}
+.opt-item:hover{border-color:var(--blue);background:var(--blue-bg)}
+.opt-let{width:22px;height:22px;border-radius:50%;background:var(--surface);color:var(--muted);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.opt-item.correct{border-color:var(--green);background:var(--green-bg)}
+.opt-item.correct .opt-let{background:var(--green);color:#fff}
+.opt-item.wrong{border-color:var(--red);background:var(--red-bg)}
+.opt-item.wrong .opt-let{background:var(--red);color:#fff}
+.qfb{margin-top:8px;padding:8px 12px;border-radius:var(--rs);font-size:13px;display:none;line-height:1.55}
+.qfb.show{display:block}
+.qfb.ok{background:var(--green-bg);color:#0D5535;border:1px solid #A5DCC5}
+.qfb.no{background:var(--red-bg);color:#7A1A1A;border:1px solid #F0B4B4}
+
+/* ── PRACTICE EXERCISE ── */
+.exercise{background:var(--white);border:1.5px solid var(--purple);border-radius:var(--r);overflow:hidden;margin-bottom:16px}
+.ex-head{background:var(--purple-bg);padding:10px 16px;display:flex;align-items:center;gap:9px;border-bottom:1px solid #C0ACF0}
+.ex-level{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.ex-body{padding:14px 16px;font-size:13.5px;color:#2A3344;line-height:1.65}
+
+/* ── GLOSSARY ── */
+.gloss-item{display:flex;gap:14px;padding:12px 0;border-bottom:1px solid var(--border)}
+.gloss-item:last-child{border-bottom:none}
+.gloss-term{font-family:var(--mono);font-size:12.5px;font-weight:600;color:var(--blue);min-width:130px;flex-shrink:0;padding-top:1px}
+.gloss-def{font-size:13.5px;color:#2A3344;line-height:1.55}
+
+/* ── CHIP ROW ── */
+.chip-row{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.chip{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:500;color:var(--muted)}
+.chip.blue{background:var(--blue-bg);color:var(--blue);border-color:#BED0F8}
+.chip.green{background:var(--green-bg);color:var(--green);border-color:#A5DCC5}
+
+/* ── MILESTONE ── */
+.milestone{background:var(--green-bg);border:2px solid var(--green);border-radius:var(--r);padding:14px 18px;margin:22px 0;display:flex;gap:12px}
+.ms-icon{font-size:22px;flex-shrink:0}
+.ms-body strong{font-size:14px;font-weight:700;color:var(--green);display:block;margin-bottom:3px}
+.ms-body p{font-size:13px;color:var(--muted);margin:0;line-height:1.55}
+
+/* ── NAV ── */
+.page-nav{display:flex;gap:10px;margin-top:40px;padding-top:18px;border-top:1px solid var(--border)}
+.btn{display:inline-flex;align-items:center;gap:6px;border-radius:var(--rs);padding:10px 20px;font-size:13.5px;font-weight:600;cursor:pointer;border:none;font-family:var(--font);transition:all .15s}
+.btn-primary{background:var(--blue);color:#fff}.btn-primary:hover{background:#2040C0}
+.btn-green{background:var(--green);color:#fff}.btn-green:hover{background:#118A58}
+.btn-ghost{background:var(--white);color:var(--muted);border:1.5px solid var(--border)}.btn-ghost:hover{background:var(--surface);color:var(--text)}
+.btn-ghost:disabled{opacity:.4;cursor:not-allowed}
+
+hr{border:none;border-top:1px solid var(--border);margin:26px 0}
+
+/* Mobile */
+.mob-btn{display:none;position:fixed;bottom:16px;right:16px;width:42px;height:42px;border-radius:50%;background:var(--blue);color:#fff;border:none;font-size:18px;box-shadow:0 4px 14px rgba(48,96,240,.4);cursor:pointer;z-index:200;align-items:center;justify-content:center}
+@media(max-width:860px){
+  .sidebar{transform:translateX(-100%);transition:transform .25s}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0}
+  .content{padding:20px 16px}
+  .topbar{padding:11px 16px}
+  .mob-btn{display:flex}
+  .arch-row{gap:6px}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- ── SIDEBAR ── -->
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <div class="sb-logo">Mobile App Dev</div>
+    <h2>Dart · Flutter · SQL · Git</h2>
+    <p>A complete learning resource</p>
+  </div>
+  <div class="prog-wrap">
+    <div class="prog-bar"><div class="prog-fill" id="progFill"></div></div>
+    <div class="prog-lbl" id="progLbl">0 of 14 chapters visited</div>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-grp">Foundations</div>
+    <div class="sb-item" onclick="go(0)" id="n0"><div class="sb-num">0</div>How to Use This Tutorial</div>
+    <div class="sb-item" onclick="go(1)" id="n1"><div class="sb-num">1</div>Mobile App Development</div>
+    <div class="sb-item" onclick="go(2)" id="n2"><div class="sb-num">2</div>The Big Picture</div>
+
+    <div class="sb-grp">Dart Language</div>
+    <div class="sb-item" onclick="go(3)" id="n3"><div class="sb-num">3</div>Dart Fundamentals</div>
+    <div class="sb-item" onclick="go(4)" id="n4"><div class="sb-num">4</div>Dart: OOP &amp; Collections</div>
+    <div class="sb-item" onclick="go(5)" id="n5"><div class="sb-num">5</div>Async Programming</div>
+
+    <div class="sb-grp">Flutter &amp; UI</div>
+    <div class="sb-item" onclick="go(6)" id="n6"><div class="sb-num">6</div>Flutter &amp; Widgets</div>
+    <div class="sb-item" onclick="go(7)" id="n7"><div class="sb-num">7</div>Layout &amp; State</div>
+    <div class="sb-item" onclick="go(8)" id="n8"><div class="sb-num">8</div>Navigation &amp; Forms</div>
+
+    <div class="sb-grp">Data &amp; Databases</div>
+    <div class="sb-item" onclick="go(9)" id="n9"><div class="sb-num">9</div>Data Models</div>
+    <div class="sb-item" onclick="go(10)" id="n10"><div class="sb-num">10</div>Databases &amp; SQL</div>
+    <div class="sb-item" onclick="go(11)" id="n11"><div class="sb-num">11</div>Connecting to a Database</div>
+
+    <div class="sb-grp">Professional Practice</div>
+    <div class="sb-item" onclick="go(12)" id="n12"><div class="sb-num">12</div>Git &amp; GitHub</div>
+    <div class="sb-item" onclick="go(13)" id="n13"><div class="sb-num">13</div>Testing, Debugging &amp; Security</div>
+    <div class="sb-item" onclick="go(14)" id="n14"><div class="sb-num">14</div>Mental Model &amp; Glossary</div>
+  </div>
+</aside>
+
+<!-- ── MAIN ── -->
+<main class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="topTitle"><strong>How to Use This Tutorial</strong></div>
+    <div class="ch-badge" id="chBadge">Chapter 0</div>
+  </div>
+  <div class="content">
+    <div class="dots" id="dots"></div>
+
+<!-- ══════════════════════════════════════════════
+     PAGE 0 — HOW TO USE
+══════════════════════════════════════════════ -->
+<div class="page active" id="p0">
+  <div class="ch-hero blue">
+    <div class="ch-eyebrow">📖 Welcome</div>
+    <h1>Mobile Application Development<br>with Dart &amp; Flutter</h1>
+    <p class="ch-sub">A complete, standalone learning resource that takes you from no experience to a working understanding of mobile apps, Dart, Flutter, SQL databases, and professional version control.</p>
+  </div>
+
+  <div class="prose">
+    <h2>Who This Tutorial Is For</h2>
+    <p>This tutorial assumes no prior knowledge of mobile development, Flutter, or Dart. It is written for:</p>
+    <ul>
+      <li>Complete beginners who have never built any kind of application</li>
+      <li>Programmers in Python, Java, JavaScript, or C++ who want to understand mobile development</li>
+      <li>Database users who understand SQL but are new to app development</li>
+      <li>Anyone who wants a mental model of how a real mobile app works end to end</li>
+    </ul>
+
+    <h2>How the Tutorial Is Organised</h2>
+    <p>Every chapter builds on the previous one. Concepts are always introduced <em>before</em> they are used in code. Here is the journey:</p>
+  </div>
+
+  <div class="arch">
+    <div class="arch-title">Learning Journey</div>
+    <div class="arch-row">
+      <div class="arch-box b"><div class="ab-icon">📱</div><div class="ab-name">Ch 1–2</div><div class="ab-sub">What &amp; Why</div></div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-box p"><div class="ab-icon">💻</div><div class="ab-name">Ch 3–5</div><div class="ab-sub">Dart Language</div></div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-box g"><div class="ab-icon">🐦</div><div class="ab-name">Ch 6–8</div><div class="ab-sub">Flutter &amp; UI</div></div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-box a"><div class="ab-icon">🗄️</div><div class="ab-name">Ch 9–11</div><div class="ab-sub">Data &amp; SQL</div></div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-box t"><div class="ab-icon">🐙</div><div class="ab-name">Ch 12–14</div><div class="ab-sub">Pro Practice</div></div>
+    </div>
+  </div>
+
+  <div class="callout tip">
+    <div class="ico">💡</div>
+    <div class="callout-body"><strong>How to read this tutorial:</strong> Do not skip chapters. Each one uses concepts from the chapter before it. Read the explanations before looking at the code. Try the exercises at the end of each chapter before moving on.</div>
+  </div>
+
+  <div class="page-nav">
+    <button class="btn btn-ghost" disabled>← Back</button>
+    <button class="btn btn-primary" onclick="go(1)">Chapter 1: What Is a Mobile App? →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     PAGE 1 — MOBILE APP DEVELOPMENT
+══════════════════════════════════════════════ -->
+<div class="page" id="p1">
+  <div class="ch-hero green">
+    <div class="ch-eyebrow">Chapter 1</div>
+    <h1>Mobile Application Development</h1>
+    <p class="ch-sub">What a mobile application is, how it differs from websites and desktop software, and why cross-platform development exists.</p>
+  </div>
+
+  <div class="prose">
+    <h2>What Is a Mobile Application?</h2>
+    <p>A <strong>mobile application</strong> (or mobile app) is a software program designed to run on a smartphone or tablet. Unlike a website, a mobile app is installed directly on the device. Unlike desktop software, it is built for a small touch screen and must work with limited battery and memory.</p>
+
+    <p>You use mobile apps constantly. A banking app, a weather app, a food delivery app, a to-do list — all of these are mobile applications. What makes them different from the web pages you visit in a browser?</p>
+
+    <ul>
+      <li><strong>Installed on the device.</strong> An app lives on your phone. It does not need a browser to run.</li>
+      <li><strong>Can work offline.</strong> Many apps store data locally and keep working even without internet.</li>
+      <li><strong>Access to hardware.</strong> Apps can use the camera, GPS, fingerprint reader, notifications, and other phone hardware that a browser cannot easily reach.</li>
+      <li><strong>Feels native.</strong> A good app follows the design conventions of its platform — it feels like it belongs on the phone, not like a website on a small screen.</li>
+    </ul>
+
+    <h2>Types of Mobile Applications</h2>
+    <p>Not all mobile apps are built the same way. Understanding the different approaches helps you make sense of why tools like Flutter exist.</p>
+  </div>
+
+  <table class="tbl">
+    <tr><th>Type</th><th>What It Is</th><th>Technologies</th><th>Pros</th><th>Cons</th><th>Examples</th></tr>
+    <tr><td><strong>Native Android</strong></td><td>Built specifically for Android</td><td>Kotlin, Java</td><td>Best performance, full hardware access</td><td>Only runs on Android; need separate iOS version</td><td>Google Maps (Android)</td></tr>
+    <tr><td><strong>Native iOS</strong></td><td>Built specifically for iPhone/iPad</td><td>Swift, Objective-C</td><td>Best performance, full Apple hardware access</td><td>Only runs on iOS; need separate Android version</td><td>Apple Maps</td></tr>
+    <tr><td><strong>Cross-platform</strong></td><td>One codebase runs on both platforms</td><td>Flutter, React Native, Xamarin</td><td>Write once, deploy everywhere; cost-efficient</td><td>Slight performance trade-offs; platform differences</td><td>Reflectly (Flutter), Facebook (React Native)</td></tr>
+    <tr><td><strong>Hybrid / PWA</strong></td><td>Web app packaged as an app, or website that behaves like an app</td><td>HTML, CSS, JavaScript</td><td>Easiest to build; works everywhere</td><td>Limited hardware access; feels like a website</td><td>Twitter Lite</td></tr>
+  </table>
+
+  <div class="prose">
+    <h2>Why Cross-Platform Development Matters</h2>
+    <p>Building two completely separate apps — one for Android, one for iOS — doubles the cost, the time, and the team you need. A company might spend months and significant budget building an Android app, only to start over building the exact same thing for iPhone users.</p>
+
+    <p>Cross-platform frameworks solve this. You write your application logic once and the framework handles the differences between Android and iOS for you. Flutter, developed by Google, is one of the most popular cross-platform frameworks available today.</p>
+  </div>
+
+  <div class="callout info">
+    <div class="ico">📱</div>
+    <div class="callout-body"><strong>The goal of this tutorial:</strong> You will learn to build cross-platform mobile applications using <strong>Flutter</strong> as the framework and <strong>Dart</strong> as the programming language. One set of code. Two platforms.</div>
+  </div>
+
+  <div class="prose">
+    <h2>Knowledge Check — Chapter 1</h2>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-num">Question 1</div>
+    <div class="quiz-q">What is the main advantage of cross-platform development over native development?</div>
+    <div class="quiz-opts" id="q1_1">
+      <div class="opt-item" onclick="qa('q1_1','a','b')"><span class="opt-let">A</span> Cross-platform apps always have better performance</div>
+      <div class="opt-item" onclick="qa('q1_1','b','b')"><span class="opt-let">B</span> One codebase runs on both Android and iOS, reducing development effort</div>
+      <div class="opt-item" onclick="qa('q1_1','c','b')"><span class="opt-let">C</span> Cross-platform apps can only run on Android</div>
+      <div class="opt-item" onclick="qa('q1_1','d','b')"><span class="opt-let">D</span> Cross-platform apps do not need an internet connection</div>
+    </div>
+    <div class="qfb" id="q1_1-fb"></div>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-num">Question 2 — True or False</div>
+    <div class="quiz-q">A mobile app and a website are the same thing — they are both accessed through a browser.</div>
+    <div class="quiz-opts" id="q1_2">
+      <div class="opt-item" onclick="qa('q1_2','a','b')"><span class="opt-let">A</span> True</div>
+      <div class="opt-item" onclick="qa('q1_2','b','b')"><span class="opt-let">B</span> False — a mobile app is installed on the device and does not need a browser</div>
+    </div>
+    <div class="qfb" id="q1_2-fb"></div>
+  </div>
+
+  <div class="page-nav">
+    <button class="btn btn-ghost" onclick="go(0)">← Welcome</button>
+    <button class="btn btn-primary" onclick="go(2)">Chapter 2: The Big Picture →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     PAGE 2 — THE BIG PICTURE
+══════════════════════════════════════════════ -->
+<div class="page" id="p2">
+  <div class="ch-hero purple">
+    <div class="ch-eyebrow">Chapter 2</div>
+    <h1>The Big Picture</h1>
+    <p class="ch-sub">What happens when a user interacts with a mobile app? How do all the pieces — Flutter, Dart, a database, and version control — fit together?</p>
+  </div>
+
+  <div class="prose">
+    <h2>What Happens When a User Taps a Button?</h2>
+    <p>When someone uses a mobile application, they see a screen, tap things, type text, and see results. From the user's perspective this feels instant and simple. Behind the scenes, a carefully organised chain of events takes place. Understanding this chain is the foundation of mobile development.</p>
+
+    <p>Here is the complete flow for a typical interaction — a user adding a task to a task list:</p>
+  </div>
+
+  <div class="flow-diag">User taps "Save Task" button
+         ↓
+Flutter widget detects the tap
+         ↓
+Dart event handler function runs
+         ↓
+Application validates the input
+         ↓
+Dart calls the database service
+         ↓
+SQL command is sent to the database
+         ↓
+Database stores the data and returns confirmation
+         ↓
+Dart receives the result
+         ↓
+setState() tells Flutter the data changed
+         ↓
+Flutter rebuilds the widget tree
+         ↓
+User sees the new task appear on screen</div>
+
+  <div class="prose">
+    <p>Each step in this flow belongs to a different layer of the application. Keeping these layers separate — rather than mixing everything into one file — is one of the most important ideas in professional software development.</p>
+
+    <h2>The Application Architecture</h2>
+    <p>A well-built mobile application separates its responsibilities into distinct layers. Each layer has a clear job.</p>
+  </div>
+
+  <div class="arch">
+    <div class="arch-title">Application Architecture</div>
+    <div class="arch-row">
+      <div class="arch-box b"><div class="ab-icon">👤</div><div class="ab-name">User</div><div class="ab-sub">Sees &amp; interacts</div></div>
+    </div>
+    <div class="arch-row"><div class="arch-arrow">↕</div></div>
+    <div class="arch-row">
+      <div class="arch-box g"><div class="ab-icon">📱</div><div class="ab-name">UI Layer</div><div class="ab-sub">Flutter widgets — what is displayed</div></div>
+    </div>
+    <div class="arch-row"><div class="arch-arrow">↕</div></div>
+    <div class="arch-row">
+      <div class="arch-box p"><div class="ab-icon">💻</div><div class="ab-name">Logic Layer</div><div class="ab-sub">Dart code — validation, business rules</div></div>
+    </div>
+    <div class="arch-row"><div class="arch-arrow">↕</div></div>
+    <div class="arch-row">
+      <div class="arch-box a"><div class="ab-icon">🔌</div><div class="ab-name">Service Layer</div><div class="ab-sub">Database operations — CRUD</div></div>
+    </div>
+    <div class="arch-row"><div class="arch-arrow">↕</div></div>
+    <div class="arch-row">
+      <div class="arch-box t"><div class="ab-icon">🗄️</div><div class="ab-name">Data Layer</div><div class="ab-sub">SQL Server — permanent storage</div></div>
+    </div>
+  </div>
+
+  <div class="prose">
+    <h2>Where Does Git/GitHub Fit?</h2>
+    <p>Something important to understand immediately: <strong>Git and GitHub are not part of the running application.</strong> They are part of the <em>development process</em> — the way developers save their work, track changes, and share code with others.</p>
+  </div>
+
+  <div class="callout info">
+    <div class="ico">🐙</div>
+    <div class="callout-body"><strong>Think of it like writing a book.</strong> Git is your version history — it saves a snapshot every time you finish a chapter. GitHub is the publisher's server — it stores the book online so your team can access it. When the book is published (the app is released), readers don't know or care how you tracked your writing history.</div>
+  </div>
+
+  <div class="arch" style="margin-top:14px">
+    <div class="arch-title">Development Process (separate from runtime)</div>
+    <div class="arch-row">
+      <div class="arch-box p"><div class="ab-icon">✍️</div><div class="ab-name">Developer writes code</div></div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-box p"><div class="ab-icon">💾</div><div class="ab-name">git commit</div><div class="ab-sub">Save a snapshot</div></div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-box p"><div class="ab-icon">🌐</div><div class="ab-name">git push</div><div class="ab-sub">Upload to GitHub</div></div>
+    </div>
+  </div>
+
+  <div class="prose">
+    <h2>The Technologies You Will Learn</h2>
+  </div>
+  <table class="tbl">
+    <tr><th>Technology</th><th>Role</th><th>Analogy</th></tr>
+    <tr><td><strong>Dart</strong></td><td>Programming language</td><td>The words and grammar of the instruction manual</td></tr>
+    <tr><td><strong>Flutter</strong></td><td>UI framework — what you see on screen</td><td>The blueprint and materials for building the house</td></tr>
+    <tr><td><strong>MS SQL Server</strong></td><td>Relational database — permanent storage</td><td>The filing cabinet that keeps records even after closing</td></tr>
+    <tr><td><strong>Git</strong></td><td>Version control — track changes</td><td>Ctrl+Z for your entire project history</td></tr>
+    <tr><td><strong>GitHub</strong></td><td>Remote hosting — share code online</td><td>Cloud Drive for your Git history</td></tr>
+  </table>
+
+  <div class="page-nav">
+    <button class="btn btn-ghost" onclick="go(1)">← Ch 1</button>
+    <button class="btn btn-primary" onclick="go(3)">Chapter 3: Dart Fundamentals →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     PAGE 3 — DART FUNDAMENTALS
+══════════════════════════════════════════════ -->
+<div class="page" id="p3">
+  <div class="ch-hero amber">
+    <div class="ch-eyebrow">Chapter 3</div>
+    <h1>Dart Fundamentals</h1>
+    <p class="ch-sub">Variables, data types, control flow, and functions — the building blocks of every Dart program.</p>
+  </div>
+
+  <div class="prose">
+    <h2>What Is Dart?</h2>
+    <p>Dart is a programming language created by Google. It is the language you use to write all the logic in a Flutter application — what the app does, how it responds to the user, and how it manages information. If Flutter is the building, Dart is the engineering that makes it work.</p>
+
+    <p>Dart is a <em>strongly typed</em> language, which means every value has a specific type — a number, some text, a true/false value. This helps catch mistakes before the app even runs.</p>
+
+    <h2>Variables — Storing Information</h2>
+    <p>A <strong>variable</strong> is a named box that stores a piece of information. You give it a name so you can refer to it later.</p>
+  </div>
+
+  <div class="code-lbl">📄 Dart — Creating Variables</div>
+  <div class="code-box"><span class="cm">// Dart knows the type from the value — this is called type inference</span>
+<span class="kw">var</span> taskName = <span class="str">"Buy groceries"</span>;    <span class="cm">← Dart infers: String</span>
+<span class="kw">var</span> taskCount = <span class="val">5</span>;                   <span class="cm">← Dart infers: int</span>
+
+<span class="cm">// You can also declare the type explicitly</span>
+<span class="kw">String</span> priority = <span class="str">"High"</span>;
+<span class="kw">int</span>    age       = <span class="val">20</span>;
+<span class="kw">double</span> price     = <span class="val">9.99</span>;
+<span class="kw">bool</span>   isDone    = <span class="val">false</span>;</div>
+
+  <table class="exp-tbl">
+    <tr><th>Keyword</th><th>Meaning</th><th>Example</th></tr>
+    <tr><td>var</td><td>Dart infers the type automatically</td><td><code>var name = "Alex";</code></td></tr>
+    <tr><td>String</td><td>Text — always in quote marks</td><td><code>String city = "London";</code></td></tr>
+    <tr><td>int</td><td>Whole numbers</td><td><code>int age = 20;</code></td></tr>
+    <tr><td>double</td><td>Decimal numbers</td><td><code>double gpa = 3.7;</code></td></tr>
+    <tr><td>bool</td><td>true or false only</td><td><code>bool isActive = true;</code></td></tr>
+    <tr><td>final</td><td>Set once, never changed again</td><td><code>final id = 101;</code></td></tr>
+    <tr><td>const</td><td>Known at compile time — never changes</td><td><code>const pi = 3.14159;</code></td></tr>
+  </table>
+
+  <div class="callout warn">
+    <div class="ico">⚠️</div>
+    <div class="callout-body"><strong>final vs const:</strong> Both prevent reassignment. <code>final</code> is determined at runtime (e.g. the current time). <code>const</code> must be known at compile time (e.g. the value of pi). When in doubt, use <code>final</code>.</div>
+  </div>
+
+  <div class="prose">
+    <h2>Null Safety — When a Value Might Not Exist</h2>
+    <p>In real applications, some values might not exist yet. A user might not have entered their name. A database query might return nothing. Dart's <strong>null safety</strong> system forces you to think about this explicitly.</p>
+  </div>
+
+  <div class="code-lbl">📄 Dart — Nullable Variables</div>
+  <div class="code-box"><span class="cm">// Non-nullable — MUST have a value, cannot be null</span>
+<span class="kw">String</span> name = <span class="str">"Alex"</span>;         <span class="cm">← always has a value</span>
+
+<span class="cm">// Nullable — CAN be null (notice the ?)</span>
+<span class="kw">String</span>? middleName = <span class="val">null</span>;    <span class="cm">← might not have a value</span>
+
+<span class="cm">// The ?? operator provides a fallback value</span>
+<span class="kw">String</span> display = middleName ?? <span class="str">"No middle name"</span>;</div>
+
+  <div class="prose">
+    <h2>Control Flow — Making Decisions</h2>
+    <p>A program that always does the same thing is not very useful. Control flow lets Dart make decisions and repeat actions.</p>
+
+    <h3>If / Else</h3>
+  </div>
+
+  <div class="code-lbl">📄 Dart — If / Else</div>
+  <div class="code-box"><span class="kw">int</span> marks = <span class="val">75</span>;
+
+<span class="kw">if</span> (marks >= <span class="val">90</span>) {
+  <span class="fn">print</span>(<span class="str">"Grade A"</span>);
+} <span class="kw">else if</span> (marks >= <span class="val">70</span>) {
+  <span class="fn">print</span>(<span class="str">"Grade B"</span>);
+} <span class="kw">else if</span> (marks >= <span class="val">50</span>) {
+  <span class="fn">print</span>(<span class="str">"Grade C"</span>);
+} <span class="kw">else</span> {
+  <span class="fn">print</span>(<span class="str">"Fail"</span>);
+}
+<span class="cm">// Output: Grade B</span></div>
+
+  <div class="prose">
+    <h3>For Loop</h3>
+    <p>When you need to repeat something a known number of times:</p>
+  </div>
+
+  <div class="code-lbl">📄 Dart — For Loop</div>
+  <div class="code-box"><span class="kw">for</span> (<span class="kw">int</span> i = <span class="val">1</span>; i <= <span class="val">3</span>; i++) {
+  <span class="fn">print</span>(<span class="str">"Task number: "</span> + i.toString());
+}
+<span class="cm">// Output:</span>
+<span class="cm">// Task number: 1</span>
+<span class="cm">// Task number: 2</span>
+<span class="cm">// Task number: 3</span>
+
+<span class="cm">// for-in: loop over a list of items</span>
+List&lt;<span class="kw">String</span>&gt; priorities = [<span class="str">"High"</span>, <span class="str">"Medium"</span>, <span class="str">"Low"</span>];
+<span class="kw">for</span> (<span class="kw">String</span> p <span class="kw">in</span> priorities) {
+  <span class="fn">print</span>(p);
+}</div>
+
+  <div class="prose">
+    <h2>Functions — Reusable Blocks of Code</h2>
+    <p>A <strong>function</strong> is a named block of code that performs a specific task. You write it once, then call it wherever you need it. This avoids repeating the same code in multiple places.</p>
+  </div>
+
+  <div class="code-lbl">📄 Dart — Functions</div>
+  <div class="code-box"><span class="cm">// A simple function that takes a name and returns a greeting</span>
+<span class="kw">String</span> <span class="fn">buildGreeting</span>(<span class="kw">String</span> name) {
+  <span class="kw">return</span> <span class="str">"Hello, "</span> + name + <span class="str">"!"</span>;
+}
+
+<span class="cm">// Named parameters — caller must use the name</span>
+<span class="kw">String</span> <span class="fn">createTask</span>({
+  <span class="kw">required</span> <span class="kw">String</span> name,
+  <span class="kw">String</span> priority = <span class="str">"Medium"</span>,  <span class="cm">← optional with default</span>
+}) {
+  <span class="kw">return</span> name + <span class="str">" ("</span> + priority + <span class="str">")"</span>;
+}
+
+<span class="cm">// Calling them</span>
+<span class="fn">print</span>(<span class="fn">buildGreeting</span>(<span class="str">"Jordan"</span>));
+<span class="cm">// Output: Hello, Jordan!</span>
+
+<span class="fn">print</span>(<span class="fn">createTask</span>(name: <span class="str">"Buy groceries"</span>, priority: <span class="str">"High"</span>));
+<span class="cm">// Output: Buy groceries (High)</span></div>
+
+  <table class="exp-tbl">
+    <tr><th>Part</th><th>Meaning</th></tr>
+    <tr><td>String before the name</td><td>The return type — what type of value the function gives back</td></tr>
+    <tr><td>void</td><td>The function returns nothing — it just does something</td></tr>
+    <tr><td>required</td><td>This parameter must be provided — it cannot be omitted</td></tr>
+    <tr><td>= "Medium"</td><td>A default value used when the caller does not provide one</td></tr>
+  </table>
+
+  <div class="callout err">
+    <div class="ico">❌</div>
+    <div class="callout-body"><strong>Common mistake:</strong> Forgetting <code>return</code> in a function that has a non-void return type. Dart will show an error if your function says it returns a <code>String</code> but you forget to write <code>return</code>.</div>
+  </div>
+
+  <div class="exercise">
+    <div class="ex-head"><div style="font-size:20px">🟢</div><div class="ex-level" style="color:var(--green)">Beginner Exercise</div></div>
+    <div class="ex-body">
+      <strong>Exercise 3.1</strong> — Create a Dart function called <code>describeTask</code> that takes a task name (String) and a priority (String) and prints: <code>"Task: [name] | Priority: [priority]"</code>. Call it with three different tasks.
+    </div>
+  </div>
+
+  <div class="page-nav">
+    <button class="btn btn-ghost" onclick="go(2)">← Ch 2</button>
+    <button class="btn btn-primary" onclick="go(4)">Chapter 4: OOP &amp; Collections →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     PAGE 4 — OOP & COLLECTIONS
+══════════════════════════════════════════════ -->
+<div class="page" id="p4">
+  <div class="ch-hero purple">
+    <div class="ch-eyebrow">Chapter 4</div>
+    <h1>Object-Oriented Programming &amp; Collections</h1>
+    <p class="ch-sub">Classes, objects, and the collection types that form the backbone of real Dart applications.</p>
+  </div>
+
+  <div class="prose">
+    <h2>Classes and Objects</h2>
+    <p>Imagine you are designing a form for a university. Every student has a name, an ID number, and a grade point average. Instead of managing three separate variables for each student, it would be far more organised to bundle all of a student's information together into a single thing.</p>
+
+    <p>That is what a <strong>class</strong> does. A class is a <em>blueprint</em> that defines what properties and behaviours a particular type of thing should have. An <strong>object</strong> is one specific instance built from that blueprint.</p>
+  </div>
+
+  <div class="arch">
+    <div class="arch-title">Blueprint vs Instance</div>
+    <div class="arch-row">
+      <div class="arch-box p"><div class="ab-icon">📐</div><div class="ab-name">class Task</div><div class="ab-sub">Blueprint: name, priority, isDone</div></div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-box g"><div class="ab-icon">📌</div><div class="ab-name">task1</div><div class="ab-sub">"Math homework", High, false</div></div>
+      <div class="arch-arrow">+</div>
+      <div class="arch-box g"><div class="ab-icon">📌</div><div class="ab-name">task2</div><div class="ab-sub">"Read Ch 4", Medium, true</div></div>
+    </div>
+  </div>
+
+  <div class="code-lbl">📄 Dart — Defining and Using a Class</div>
+  <div class="code-box"><span class="cm">// The blueprint</span>
+<span class="kw">class</span> Task {
+  <span class="kw">String</span> name;
+  <span class="kw">String</span> priority;
+  <span class="kw">bool</span>   isDone;
+
+  <span class="cm">// Constructor — called when creating an object</span>
+  Task({
+    <span class="kw">required this</span>.name,
+    <span class="kw">required this</span>.priority,
+    <span class="kw">this</span>.isDone = <span class="val">false</span>,   <span class="cm">← defaults to false</span>
+  });
+
+  <span class="cm">// A method — behaviour the object can perform</span>
+  <span class="kw">String</span> <span class="fn">describe</span>() {
+    <span class="kw">return</span> name + <span class="str">" ["</span> + priority + <span class="str">"]"</span>;
+  }
+}
+
+<span class="cm">// Creating objects from the blueprint</span>
+<span class="kw">void</span> <span class="fn">main</span>() {
+  Task task1 = Task(name: <span class="str">"Math homework"</span>, priority: <span class="str">"High"</span>);
+  Task task2 = Task(name: <span class="str">"Read chapter"</span>,  priority: <span class="str">"Medium"</span>, isDone: <span class="val">true</span>);
+
+  <span class="fn">print</span>(task1.<span class="fn">describe</span>());   <span class="cm">// Math homework [High]</span>
+  <span class="fn">print</span>(task2.isDone);        <span class="cm">// true</span>
+}</div>
+
+  <table class="exp-tbl">
+    <tr><th>Part</th><th>Meaning</th></tr>
+    <tr><td>class Task</td><td>Defines a new type called Task</td></tr>
+    <tr><td>String name;</td><td>A property — every Task has a name stored as text</td></tr>
+    <tr><td>Task({required this.name, ...})</td><td>The constructor — the code that runs when you create a new Task</td></tr>
+    <tr><td>this.isDone = false</td><td>Sets a default — if you do not provide isDone, it starts as false</td></tr>
+    <tr><td>String describe()</td><td>A method — a function that belongs to Task objects</td></tr>
+    <tr><td>task1.describe()</td><td>Calling the method on a specific object</td></tr>
+  </table>
+
+  <div class="prose">
+    <h2>Collections — Lists, Maps, and Sets</h2>
+
+    <h3>Lists</h3>
+    <p>A <strong>List</strong> is an ordered collection of items — like a shopping list or a queue. Items keep their position and can be accessed by index (starting from 0).</p>
+  </div>
+
+  <div class="code-lbl">📄 Dart — Lists</div>
+  <div class="code-box">List&lt;<span class="kw">String</span>&gt; tasks = [<span class="str">"Math"</span>, <span class="str">"Reading"</span>, <span class="str">"Project"</span>];
+
+<span class="fn">print</span>(tasks[<span class="val">0</span>]);          <span class="cm">// "Math"  (index 0 is the first item)</span>
+<span class="fn">print</span>(tasks.length);       <span class="cm">// 3</span>
+
+tasks.<span class="fn">add</span>(<span class="str">"Exercise"</span>);    <span class="cm">// adds to the end</span>
+tasks.<span class="fn">removeAt</span>(<span class="val">1</span>);       <span class="cm">// removes "Reading"</span>
+
+<span class="cm">// Common operations</span>
+<span class="kw">var</span> upper = tasks.<span class="fn">map</span>((t) =&gt; t.toUpperCase()).<span class="fn">toList</span>();
+<span class="cm">// ["MATH", "PROJECT", "EXERCISE"]</span>
+
+<span class="kw">var</span> highPriority = tasks.<span class="fn">where</span>((t) =&gt; t.length > <span class="val">5</span>).<span class="fn">toList</span>();
+<span class="cm">// tasks with more than 5 characters</span></div>
+
+  <div class="prose">
+    <h3>Maps</h3>
+    <p>A <strong>Map</strong> stores key-value pairs — like a dictionary. You look up a value by its key rather than by position. Maps are especially important when working with database results, which arrive as <code>Map&lt;String, dynamic&gt;</code>.</p>
+  </div>
+
+  <div class="code-lbl">📄 Dart — Maps</div>
+  <div class="code-box">Map&lt;<span class="kw">String</span>, <span class="kw">dynamic</span>&gt; taskRow = {
+  <span class="str">'id'</span>:       <span class="val">1</span>,
+  <span class="str">'taskName'</span>: <span class="str">"Math homework"</span>,
+  <span class="str">'priority'</span>: <span class="str">"High"</span>,
+  <span class="str">'isDone'</span>:   <span class="val">0</span>,
+};
+
+<span class="fn">print</span>(taskRow[<span class="str">'taskName'</span>]);   <span class="cm">// "Math homework"</span>
+<span class="fn">print</span>(taskRow[<span class="str">'id'</span>]);          <span class="cm">// 1</span></div>
+
+  <div class="callout note">
+    <div class="ico">💡</div>
+    <div class="callout-body"><strong>Why Map&lt;String, dynamic&gt;?</strong> When a database returns a row, the values might be different types — a number, text, a boolean. Using <code>dynamic</code> as the value type tells Dart "this value could be anything." You will convert these maps into proper objects in Chapter 9.</div>
+  </div>
+
+  <div class="exercise">
+    <div class="ex-head"><div style="font-size:20px">🟡</div><div class="ex-level" style="color:var(--amber)">Intermediate Exercise</div></div>
+    <div class="ex-body">
+      <strong>Exercise 4.1</strong> — Create a <code>Student</code> class with properties: <code>name</code> (String), <code>grade</code> (int), and <code>isEnrolled</code> (bool). Add a method called <code>status()</code> that returns <code>"Active"</code> if enrolled, <code>"Inactive"</code> otherwise. Create a List of 3 students and print the status of each one.
+    </div>
+  </div>
+
+  <div class="page-nav">
+    <button class="btn btn-ghost" onclick="go(3)">← Ch 3</button>
+    <button class="btn btn-primary" onclick="go(5)">Chapter 5: Async Programming →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     PAGE 5 — ASYNC
+══════════════════════════════════════════════ -->
+<div class="page" id="p5">
+  <div class="ch-hero teal">
+    <div class="ch-eyebrow">Chapter 5</div>
+    <h1>Asynchronous Programming</h1>
+    <p class="ch-sub">Why database and network operations take time, and how Dart's async/await system handles that without freezing the app.</p>
+  </div>
+
+  <div class="prose">
+    <h2>The Problem: Some Things Take Time</h2>
+    <p>Imagine you order food at a restaurant. You do not stand frozen at the counter waiting for your food to be cooked. You go to your table, look at the menu, maybe talk to someone — and when the food is ready, the waiter brings it to you. Life continues while you wait.</p>
+
+    <p>Mobile applications face the same challenge. Loading data from a database, downloading an image from the internet, or writing a file to disk all take time — sometimes milliseconds, sometimes seconds. If the app just stopped and waited, the screen would freeze. The user would think the app crashed.</p>
+
+    <p><strong>Asynchronous programming</strong> allows Dart to start a slow operation, continue doing other things, and handle the result when it arrives.</p>
+
+    <h2>Synchronous vs Asynchronous</h2>
+  </div>
+
+  <table class="tbl">
+    <tr><th>Synchronous</th><th>Asynchronous</th></tr>
+    <tr><td>Each step waits for the previous one to finish</td><td>Slow operations run in the background; other code continues</td></tr>
+    <tr><td>Simple to understand</td><td>Requires special keywords (async, await)</td></tr>
+    <tr><td>Fine for fast operations (math, string formatting)</td><td>Essential for database calls, network requests, file I/O</td></tr>
+    <tr><td>Freezes the app if used for slow operations</td><td>Keeps the app responsive while waiting</td></tr>
+  </table>
+
+  <div class="prose">
+    <h2>Future — A Promise of a Value</h2>
+    <p>In Dart, a <code>Future&lt;T&gt;</code> represents a value that does not exist yet but will exist sometime in the future. Think of it as a ticket — you have the ticket now, and you will get what it promises when it is ready.</p>
+
+    <p><code>Future&lt;String&gt;</code> means: "a String value that will arrive later."<br>
+    <code>Future&lt;List&lt;Task&gt;&gt;</code> means: "a list of Tasks that will arrive later."<br>
+    <code>Future&lt;void&gt;</code> means: "something that will finish later but gives nothing back."</p>
+
+    <h2>async and await</h2>
+    <p>The keywords <code>async</code> and <code>await</code> are how you work with Futures in a readable way.</p>
+    <ul>
+      <li>Add <code>async</code> to a function to indicate it does asynchronous work.</li>
+      <li>Write <code>await</code> before any operation that returns a Future — it pauses <em>that function</em> until the result arrives, without freezing the rest of the app.</li>
+    </ul>
+  </div>
+
+  <div class="code-lbl">📄 Dart — async / await</div>
+  <div class="code-box"><span class="cm">// Simulating a slow database read (takes 1 second)</span>
+<span class="kw">Future</span>&lt;List&lt;<span class="kw">String</span>&gt;&gt; <span class="fn">getTasksFromDatabase</span>() <span class="kw">async</span> {
+  await Future.<span class="fn">delayed</span>(Duration(seconds: <span class="val">1</span>));  <span class="cm">← simulates waiting</span>
+  <span class="kw">return</span> [<span class="str">"Math homework"</span>, <span class="str">"Read chapter"</span>];
+}
+
+<span class="cm">// Calling the async function</span>
+<span class="kw">Future</span>&lt;<span class="kw">void</span>&gt; <span class="fn">loadTasks</span>() <span class="kw">async</span> {
+  <span class="fn">print</span>(<span class="str">"Loading..."</span>);
+
+  List&lt;<span class="kw">String</span>&gt; tasks = <span class="kw">await</span> <span class="fn">getTasksFromDatabase</span>();
+
+  <span class="fn">print</span>(<span class="str">"Done! Found "</span> + tasks.length.toString() + <span class="str">" tasks"</span>);
+  <span class="cm">// Output after 1 second: Done! Found 2 tasks</span>
+}</div>
+
+  <table class="exp-tbl">
+    <tr><th>Part</th><th>Meaning</th></tr>
+    <tr><td>Future&lt;List&lt;String&gt;&gt;</td><td>This function will eventually return a list of strings</td></tr>
+    <tr><td>async</td><td>This function contains asynchronous operations</td></tr>
+    <tr><td>await</td><td>Wait here until the Future completes before continuing</td></tr>
+    <tr><td>Future.delayed()</td><td>A built-in way to simulate waiting for a moment</td></tr>
+  </table>
+
+  <div class="prose">
+    <h2>Error Handling — try / catch</h2>
+    <p>Database connections can fail. The network might be down. The server might be busy. Your code must handle these situations gracefully rather than crashing.</p>
+  </div>
+
+  <div class="code-lbl">📄 Dart — try / catch / finally</div>
+  <div class="code-box"><span class="kw">Future</span>&lt;<span class="kw">void</span>&gt; <span class="fn">loadTasksSafely</span>() <span class="kw">async</span> {
+  <span class="kw">try</span> {
+    <span class="cm">// Attempt the operation</span>
+    List&lt;<span class="kw">String</span>&gt; tasks = <span class="kw">await</span> <span class="fn">getTasksFromDatabase</span>();
+    <span class="fn">print</span>(<span class="str">"Loaded: "</span> + tasks.length.toString());
+
+  } <span class="kw">catch</span> (error) {
+    <span class="cm">// If anything goes wrong, this runs instead of crashing</span>
+    <span class="fn">print</span>(<span class="str">"Something went wrong: "</span> + error.toString());
+
+  } <span class="kw">finally</span> {
+    <span class="cm">// This always runs, whether it succeeded or failed</span>
+    <span class="fn">print</span>(<span class="str">"Loading complete."</span>);
+  }
+}</div>
+
+  <div class="callout tip">
+    <div class="ico">🌟</div>
+    <div class="callout-body"><strong>Real-world importance:</strong> Every database call in a Flutter application should be wrapped in try/catch. A database might be unavailable, credentials might be wrong, the network might fail. Showing the user a helpful error message is always better than a silent crash.</div>
+  </div>
+
+  <div class="quiz-card">
+    <div class="quiz-num">Knowledge Check</div>
+    <div class="quiz-q">What does the <code>await</code> keyword do?</div>
+    <div class="quiz-opts" id="q5_1">
+      <div class="opt-item" onclick="qa('q5_1','a','b')"><span class="opt-let">A</span> It runs the function twice to make sure it completes</div>
+      <div class="opt-item" onclick="qa('q5_1','b','b')"><span class="opt-let">B</span> It pauses the current function until the awaited Future completes, without freezing the whole app</div>
+      <div class="opt-item" onclick="qa('q5_1','c','b')"><span class="opt-let">C</span> It makes the function run faster</div>
+      <div class="opt-item" onclick="qa('q5_1','d','b')"><span class="opt-let">D</span> It prevents the function from returning anything</div>
+    </div>
+    <div class="qfb" id="q5_1-fb"></div>
+  </div>
+
+  <div class="page-nav">
+    <button class="btn btn-ghost" onclick="go(4)">← Ch 4</button>
+    <button class="btn btn-primary" onclick="go(6)">Chapter 6: Flutter &amp; Widgets →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     PAGE 6 — FLUTTER & WIDGETS
+══════════════════════════════════════════════ -->
+<div class="page" id="p6">
+  <div class="ch-hero blue">
+    <div class="ch-eyebrow">Chapter 6</div>
+    <h1>Flutter &amp; Widgets</h1>
+    <p class="ch-sub">What Flutter is, how it builds a UI from widgets, and the most important widgets you will use in every application.</p>
+  </div>
+
+  <div class="prose">
+    <h2>What Is Flutter?</h2>
+    <p>Flutter is an open-source UI framework created by Google. It lets you build applications for Android, iOS, web, and desktop from a single Dart codebase. Flutter does not use the native components of each platform. Instead, it draws every pixel of the interface itself, using a high-performance rendering engine.</p>
+
+    <p>This is why a Flutter app looks identical on Android and iOS — Flutter is not asking Android to draw a button. Flutter is drawing the button itself, consistently, on every platform.</p>
+
+    <h2>Everything Is a Widget</h2>
+    <p>Flutter's most fundamental rule is this: <em>everything you see on screen is a widget.</em> A button is a widget. A line of text is a widget. The padding around a button is a widget. The entire screen is a widget. Even the invisible structure that arranges things is a widget.</p>
+
+    <p>Think of widgets like LEGO bricks. Each one is small and self-contained. You snap them together to build something complex. The result is called the <strong>widget tree</strong>.</p>
+
+    <h2>The Widget Tree</h2>
+  </div>
+
+  <div class="flow-diag">MaterialApp
+  └── Scaffold
+      ├── AppBar
+      │   └── Text("My Tasks")
+      └── body
+          └── Column
+              ├── Text("Task 1")
+              ├── Text("Task 2")
+              └── FloatingActionButton
+                  └── Icon(Icons.add)</div>
+
+  <div class="prose">
+    <p>Every widget has a parent and may have one or more children. The <code>build()</code> method on each widget returns its child widgets, forming the tree. When Flutter needs to display the screen, it walks down the tree and paints each widget.</p>
+
+    <h2>StatelessWidget vs StatefulWidget</h2>
+    <p>There are two fundamental types of widget:</p>
+  </div>
+
+  <table class="tbl">
+    <tr><th>Type</th><th>When to Use</th><th>Example</th></tr>
+    <tr><td><strong>StatelessWidget</strong></td><td>The widget always looks the same — it has no internal data that changes. It just receives data from its parent and displays it.</td><td>A label showing a fixed piece of text; an icon; a static card</td></tr>
+    <tr><td><strong>StatefulWidget</strong></td><td>The widget can change while the app is running — it holds state (changing data) and can rebuild itself when that data changes.</td><td>A checkbox that toggles; a counter button; a form field; any screen that loads data</td></tr>
+  </table>
+
+  <div class="code-lbl">📄 Flutter — StatelessWidget</div>
+  <div class="code-box"><span class="kw">class</span> PriorityLabel <span class="kw">extends</span> StatelessWidget {
+  <span class="kw">final</span> <span class="kw">String</span> priority;
+
+  <span class="kw">const</span> PriorityLabel({<span class="kw">super</span>.key, <span class="kw">required this</span>.priority});
+
+  @override
+  Widget <span class="fn">build</span>(BuildContext context) {
+    <span class="kw">return</span> Text(
+      priority,
+      style: TextStyle(fontWeight: FontWeight.bold),
+    );
+  }
+}</div>
+
+  <div class="code-lbl">📄 Flutter — StatefulWidget with setState()</div>
+  <div class="code-box"><span class="kw">class</span> TaskCheckbox <span class="kw">extends</span> StatefulWidget {
+  <span class="kw">const</span> TaskCheckbox({<span class="kw">super</span>.key});
+  @override
+  State&lt;TaskCheckbox&gt; <span class="fn">createState</span>() =&gt; _TaskCheckboxState();
+}
+
+<span class="kw">class</span> _TaskCheckboxState <span class="kw">extends</span> State&lt;TaskCheckbox&gt; {
+  <span class="kw">bool</span> isDone = <span class="val">false</span>;   <span class="cm">← the state variable</span>
+
+  @override
+  Widget <span class="fn">build</span>(BuildContext context) {
+    <span class="kw">return</span> Checkbox(
+      value: isDone,
+      onChanged: (value) {
+        <span class="fn">setState</span>(() {          <span class="cm">← tells Flutter to rebuild</span>
+          isDone = value!;
+        });
+      },
+    );
+  }
+}</div>
+
+  <div class="prose">
+    <h2>Important Widgets — Quick Reference</h2>
+  </div>
+
+  <table class="tbl">
+    <tr><th>Widget</th><th>Purpose</th><th>Key Properties</th></tr>
+    <tr><td><code>MaterialApp</code></td><td>Root of every Flutter app — sets theme, home screen, title</td><td>home, theme, title</td></tr>
+    <tr><td><code>Scaffold</code></td><td>The basic screen template — app bar + body + floating button</td><td>appBar, body, floatingActionButton</td></tr>
+    <tr><td><code>AppBar</code></td><td>The top bar with a title and optional buttons</td><td>title, backgroundColor, actions</td></tr>
+    <tr><td><code>Text</code></td><td>Displays a string of text</td><td>data, style (TextStyle)</td></tr>
+    <tr><td><code>Column</code></td><td>Arranges children vertically, one above the other</td><td>children, crossAxisAlignment</td></tr>
+    <tr><td><code>Row</code></td><td>Arranges children horizontally, side by side</td><td>children, mainAxisAlignment</td></tr>
+    <tr><td><code>Padding</code></td><td>Adds space around a child widget</td><td>padding (EdgeInsets), child</td></tr>
+    <tr><td><code>SizedBox</code></td><td>Fixed-size empty space; useful for gaps between widgets</td><td>width, height, child</td></tr>
+    <tr><td><code>ListView.builder</code></td><td>Scrollable list — builds items on demand (efficient)</td><td>itemCount, itemBuilder</td></tr>
+    <tr><td><code>ListTile</code></td><td>One row in a list: optional icon + title + subtitle + trailing</td><td>leading, title, subtitle, trailing</td></tr>
+    <tr><td><code>ElevatedButton</code></td><td>A raised, tappable button</td><td>onPressed, child, style</td></tr>
+    <tr><td><code>FloatingActionButton</code></td><td>The circular button that floats over the screen (typically +)</td><td>onPressed, child, backgroundColor</td></tr>
+    <tr><td><code>TextField</code></td><td>A text input field the user can type into</td><td>controller, decoration, onChanged</td></tr>
+    <tr><td><code>Checkbox</code></td><td>A toggleable tick box</td><td>value, onChanged</td></tr>
+    <tr><td><code>Icon</code></td><td>A Material Design icon</td><td>Icons.add, Icons.delete, size, color</td></tr>
+    <tr><td><code>CircularProgressIndicator</code></td><td>The spinning wheel shown while data is loading</td><td>color</td></tr>
+  </table>
+
+  <div class="prose">
+    <h2>Flutter Project Structure</h2>
+    <p>When you create a Flutter project, it generates a folder structure. Understanding what each part does will help you know where to put your code.</p>
+  </div>
+
+  <div class="file-tree">
+<span class="ft-dir">my_app/</span>
+  <span class="ft-imp">pubspec.yaml</span>       ← Project settings, dependencies (like package.json)
+  <span class="ft-imp">lib/</span>               ← YOUR CODE GOES HERE
+    <span class="ft-imp">main.dart</span>          ← Entry point — runApp() lives here
+  android/             ← Android platform files (rarely modified directly)
+  ios/                 ← iOS platform files (rarely modified directly)
+  test/                ← Automated tests
+  build/               ← Generated output (do NOT edit)
+  .dart_tool/          ← Internal tooling (do NOT edit)
+</div>
+
+  <div class="callout tip">
+    <div class="ico">📁</div>
+    <div class="callout-body"><strong>As your app grows</strong>, organise <code>lib/</code> into subfolders: <code>models/</code> for data classes, <code>services/</code> for database code, <code>screens/</code> for UI pages, <code>widgets/</code> for reusable UI components. This is covered in depth in Chapter 11.</div>
+  </div>
+
+  <div class="exercise">
+    <div class="ex-head"><div style="font-size:20px">🟢</div><div class="ex-level" style="color:var(--green)">Beginner Exercise</div></div>
+    <div class="ex-body">
+      <strong>Exercise 6.1</strong> — Create a Flutter screen that displays a Scaffold with an AppBar titled "My First Screen" and a body containing a Column with three Text widgets: "Widget 1", "Widget 2", "Widget 3". Add a SizedBox with height 16 between each text.
+    </div>
+  </div>
+
+  <div class="page-nav">
+    <button class="btn btn-ghost" onclick="go(5)">← Ch 5</button>
+    <button class="btn btn-primary" onclick="go(7)">Chapter 7: Layout &amp; State →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     PAGE 7 — LAYOUT & STATE
+══════════════════════════════════════════════ -->
+<div class="page" id="p7">
+  <div class="ch-hero green">
+    <div class="ch-eyebrow">Chapter 7</div>
+    <h1>Layout, State &amp; User Interaction</h1>
+    <p class="ch-sub">How Flutter positions widgets on screen, what "state" means, and why setState() is needed to update the UI.</p>
+  </div>
+
+  <div class="prose">
+    <h2>How Flutter Layout Works</h2>
+    <p>Flutter uses a <strong>constraint-based</strong> layout system. A parent widget gives its child a set of constraints — a minimum and maximum width and height. The child chooses its own size within those constraints, and then the parent positions it.</p>
+  </div>
+
+  <div class="flow-diag">Parent Widget
+    → passes constraints to Child (min/max width and height)
+Child Widget
+    → chooses its own size within those constraints
+Parent Widget
+    → positions the child within itself</div>
+
+  <div class="prose">
+    <h3>Common Layout Patterns</h3>
+  </div>
+
+  <table class="tbl">
+    <tr><th>Widget</th><th>Behaviour</th><th>When to Use</th></tr>
+    <tr><td>Column</td><td>Stack children vertically. Takes as much vertical space as it needs.</td><td>A form, a list of labels, a vertical menu</td></tr>
+    <tr><td>Row</td><td>Place children side by side horizontally.</td><td>A row of buttons, an icon next to text</td></tr>
+    <tr><td>Expanded</td><td>Takes all remaining space in its parent Row/Column.</td><td>Making a text field fill the remaining width</td></tr>
+    <tr><td>Padding</td><td>Adds empty space around its child.</td><td>Spacing around any widget</td></tr>
+    <tr><td>SizedBox</td><td>Creates a fixed-size empty space.</td><td>Gaps between widgets: SizedBox(height: 16)</td></tr>
+    <tr><td>Center</td><td>Centers its child within the available space.</td><td>Centering a message or loading indicator</td></tr>
+  </table>
+
+  <div class="callout err">
+    <div class="ico">⚠️</div>
+    <div class="callout-body"><strong>Common layout error — RenderOverflow:</strong> This happens when a Column or Row tries to fit more content than it has space for. Fix: wrap the Column in a <code>SingleChildScrollView</code> to make it scrollable, or use <code>Expanded</code> to distribute space properly.</div>
+  </div>
+
+  <div class="prose">
+    <h2>Understanding State</h2>
+  </div>
+
+  <div class="def-card">
+    <div class="def-term">State</div>
+    <div class="def-simple">Simple meaning: "Information that can change while the app is running."</div>
+    <div class="def-tech">In Flutter, state is data held inside a StatefulWidget that affects what the screen looks like. When state changes, Flutter rebuilds the relevant part of the widget tree to reflect the new data.</div>
+  </div>
+
+  <div class="prose">
+    <p>Think of the difference between a static poster and a digital sign. A poster always shows the same thing — it has no state. A digital sign can change what it displays — it has state. A task list that shows items as "done" or "not done" has state. A counter that increases when you tap a button has state.</p>
+
+    <h2>Why You Cannot Just Change a Variable</h2>
+    <p>This is one of the most important things to understand about Flutter. Imagine you have a task marked as done and you change its <code>isDone</code> property directly:</p>
+  </div>
+
+  <div class="code-lbl">📄 Flutter — Wrong Way (UI does not update)</div>
+  <div class="code-box"><span class="cm">// WRONG — the variable changes, but Flutter does not know about it</span>
+task.isDone = <span class="val">true</span>;
+
+<span class="cm">// CORRECT — wrap the change in setState()</span>
+<span class="fn">setState</span>(() {
+  task.isDone = <span class="val">true</span>;   <span class="cm">← Flutter sees this and rebuilds the widget</span>
+});</div>
+
+  <div class="prose">
+    <p>When you call <code>setState()</code>, you are telling Flutter: "The data has changed. Please call <code>build()</code> again and update the screen." Without <code>setState()</code>, Flutter has no way to know that anything changed, so the screen stays the same even though the variable has changed in memory.</p>
+
+    <h2>initState — Running Code When the Screen Opens</h2>
+    <p><code>initState()</code> is a lifecycle method that runs <em>exactly once</em> when a StatefulWidget is first inserted into the widget tree. It is the correct place to load data from a database when a screen first opens.</p>
+  </div>
+
+  <div class="code-lbl">📄 Flutter — initState()</div>
+  <div class="code-box"><span class="kw">class</span> _TaskListScreenState <span class="kw">extends</span> State&lt;TaskListScreen&gt; {
+  List&lt;Task&gt; _tasks = [];
+  <span class="kw">bool</span> _loading = <span class="val">true</span>;
+
+  @override
+  <span class="kw">void</span> <span class="fn">initState</span>() {
+    <span class="kw">super</span>.<span class="fn">initState</span>();
+    <span class="fn">_loadTasks</span>();  <span class="cm">← runs once when the screen opens</span>
+  }
+
+  <span class="kw">Future</span>&lt;<span class="kw">void</span>&gt; <span class="fn">_loadTasks</span>() <span class="kw">async</span> {
+    <span class="kw">final</span> tasks = <span class="kw">await</span> databaseService.<span class="fn">getTasks</span>();
+    <span class="fn">setState</span>(() {
+      _tasks   = tasks;
+      _loading = <span class="val">false</span>;
+    });
+  }
+
+  @override
+  Widget <span class="fn">build</span>(BuildContext context) {
+    <span class="kw">if</span> (_loading) <span class="kw">return</span> Center(child: CircularProgressIndicator());
+    <span class="kw">return</span> ListView.<span class="fn">builder</span>(
+      itemCount: _tasks.length,
+      itemBuilder: (context, index) =&gt; Text(_tasks[index].name),
+    );
+  }
+}</div>
+
+  <div class="page-nav">
+    <button class="btn btn-ghost" onclick="go(6)">← Ch 6</button>
+    <button class="btn btn-primary" onclick="go(8)">Chapter 8: Navigation &amp; Forms →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     PAGE 8 — NAVIGATION & FORMS
+══════════════════════════════════════════════ -->
+<div class="page" id="p8">
+  <div class="ch-hero amber">
+    <div class="ch-eyebrow">Chapter 8</div>
+    <h1>Navigation &amp; Forms</h1>
+    <p class="ch-sub">Moving between screens, passing data back and forth, and collecting input from users.</p>
+  </div>
+
+  <div class="prose">
+    <h2>Navigation — Moving Between Screens</h2>
+    <p>Most apps have more than one screen. A task list app might have a list screen and an "add task" screen. Flutter manages this with a <strong>navigation stack</strong> — a pile of screens, one on top of the other.</p>
+    <ul>
+      <li><strong>Navigator.push</strong> — puts a new screen on top of the stack (go forward)</li>
+      <li><strong>Navigator.pop</strong> — removes the top screen (go back)</li>
+    </ul>
+  </div>
+
+  <div class="flow-diag">Stack before navigation:
+[ Home Screen ]     ← currently visible
+
+User taps "Add Task" button → Navigator.push(AddTaskScreen)
+
+Stack after push:
+[ Add Task Screen ] ← currently visible
+[ Home Screen ]     ← underneath
+
+User taps Save → Navigator.pop()
+
+Stack after pop:
+[ Home Screen ]     ← currently visible again</div>
+
+  <div class="code-lbl">📄 Flutter — Navigating to Another Screen</div>
+  <div class="code-box"><span class="cm">// Navigate to the AddTaskScreen and wait for it to close</span>
+<span class="kw">await</span> Navigator.<span class="fn">push</span>(
+  context,
+  MaterialPageRoute(builder: (_) =&gt; <span class="kw">const</span> AddTaskScreen()),
+);
+
+<span class="cm">// After the user returns, reload the task list</span>
+<span class="fn">_loadTasks</span>();</div>
+
+  <div class="code-lbl">📄 Flutter — Going Back</div>
+  <div class="code-box"><span class="cm">// Inside AddTaskScreen, after saving — go back to the previous screen</span>
+Navigator.<span class="fn">pop</span>(context);</div>
+
+  <div class="callout note">
+    <div class="ico">💡</div>
+    <div class="callout-body"><strong>Why BuildContext?</strong> <code>context</code> is Flutter's way of knowing <em>where</em> a widget sits in the widget tree. Navigation needs context to find the Navigator that manages the current stack. Every widget has a context provided by Flutter automatically.</div>
+  </div>
+
+  <div class="prose">
+    <h2>Forms — Collecting Input from Users</h2>
+    <p>A form is a screen or section where the user types text, makes selections, and submits information. In Flutter, forms are typically built with <code>TextField</code> and <code>DropdownButton</code> widgets, controlled by <code>TextEditingController</code>.</p>
+
+    <h3>TextEditingController</h3>
+    <p>A <code>TextEditingController</code> is attached to a <code>TextField</code>. It lets you read what the user typed at any time, clear the field, or pre-fill it.</p>
+  </div>
+
+  <div class="code-lbl">📄 Flutter — A Complete Form Example</div>
+  <div class="code-box"><span class="kw">class</span> _AddTaskScreenState <span class="kw">extends</span> State&lt;AddTaskScreen&gt; {
+  <span class="kw">final</span> TextEditingController _nameCtrl = TextEditingController();
+  <span class="kw">String</span> _priority = <span class="str">"Medium"</span>;
+
+  @override
+  <span class="kw">void</span> <span class="fn">dispose</span>() {
+    _nameCtrl.<span class="fn">dispose</span>();  <span class="cm">← always dispose controllers to free memory</span>
+    <span class="kw">super</span>.<span class="fn">dispose</span>();
+  }
+
+  <span class="kw">void</span> <span class="fn">_save</span>() {
+    <span class="cm">// Validation — check the field is not empty</span>
+    <span class="kw">if</span> (_nameCtrl.text.<span class="fn">trim</span>().<span class="fn">isEmpty</span>) {
+      <span class="fn">print</span>(<span class="str">"Task name is required"</span>);
+      <span class="kw">return</span>;
+    }
+    <span class="cm">// Proceed to save...</span>
+  }
+
+  @override
+  Widget <span class="fn">build</span>(BuildContext context) {
+    <span class="kw">return</span> Scaffold(
+      appBar: AppBar(title: <span class="kw">const</span> Text(<span class="str">"Add Task"</span>)),
+      body: Padding(
+        padding: <span class="kw">const</span> EdgeInsets.<span class="fn">all</span>(<span class="val">20</span>),
+        child: Column(
+          children: [
+            TextField(
+              controller: _nameCtrl,
+              decoration: <span class="kw">const</span> InputDecoration(
+                labelText: <span class="str">"Task name"</span>,
+                border: OutlineInputBorder(),
+              ),
+            ),
+            <span class="kw">const</span> SizedBox(height: <span class="val">16</span>),
+            DropdownButtonFormField&lt;<span class="kw">String</span>&gt;(
+              value: _priority,
+              decoration: <span class="kw">const</span> InputDecoration(
+                labelText: <span class="str">"Priority"</span>,
+                border: OutlineInputBorder(),
+              ),
+              items: [<span class="str">"High"</span>, <span class="str">"Medium"</span>, <span class="str">"Low"</span>]
+                  .<span class="fn">map</span>((p) =&gt; DropdownMenuItem(value: p, child: Text(p)))
+                  .<span class="fn">toList</span>(),
+              onChanged: (v) =&gt; <span class="fn">setState</span>(() =&gt; _priority = v!),
+            ),
+            <span class="kw">const</span> SizedBox(height: <span class="val">24</span>),
+            ElevatedButton(
+              onPressed: <span class="fn">_save</span>,
+              child: <span class="kw">const</span> Text(<span class="str">"Save Task"</span>),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}</div>
+
+  <div class="prose">
+    <h2>Validation — Checking Input Before Saving</h2>
+    <p>Never trust that users will enter valid data. Always validate before sending anything to a database.</p>
+  </div>
+
+  <table class="tbl">
+    <tr><th>Rule</th><th>Example Check</th><th>User-Friendly Message</th></tr>
+    <tr><td>Required field</td><td><code>_nameCtrl.text.isEmpty</code></td><td>"Task name is required."</td></tr>
+    <tr><td>Minimum length</td><td><code>text.length &lt; 3</code></td><td>"Name must be at least 3 characters."</td></tr>
+    <tr><td>Numbers only</td><td><code>int.tryParse(text) == null</code></td><td>"Please enter a number."</td></tr>
+    <tr><td>Valid selection</td><td>dropdown not null</td><td>"Please choose a priority."</td></tr>
+  </table>
+
+  <div class="exercise">
+    <div class="ex-head"><div style="font-size:20px">🟡</div><div class="ex-level" style="color:var(--amber)">Intermediate Exercise</div></div>
+    <div class="ex-body">
+      <strong>Exercise 8.1</strong> — Build two screens. The first screen has a button "Go to Details". When tapped, it navigates to the second screen. The second screen has a "Go Back" button that returns to the first screen. As a challenge: pass a message string from the first screen to the second, and display it on the second screen.
+    </div>
+  </div>
+
+  <div class="page-nav">
+    <button class="btn btn-ghost" onclick="go(7)">← Ch 7</button>
+    <button class="btn btn-primary" onclick="go(9)">Chapter 9: Data Models →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     PAGE 9 — DATA MODELS
+══════════════════════════════════════════════ -->
+<div class="page" id="p9">
+  <div class="ch-hero purple">
+    <div class="ch-eyebrow">Chapter 9</div>
+    <h1>Data Models</h1>
+    <p class="ch-sub">How Dart classes bridge the gap between raw database rows and the objects your application actually works with.</p>
+  </div>
+
+  <div class="prose">
+    <h2>What Is a Data Model?</h2>
+    <p>A <strong>data model</strong> (or simply a <em>model</em>) is a Dart class that represents one record of real-world data. If your database has a <code>Tasks</code> table, you create a <code>Task</code> class in Dart that mirrors its structure.</p>
+
+    <p>Without models, your application would pass raw <code>Map&lt;String, dynamic&gt;</code> dictionaries everywhere. That leads to errors, confusion, and code that is difficult to maintain. Models give your data a clear structure, type safety, and meaningful methods.</p>
+  </div>
+
+  <div class="arch">
+    <div class="arch-title">Database Row → Dart Model → Flutter UI</div>
+    <div class="arch-row">
+      <div class="arch-box t"><div class="ab-icon">🗄️</div><div class="ab-name">Database Row</div><div class="ab-sub">Map with string keys</div></div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-box p"><div class="ab-icon">💻</div><div class="ab-name">Model Object</div><div class="ab-sub">Typed Dart class</div></div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-box g"><div class="ab-icon">📱</div><div class="ab-name">Flutter Widget</div><div class="ab-sub">Displays the data</div></div>
+    </div>
+  </div>
+
+  <div class="prose">
+    <h2>Building a Model Class</h2>
+    <p>A model class has three parts: the properties (the fields), the constructor (how to create one), and a <em>factory constructor</em> that converts a database row into an object.</p>
+  </div>
+
+  <div class="code-lbl">📄 Dart — A Complete Model Class</div>
+  <div class="code-box"><span class="kw">class</span> Task {
+  <span class="cm">// ── Properties — mirror the database columns ─────</span>
+  <span class="kw">final int</span>    id;
+  <span class="kw">String</span>       taskName;
+  <span class="kw">String</span>       priority;
+  <span class="kw">bool</span>         isDone;
+
+  <span class="cm">// ── Constructor ──────────────────────────────────</span>
+  Task({
+    <span class="kw">required this</span>.id,
+    <span class="kw">required this</span>.taskName,
+    <span class="kw">required this</span>.priority,
+    <span class="kw">required this</span>.isDone,
+  });
+
+  <span class="cm">// ── Factory — converts a database Map to a Task ──</span>
+  <span class="kw">factory</span> Task.fromMap(Map&lt;<span class="kw">String</span>, <span class="kw">dynamic</span>&gt; row) {
+    <span class="kw">return</span> Task(
+      id:       row[<span class="str">'id'</span>],
+      taskName: row[<span class="str">'taskName'</span>],
+      priority: row[<span class="str">'priority'</span>],
+      isDone:   row[<span class="str">'isDone'</span>] == <span class="val">1</span>,   <span class="cm">← SQL BIT 0/1 → Dart bool</span>
+    );
+  }
+
+  <span class="cm">// ── toMap() — converts a Task back to a Map for saving</span>
+  Map&lt;<span class="kw">String</span>, <span class="kw">dynamic</span>&gt; <span class="fn">toMap</span>() {
+    <span class="kw">return</span> {
+      <span class="str">'id'</span>:       id,
+      <span class="str">'taskName'</span>: taskName,
+      <span class="str">'priority'</span>: priority,
+      <span class="str">'isDone'</span>:   isDone ? <span class="val">1</span> : <span class="val">0</span>,  <span class="cm">← Dart bool → SQL BIT</span>
+    };
+  }
+}</div>
+
+  <table class="exp-tbl">
+    <tr><th>Part</th><th>Meaning</th></tr>
+    <tr><td>final int id</td><td>id cannot be changed after the Task is created — it comes from the database</td></tr>
+    <tr><td>factory Task.fromMap()</td><td>A special constructor that reads from a Map and builds a Task object</td></tr>
+    <tr><td>row['isDone'] == 1</td><td>SQL Server stores booleans as 0 or 1. This converts to a Dart bool.</td></tr>
+    <tr><td>toMap()</td><td>The reverse — converts the Task back into a Map for database operations</td></tr>
+  </table>
+
+  <div class="callout info">
+    <div class="ico">🔄</div>
+    <div class="callout-body"><strong>The conversion pattern:</strong> Database → <code>fromMap()</code> → Model Object (used in Dart code) → <code>toMap()</code> → Database. This round-trip is the foundation of how applications persist and retrieve data.</div>
+  </div>
+
+  <div class="exercise">
+    <div class="ex-head"><div style="font-size:20px">🟡</div><div class="ex-level" style="color:var(--amber)">Intermediate Exercise</div></div>
+    <div class="ex-body">
+      <strong>Exercise 9.1</strong> — Create a <code>Product</code> model class with properties: <code>id</code> (int), <code>name</code> (String), <code>price</code> (double), <code>inStock</code> (bool). Include a <code>fromMap()</code> factory and a <code>toMap()</code> method. Create a test Map and convert it to a Product object. Print the product name and whether it is in stock.
+    </div>
+  </div>
+
+  <div class="page-nav">
+    <button class="btn btn-ghost" onclick="go(8)">← Ch 8</button>
+    <button class="btn btn-primary" onclick="go(10)">Chapter 10: Databases &amp; SQL →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     PAGE 10 — DATABASES & SQL
+══════════════════════════════════════════════ -->
+<div class="page" id="p10">
+  <div class="ch-hero teal">
+    <div class="ch-eyebrow">Chapter 10</div>
+    <h1>Databases &amp; SQL</h1>
+    <p class="ch-sub">What a relational database is, what Microsoft SQL Server is, and the SQL commands used to create, read, update, and delete data.</p>
+  </div>
+
+  <div class="prose">
+    <h2>What Is a Database?</h2>
+    <p>A <strong>database</strong> is organised storage for information that persists beyond the lifetime of an application. Without a database, all data disappears the moment an application closes.</p>
+
+    <p>A <strong>relational database</strong> organises information into <em>tables</em> — structured like spreadsheets, with rows and columns. Each table represents one type of thing. A <em>row</em> is one record. A <em>column</em> is one property of every record.</p>
+
+    <h2>Key Database Concepts</h2>
+  </div>
+
+  <table class="tbl">
+    <tr><th>Concept</th><th>Meaning</th><th>Example</th></tr>
+    <tr><td>Table</td><td>A structured collection of related records</td><td>A Tasks table</td></tr>
+    <tr><td>Row</td><td>One complete record</td><td>One specific task</td></tr>
+    <tr><td>Column</td><td>One property of every record</td><td>taskName, priority, isDone</td></tr>
+    <tr><td>Primary Key</td><td>A unique identifier for each row — no two rows can share it</td><td>id = 1, 2, 3...</td></tr>
+    <tr><td>NULL</td><td>A value that does not exist or is unknown</td><td>A task with no due date yet</td></tr>
+    <tr><td>Constraint</td><td>A rule the database enforces on data</td><td>NOT NULL — this column cannot be empty</td></tr>
+    <tr><td>Default value</td><td>A value used when none is provided</td><td>isDone defaults to 0</td></tr>
+  </table>
+
+  <div class="prose">
+    <h2>Microsoft SQL Server</h2>
+    <p>SQL Server is Microsoft's enterprise relational database management system (RDBMS). It stores, organises, and retrieves structured data. For learning purposes, it runs on your local computer.</p>
+
+    <p>An important distinction for beginners:</p>
+  </div>
+
+  <table class="tbl">
+    <tr><th>Thing</th><th>What It Is</th></tr>
+    <tr><td><strong>SQL Server</strong></td><td>The database engine software that actually stores and manages data</td></tr>
+    <tr><td><strong>SSMS</strong> (SQL Server Management Studio)</td><td>A graphical tool for connecting to SQL Server, writing queries, and viewing data</td></tr>
+    <tr><td><strong>SQL</strong></td><td>The language you write to communicate with SQL Server — SELECT, INSERT, etc.</td></tr>
+  </table>
+
+  <div class="prose">
+    <h2>SQL — Creating and Managing Data</h2>
+
+    <h3>Creating a Database and Table</h3>
+  </div>
+
+  <div class="sql-lbl">📄 SQL — Database and Table Setup</div>
+  <div class="sql-box"><span class="sq">CREATE DATABASE</span> TaskManagerDB;
+<span class="sq">USE</span> TaskManagerDB;
+
+<span class="sq">CREATE TABLE</span> Tasks (
+  id        <span class="sq">INT IDENTITY</span>(1,1) <span class="sq">PRIMARY KEY</span>,
+  taskName  <span class="sq">NVARCHAR</span>(200) <span class="sq">NOT NULL</span>,
+  priority  <span class="sq">NVARCHAR</span>(20)  <span class="sq">NOT NULL DEFAULT</span> <span class="str">'Medium'</span>,
+  isDone    <span class="sq">BIT           NOT NULL DEFAULT</span> 0
+);</div>
+
+  <table class="exp-tbl">
+    <tr><th>SQL Part</th><th>Meaning</th></tr>
+    <tr><td>IDENTITY(1,1)</td><td>Auto-increment: 1, 2, 3... The database assigns this automatically</td></tr>
+    <tr><td>PRIMARY KEY</td><td>Each row has a unique id — this is how we find specific records</td></tr>
+    <tr><td>NVARCHAR(200)</td><td>Text up to 200 characters; N means Unicode — supports all languages</td></tr>
+    <tr><td>NOT NULL</td><td>This field is required — you cannot insert a row without it</td></tr>
+    <tr><td>DEFAULT 'Medium'</td><td>If no priority is provided, the database uses "Medium" automatically</td></tr>
+    <tr><td>BIT</td><td>Stores only 0 (false) or 1 (true) — used for boolean values</td></tr>
+  </table>
+
+  <div class="prose">
+    <h2>CRUD — The Four Database Operations</h2>
+    <p>Every application that stores data performs these four fundamental operations. The acronym <strong>CRUD</strong> stands for Create, Read, Update, Delete.</p>
+  </div>
+
+  <div class="sql-lbl">📄 SQL — CRUD Operations</div>
+  <div class="sql-box"><span class="cm">-- CREATE: Add a new record</span>
+<span class="sq">INSERT INTO</span> Tasks (taskName, priority)
+<span class="sq">VALUES</span> (<span class="str">'Read Chapter 4'</span>, <span class="str">'High'</span>);
+
+<span class="cm">-- READ: Retrieve records</span>
+<span class="sq">SELECT</span> * <span class="sq">FROM</span> Tasks;
+<span class="sq">SELECT</span> id, taskName <span class="sq">FROM</span> Tasks <span class="sq">WHERE</span> isDone = 0;
+
+<span class="cm">-- UPDATE: Modify an existing record</span>
+<span class="sq">UPDATE</span> Tasks <span class="sq">SET</span> isDone = 1 <span class="sq">WHERE</span> id = 2;
+
+<span class="cm">-- DELETE: Remove a record</span>
+<span class="sq">DELETE FROM</span> Tasks <span class="sq">WHERE</span> id = 2;</div>
+
+  <div class="callout warn">
+    <div class="ico">⚠️</div>
+    <div class="callout-body"><strong>Always use WHERE with UPDATE and DELETE.</strong> Writing <code>DELETE FROM Tasks;</code> without a WHERE clause deletes every row in the table. Always specify which record to affect.</div>
+  </div>
+
+  <div class="prose">
+    <h2>SQL Injection — A Security Warning</h2>
+    <p>Never build SQL commands by directly concatenating user input:</p>
+  </div>
+
+  <div class="code-lbl">📄 DANGEROUS — SQL Injection Vulnerability</div>
+  <div class="code-box"><span class="cm">// If the user types: ' OR '1'='1 -- (malicious input)</span>
+<span class="kw">String</span> query = <span class="str">"SELECT * FROM Tasks WHERE taskName = '"</span> + userInput + <span class="str">"'"</span>;
+<span class="cm">// This becomes: SELECT * FROM Tasks WHERE taskName = '' OR '1'='1' --</span>
+<span class="cm">// The database returns ALL records — a security breach</span></div>
+
+  <div class="callout err">
+    <div class="ico">🔒</div>
+    <div class="callout-body"><strong>Always use parameterised queries</strong> — pass values as parameters separate from the SQL text. The database driver ensures user input cannot be interpreted as SQL code. Most database packages handle this for you.</div>
+  </div>
+
+  <div class="page-nav">
+    <button class="btn btn-ghost" onclick="go(9)">← Ch 9</button>
+    <button class="btn btn-primary" onclick="go(11)">Chapter 11: Connecting to a Database →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     PAGE 11 — CONNECTING TO DATABASE
+══════════════════════════════════════════════ -->
+<div class="page" id="p11">
+  <div class="ch-hero red">
+    <div class="ch-eyebrow">Chapter 11</div>
+    <h1>Connecting an Application to a Database</h1>
+    <p class="ch-sub">The service layer, how Dart communicates with SQL Server, and how architecture keeps UI and data logic cleanly separated.</p>
+  </div>
+
+  <div class="prose">
+    <h2>Separating Concerns — The Service Layer</h2>
+    <p>A professional Flutter application does not mix database code with UI code. If a widget is building buttons and calling SQL at the same time, the code becomes difficult to read, test, and maintain.</p>
+
+    <p>The solution is to create a dedicated <strong>service class</strong> — also called a data-access layer — whose only job is to communicate with the database. The UI asks the service for data. The service performs the SQL. The UI never touches SQL directly.</p>
+  </div>
+
+  <div class="flow-diag">HomeScreen (UI widget)
+    calls: await _taskService.getTasks()
+           ↓
+TaskService (service class)
+    opens connection
+    runs: SELECT * FROM Tasks
+    converts rows to Task objects using Task.fromMap()
+    returns: List&lt;Task&gt;
+           ↓
+HomeScreen
+    receives the List&lt;Task&gt;
+    calls setState() to update the UI
+           ↓
+Flutter rebuilds the screen with the new data</div>
+
+  <div class="prose">
+    <h2>A Database Service in Practice</h2>
+    <p>A service class typically contains one method per database operation. Here is what a task management service would look like conceptually:</p>
+  </div>
+
+  <div class="code-lbl">📄 Dart — Database Service (concept)</div>
+  <div class="code-box"><span class="kw">class</span> TaskService {
+  <span class="cm">// ── Connection settings ──────────────────────────────────────</span>
+  <span class="kw">static const</span> _server   = <span class="str">'localhost'</span>;
+  <span class="kw">static const</span> _database = <span class="str">'TaskManagerDB'</span>;
+  <span class="kw">static const</span> _username = <span class="str">'your_username'</span>;
+  <span class="kw">static const</span> _password = <span class="str">'your_password'</span>;
+
+  <span class="cm">// ── Connect to the database ──────────────────────────────────</span>
+  <span class="kw">Future</span>&lt;<span class="kw">void</span>&gt; <span class="fn">connect</span>() <span class="kw">async</span> {
+    <span class="cm">// Use a database package to open the connection</span>
+  }
+
+  <span class="cm">// ── Read all tasks ────────────────────────────────────────────</span>
+  <span class="kw">Future</span>&lt;List&lt;Task&gt;&gt; <span class="fn">getTasks</span>() <span class="kw">async</span> {
+    <span class="kw">try</span> {
+      <span class="kw">final</span> rows = <span class="kw">await</span> <span class="cm">/* run: SELECT * FROM Tasks */</span>;
+      <span class="kw">return</span> rows.<span class="fn">map</span>((row) =&gt; Task.<span class="fn">fromMap</span>(row)).<span class="fn">toList</span>();
+    } <span class="kw">catch</span> (e) {
+      <span class="fn">print</span>(<span class="str">"Failed to load tasks: "</span> + e.toString());
+      <span class="kw">return</span> [];  <span class="cm">← return empty list rather than crash</span>
+    }
+  }
+
+  <span class="cm">// ── Insert a new task ─────────────────────────────────────────</span>
+  <span class="kw">Future</span>&lt;<span class="kw">void</span>&gt; <span class="fn">addTask</span>(<span class="kw">String</span> name, <span class="kw">String</span> priority) <span class="kw">async</span> {
+    <span class="kw">await</span> <span class="cm">/* run: INSERT INTO Tasks (taskName, priority) VALUES (...) */</span>;
+  }
+
+  <span class="cm">// ── Update a task's isDone status ─────────────────────────────</span>
+  <span class="kw">Future</span>&lt;<span class="kw">void</span>&gt; <span class="fn">setDone</span>(<span class="kw">int</span> id, <span class="kw">bool</span> isDone) <span class="kw">async</span> {
+    <span class="kw">int</span> bit = isDone ? <span class="val">1</span> : <span class="val">0</span>;
+    <span class="kw">await</span> <span class="cm">/* run: UPDATE Tasks SET isDone = $bit WHERE id = $id */</span>;
+  }
+
+  <span class="cm">// ── Delete a task ─────────────────────────────────────────────</span>
+  <span class="kw">Future</span>&lt;<span class="kw">void</span>&gt; <span class="fn">deleteTask</span>(<span class="kw">int</span> id) <span class="kw">async</span> {
+    <span class="kw">await</span> <span class="cm">/* run: DELETE FROM Tasks WHERE id = $id */</span>;
+  }
+}</div>
+
+  <div class="prose">
+    <h2>Packages — Extending Dart with Libraries</h2>
+    <p>Dart by itself cannot talk to SQL Server. You need a <strong>package</strong> — a library written by someone else that provides that capability. Packages are listed in <code>pubspec.yaml</code> and downloaded with <code>flutter pub get</code>.</p>
+    <p>For connecting to Microsoft SQL Server, packages such as <code>mssql_connection</code> provide the connection mechanism. The exact API varies by package, but the pattern is always: open connection → run query → receive results → close or reuse connection.</p>
+
+    <h2>A Critical Architecture Note — Production Considerations</h2>
+    <p>Connecting a mobile application <em>directly</em> to a database is acceptable for learning and small-scale projects, but it is not the recommended approach for production applications. Here is why:</p>
+  </div>
+
+  <table class="tbl">
+    <tr><th>Issue</th><th>Direct Connection</th><th>API/Backend Approach</th></tr>
+    <tr><td>Credentials</td><td>Database username and password must be in the app — easily extracted</td><td>Credentials stay on the server — never reach the device</td></tr>
+    <tr><td>Security</td><td>Anyone who decompiles the app can see the database server address</td><td>Only the backend server connects to the database</td></tr>
+    <tr><td>Scalability</td><td>Each device opens a database connection — server cannot handle thousands</td><td>Backend manages connection pooling efficiently</td></tr>
+    <tr><td>Updates</td><td>Business logic is locked inside the app — requires an app update</td><td>Business logic can be updated on the server without an app update</td></tr>
+  </table>
+
+  <div class="arch">
+    <div class="arch-title">Production Architecture (recommended)</div>
+    <div class="arch-row">
+      <div class="arch-box b"><div class="ab-icon">📱</div><div class="ab-name">Flutter App</div></div>
+      <div class="arch-arrow">→ HTTPS →</div>
+      <div class="arch-box g"><div class="ab-icon">🖥️</div><div class="ab-name">Web API / Backend</div><div class="ab-sub">Node, Python, .NET...</div></div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-box t"><div class="ab-icon">🗄️</div><div class="ab-name">SQL Server</div></div>
+    </div>
+  </div>
+
+  <div class="prose">
+    <h2>Project Structure — Organising Your Code</h2>
+    <p>As an application grows, putting all code into <code>main.dart</code> becomes unmanageable. Professional Flutter projects use a folder structure that separates concerns clearly.</p>
+  </div>
+
+  <div class="file-tree">
+<span class="ft-dir">lib/</span>
+  main.dart                    ← App entry point only
+  <span class="ft-dir">models/</span>
+    task.dart                  ← Task class with fromMap() and toMap()
+    product.dart               ← Other model classes...
+  <span class="ft-dir">services/</span>
+    task_service.dart          ← All SQL operations for tasks
+    auth_service.dart          ← Login/auth operations
+  <span class="ft-dir">screens/</span>
+    home_screen.dart           ← Task list UI
+    add_task_screen.dart       ← Add task form
+  <span class="ft-dir">widgets/</span>
+    task_card.dart             ← Reusable task card widget
+    priority_badge.dart        ← Reusable priority label
+</div>
+
+  <div class="callout tip">
+    <div class="ico">📐</div>
+    <div class="callout-body"><strong>A useful rule:</strong> If you are in a screen file and you are writing SQL, stop — that SQL belongs in a service. If you are in a service file and you are building widgets, stop — that widget code belongs in a screen. Keep each file focused on exactly one responsibility.</div>
+  </div>
+
+  <div class="page-nav">
+    <button class="btn btn-ghost" onclick="go(10)">← Ch 10</button>
+    <button class="btn btn-primary" onclick="go(12)">Chapter 12: Git &amp; GitHub →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     PAGE 12 — GIT & GITHUB
+══════════════════════════════════════════════ -->
+<div class="page" id="p12">
+  <div class="ch-hero amber">
+    <div class="ch-eyebrow">Chapter 12</div>
+    <h1>Git &amp; GitHub — Version Control</h1>
+    <p class="ch-sub">How to track changes to your code, work safely, and collaborate — even on your own.</p>
+  </div>
+
+  <div class="prose">
+    <h2>What Is Version Control?</h2>
+    <p>Imagine writing a long document and saving it as <em>Essay_v1.docx</em>, <em>Essay_v2.docx</em>, <em>Essay_final.docx</em>, <em>Essay_final_FINAL.docx</em>. That is a manual version control system. It works, but it is messy, takes space, and makes it hard to see exactly what changed between versions.</p>
+
+    <p><strong>Git</strong> solves this properly. It tracks every change to every file in your project, stores them efficiently, lets you go back to any previous state, and lets multiple people work on the same code without conflicts.</p>
+
+    <h2>Git vs GitHub</h2>
+  </div>
+
+  <table class="tbl">
+    <tr><th>Git</th><th>GitHub</th></tr>
+    <tr><td>Software installed on your computer</td><td>A website (github.com)</td></tr>
+    <tr><td>Tracks changes locally on your machine</td><td>Stores your Git history online</td></tr>
+    <tr><td>Works completely offline</td><td>Requires internet</td></tr>
+    <tr><td>The core technology</td><td>A hosting service for Git repositories</td></tr>
+    <tr><td>Free, open-source</td><td>Free for public repos; paid plans for more features</td></tr>
+  </table>
+
+  <div class="prose">
+    <h2>Core Git Concepts</h2>
+  </div>
+
+  <div class="def-card">
+    <div class="def-term">Repository (repo)</div>
+    <div class="def-simple">A folder Git is tracking — everything inside it is version-controlled.</div>
+    <div class="def-tech">Contains the project files AND a hidden <code>.git</code> folder where Git stores all the history.</div>
+  </div>
+
+  <div class="def-card">
+    <div class="def-term">Commit</div>
+    <div class="def-simple">A saved snapshot of your code at a specific moment in time.</div>
+    <div class="def-tech">Each commit has a unique ID, a message describing what changed, and a reference to its parent commit. Commits are permanent — you can always go back to one.</div>
+  </div>
+
+  <div class="def-card">
+    <div class="def-term">Staging Area</div>
+    <div class="def-simple">A waiting room for changes before they become a commit.</div>
+    <div class="def-tech"><code>git add</code> moves changes to the staging area. <code>git commit</code> takes everything in the staging area and creates a permanent snapshot.</div>
+  </div>
+
+  <div class="prose">
+    <h2>The Everyday Git Workflow</h2>
+  </div>
+
+  <div class="flow-diag">Working Directory              Staging Area             Repository (GitHub)
+  (your code files)
+
+  Edit files                    
+        ↓
+  git status                   
+  (see what changed)            
+        ↓
+  git add .                  →  Changes staged
+  (stage all changes)                ↓
+                                git commit -m "message"   →  Snapshot saved locally
+                                                                    ↓
+                                                         git push origin main
+                                                         (uploaded to GitHub)</div>
+
+  <div class="prose">
+    <h2>Essential Git Commands</h2>
+  </div>
+
+  <table class="tbl">
+    <tr><th>Command</th><th>What It Does</th><th>When to Use</th></tr>
+    <tr><td><code>git init</code></td><td>Create a new repository in the current folder</td><td>Starting a brand new project</td></tr>
+    <tr><td><code>git clone &lt;url&gt;</code></td><td>Download an existing repository from GitHub</td><td>Starting work on an existing project</td></tr>
+    <tr><td><code>git status</code></td><td>Show which files have changed and what is staged</td><td>Before every commit — check what you are about to save</td></tr>
+    <tr><td><code>git add .</code></td><td>Stage all changed files</td><td>Before committing</td></tr>
+    <tr><td><code>git add filename</code></td><td>Stage one specific file</td><td>When you only want to commit part of your changes</td></tr>
+    <tr><td><code>git commit -m "message"</code></td><td>Create a snapshot with a descriptive message</td><td>After completing a logical piece of work</td></tr>
+    <tr><td><code>git push</code></td><td>Upload committed changes to GitHub</td><td>After committing locally</td></tr>
+    <tr><td><code>git pull</code></td><td>Download and merge the latest changes from GitHub</td><td>Before starting work each day</td></tr>
+    <tr><td><code>git log</code></td><td>View the history of all commits</td><td>To see what has changed over time</td></tr>
+  </table>
+
+  <div class="code-lbl">💻 Terminal — The Typical Daily Workflow</div>
+  <div class="cmd-box"><span class="p">$ </span>git status                          # see what changed
+<span class="p">$ </span>git add .                           # stage everything
+<span class="p">$ </span>git commit -m "Add task deletion"   # save a snapshot
+<span class="p">$ </span>git push                            # upload to GitHub</div>
+
+  <div class="prose">
+    <h2>Writing Good Commit Messages</h2>
+    <p>A commit message is a description of what you did. Good messages make it easy to understand a project's history. Bad messages make it impossible.</p>
+  </div>
+
+  <table class="tbl">
+    <tr><th>❌ Bad</th><th>✅ Good</th></tr>
+    <tr><td>fix</td><td>Fix: checkbox crash when task has no priority</td></tr>
+    <tr><td>update</td><td>Add: validation to the Add Task form</td></tr>
+    <tr><td>changes</td><td>Refactor: move SQL queries to TaskService class</td></tr>
+    <tr><td>wip</td><td>Style: update colours to match design system</td></tr>
+  </table>
+
+  <div class="prose">
+    <h2>GitHub — Beyond Just Submitting Work</h2>
+    <p>GitHub is a professional platform used by millions of developers and companies worldwide. It provides:</p>
+    <ul>
+      <li><strong>Remote backup</strong> — your code is safe even if your computer is lost or broken</li>
+      <li><strong>Collaboration</strong> — multiple developers can work on the same project simultaneously</li>
+      <li><strong>Pull Requests</strong> — a formal mechanism for reviewing code before merging changes</li>
+      <li><strong>Issues</strong> — track bugs, features, and tasks within the same platform</li>
+      <li><strong>Portfolio</strong> — public repositories serve as a professional record of your work</li>
+    </ul>
+  </div>
+
+  <div class="page-nav">
+    <button class="btn btn-ghost" onclick="go(11)">← Ch 11</button>
+    <button class="btn btn-primary" onclick="go(13)">Chapter 13: Testing &amp; Security →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     PAGE 13 — TESTING, DEBUGGING, SECURITY
+══════════════════════════════════════════════ -->
+<div class="page" id="p13">
+  <div class="ch-hero green">
+    <div class="ch-eyebrow">Chapter 13</div>
+    <h1>Testing, Debugging &amp; Security</h1>
+    <p class="ch-sub">Verifying that your application works correctly, finding and fixing problems, and protecting data.</p>
+  </div>
+
+  <div class="prose">
+    <h2>Testing — Why It Matters</h2>
+    <p>There is a fundamental difference between these two statements:</p>
+    <ul>
+      <li><em>"I wrote the code and it compiles."</em></li>
+      <li><em>"I know the application works correctly."</em></li>
+    </ul>
+    <p>Code that compiles without errors can still behave incorrectly, crash in specific situations, or lose data. Testing is the process of systematically verifying that the application does what it is supposed to do.</p>
+
+    <h2>Manual Testing — Test Cases</h2>
+    <p>Manual testing means operating the application yourself and checking that each feature works as expected. The key is to test <em>systematically</em> using written test cases, not just clicking around hoping nothing breaks.</p>
+  </div>
+
+  <table class="tbl">
+    <tr><th>Test Case</th><th>Action</th><th>Expected Result</th><th>Pass/Fail</th></tr>
+    <tr><td>App loads with data</td><td>Open the application</td><td>Task list appears with existing tasks</td><td></td></tr>
+    <tr><td>Add a task</td><td>Enter "Study Flutter", select High priority, tap Save</td><td>New task appears at bottom of list</td><td></td></tr>
+    <tr><td>Empty name blocked</td><td>Tap Save with no task name entered</td><td>Error message shown; nothing saved</td><td></td></tr>
+    <tr><td>Mark task done</td><td>Tap the checkbox on a task</td><td>Task gets strikethrough; database updates</td><td></td></tr>
+    <tr><td>Delete a task</td><td>Tap the delete button on a task</td><td>Task disappears from the list</td><td></td></tr>
+    <tr><td>Data persists</td><td>Close and reopen the app</td><td>All tasks still present</td><td></td></tr>
+    <tr><td>Long task name</td><td>Enter a 200-character task name</td><td>Task saves without truncation or crash</td><td></td></tr>
+  </table>
+
+  <div class="prose">
+    <h2>Debugging — Finding What Went Wrong</h2>
+    <p>Debugging is the process of identifying the cause of unexpected behaviour. When something goes wrong, the instinct is to panic. The professional approach is to be methodical.</p>
+
+    <h3>Reading Error Messages</h3>
+    <p>An error message is not a sign that something is catastrophically broken — it is a <em>clue</em>. Read it carefully before trying to fix anything. Error messages usually tell you:</p>
+    <ul>
+      <li>What type of error occurred</li>
+      <li>Which file and line number it happened on</li>
+      <li>What Dart or Flutter expected vs. what it got</li>
+    </ul>
+
+    <h3>Systematic Debugging Approach</h3>
+  </div>
+
+  <div class="flow-diag">Problem observed
+         ↓
+Identify WHICH layer the problem is in:
+  UI? → Check build() method and setState() calls
+  Logic? → Check Dart functions and conditions
+  Service? → Check database calls and SQL
+  Database? → Run the SQL directly in SSMS
+  Connection? → Check credentials and server settings
+         ↓
+Add print() statements to see values at each step
+         ↓
+Isolate the problematic line
+         ↓
+Fix and test again</div>
+
+  <div class="prose">
+    <h2>Security Basics — Protecting Your Code and Data</h2>
+
+    <h3>Never Commit Secrets to GitHub</h3>
+    <p>Once a password or API key is pushed to GitHub — even to a private repository — it should be considered compromised. People scan GitHub for accidentally committed credentials continuously. The rule is absolute: <strong>no credentials in source code.</strong></p>
+
+    <h3>.gitignore — Telling Git What to Ignore</h3>
+    <p>A <code>.gitignore</code> file lists files and folders that Git should never track. Common entries for Flutter projects:</p>
+  </div>
+
+  <div class="code-lbl">📄 .gitignore — Flutter Project</div>
+  <div class="code-box"><span class="cm"># Flutter build output — never commit these</span>
+build/
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+
+<span class="cm"># Credentials and environment files</span>
+*.env
+secrets.dart
+config_local.dart
+
+<span class="cm"># macOS system files</span>
+.DS_Store
+
+<span class="cm"># VS Code settings (personal preference, not code)</span>
+.vscode/</div>
+
+  <div class="prose">
+    <h3>Where Should Credentials Live?</h3>
+    <p>In a learning project, credentials may be in a configuration file. In a production application:</p>
+    <ul>
+      <li>Use environment variables set on the server</li>
+      <li>Use a secrets management service</li>
+      <li>Keep credentials only on the backend server, never in the mobile app</li>
+    </ul>
+    <p>This reinforces why the API/backend architecture described in Chapter 11 is the correct approach for production — the mobile app never needs to know the database password.</p>
+  </div>
+
+  <div class="prose">
+    <h2>Common Beginner Misconceptions</h2>
+  </div>
+
+  <div class="misconception">
+    <div class="mis-head"><span>❌</span><div class="mis-wrong">Flutter is a programming language.</div></div>
+    <div class="mis-body">Flutter is a <em>framework</em> — a collection of tools, libraries, and components for building UIs. The programming language is Dart. You write Dart code that uses the Flutter framework.</div>
+    <div class="mis-correct">✅ Flutter is the framework. Dart is the language. They work together but are distinct.</div>
+  </div>
+
+  <div class="misconception">
+    <div class="mis-head"><span>❌</span><div class="mis-wrong">Git and GitHub are the same thing.</div></div>
+    <div class="mis-body">Git is software that runs on your computer and tracks changes. GitHub is a website that hosts Git repositories online. You can use Git without GitHub.</div>
+    <div class="mis-correct">✅ Git = version control tool on your computer. GitHub = online hosting service for Git repositories.</div>
+  </div>
+
+  <div class="misconception">
+    <div class="mis-head"><span>❌</span><div class="mis-wrong">setState() saves data to the database.</div></div>
+    <div class="mis-body"><code>setState()</code> tells Flutter to rebuild the UI. It has absolutely nothing to do with databases. To save to a database, you call your service method. To update the UI after saving, you call <code>setState()</code>.</div>
+    <div class="mis-correct">✅ setState() updates the screen. Database operations update the database. These are completely separate concerns.</div>
+  </div>
+
+  <div class="misconception">
+    <div class="mis-head"><span>❌</span><div class="mis-wrong">If the code compiles, the application is working correctly.</div></div>
+    <div class="mis-body">Compilation only checks that the syntax is valid Dart. It does not check that the logic is correct, that the database connection works, or that the UI behaves as expected. Testing is necessary to confirm the application works.</div>
+    <div class="mis-correct">✅ A compiling app is a starting point, not a finished product. Test every feature explicitly.</div>
+  </div>
+
+  <div class="misconception">
+    <div class="mis-head"><span>❌</span><div class="mis-wrong">Putting everything in main.dart is fine for small apps.</div></div>
+    <div class="mis-body">Even small apps benefit from clear structure. main.dart with hundreds of lines of mixed UI, database, and logic code is difficult to debug, maintain, or extend. Good habits established on small projects carry into large ones.</div>
+    <div class="mis-correct">✅ Always separate screens, models, and services into their own files from the start.</div>
+  </div>
+
+  <div class="page-nav">
+    <button class="btn btn-ghost" onclick="go(12)">← Ch 12</button>
+    <button class="btn btn-primary" onclick="go(14)">Chapter 14: Mental Model &amp; Glossary →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     PAGE 14 — MENTAL MODEL & GLOSSARY
+══════════════════════════════════════════════ -->
+<div class="page" id="p14">
+  <div class="ch-hero blue">
+    <div class="ch-eyebrow">Chapter 14</div>
+    <h1>The Mobile App Developer's Mental Model</h1>
+    <p class="ch-sub">Putting everything together — the complete picture, the full flow, and a reference glossary.</p>
+  </div>
+
+  <div class="prose">
+    <h2>How It All Fits Together</h2>
+    <p>After working through this tutorial, you should have a clear mental map of each technology and its role. Here it is in one place:</p>
+  </div>
+
+  <table class="tbl">
+    <tr><th>Technology</th><th>Role</th><th>Lives Where</th></tr>
+    <tr><td><strong>Dart</strong></td><td>The programming language — variables, logic, classes, async</td><td>In your .dart files</td></tr>
+    <tr><td><strong>Flutter</strong></td><td>The UI framework — widgets, layout, navigation, state</td><td>SDK on your computer; used in .dart files</td></tr>
+    <tr><td><strong>Models</strong></td><td>Dart classes representing data records (Task, Product, Student)</td><td>lib/models/</td></tr>
+    <tr><td><strong>Services</strong></td><td>Dart classes responsible for database operations</td><td>lib/services/</td></tr>
+    <tr><td><strong>Screens</strong></td><td>Flutter widgets that represent full pages of the UI</td><td>lib/screens/</td></tr>
+    <tr><td><strong>SQL Server</strong></td><td>Persistent relational data storage</td><td>Running on your local machine or a server</td></tr>
+    <tr><td><strong>Git</strong></td><td>Version control — tracks every change to your code</td><td>Installed on your computer (.git folder)</td></tr>
+    <tr><td><strong>GitHub</strong></td><td>Remote hosting for your Git history; collaboration platform</td><td>github.com</td></tr>
+  </table>
+
+  <div class="prose">
+    <h2>The Complete Application Flow</h2>
+  </div>
+
+  <div class="flow-diag">                  THE COMPLETE FLOW
+
+User enters a task name and taps "Save"
+              ↓
+Flutter widget (AddTaskScreen) detects the tap
+              ↓
+Dart validates the input (not empty, correct format)
+              ↓
+Dart creates a model: Task(name: "Study", priority: "High")
+              ↓
+TaskService.addTask() called
+              ↓
+SQL: INSERT INTO Tasks (taskName, priority) VALUES (...)
+              ↓
+SQL Server stores the row permanently
+              ↓
+Function returns (await completes)
+              ↓
+Navigator.pop() — return to HomeScreen
+              ↓
+HomeScreen._loadTasks() runs again
+              ↓
+SQL: SELECT * FROM Tasks
+              ↓
+Rows converted to Task objects via Task.fromMap()
+              ↓
+setState() called with new list
+              ↓
+Flutter rebuilds ListView
+              ↓
+User sees the new task in the list</div>
+
+  <div class="prose">
+    <h2>Where Development Fits In</h2>
+  </div>
+
+  <div class="flow-diag">Developer writes code
+       ↓ git add .
+Changes staged
+       ↓ git commit -m "Add task saving feature"
+Snapshot saved locally
+       ↓ git push
+Code uploaded to GitHub
+       ↓
+Team members can pull and see the changes
+       ↓
+(later) App built and deployed to app stores</div>
+
+  <div class="milestone">
+    <div class="ms-icon">🎓</div>
+    <div class="ms-body"><strong>You now understand the complete picture.</strong><p>Dart → Flutter → Widgets → State → Navigation → Models → Services → SQL → Database → Git → GitHub → Testing. These are the foundations of professional mobile application development.</p></div>
+  </div>
+
+  <div class="prose">
+    <h2>Glossary</h2>
+    <p>A concise reference for every key term introduced in this tutorial.</p>
+  </div>
+
+  <div class="gloss-item"><div class="gloss-term">async</div><div class="gloss-def">A Dart keyword that marks a function as asynchronous — it contains operations that take time and uses await internally.</div></div>
+  <div class="gloss-item"><div class="gloss-term">await</div><div class="gloss-def">A Dart keyword that pauses the current function until a Future completes, then continues with the result — without blocking the whole app.</div></div>
+  <div class="gloss-item"><div class="gloss-term">BuildContext</div><div class="gloss-def">An object Flutter provides to every widget's build() method that describes the widget's position in the widget tree. Required for navigation and some lookups.</div></div>
+  <div class="gloss-item"><div class="gloss-term">CRUD</div><div class="gloss-def">Create, Read, Update, Delete — the four fundamental database operations. Maps to INSERT, SELECT, UPDATE, DELETE in SQL.</div></div>
+  <div class="gloss-item"><div class="gloss-term">commit</div><div class="gloss-def">A Git snapshot of code at a specific point in time, with a message describing what changed.</div></div>
+  <div class="gloss-item"><div class="gloss-term">Dart</div><div class="gloss-def">The programming language developed by Google and used to write all Flutter application logic.</div></div>
+  <div class="gloss-item"><div class="gloss-term">Flutter</div><div class="gloss-def">An open-source UI framework developed by Google for building cross-platform applications from a single Dart codebase.</div></div>
+  <div class="gloss-item"><div class="gloss-term">Future</div><div class="gloss-def">A Dart type representing a value that will be available sometime in the future — the result of an asynchronous operation.</div></div>
+  <div class="gloss-item"><div class="gloss-term">Git</div><div class="gloss-def">An open-source distributed version control system that tracks changes to code files over time.</div></div>
+  <div class="gloss-item"><div class="gloss-term">GitHub</div><div class="gloss-def">A web-based hosting service for Git repositories, enabling remote storage, collaboration, and code sharing.</div></div>
+  <div class="gloss-item"><div class="gloss-term">hot reload</div><div class="gloss-def">A Flutter feature that updates the running app with code changes in under a second, preserving the current app state.</div></div>
+  <div class="gloss-item"><div class="gloss-term">initState()</div><div class="gloss-def">A Flutter lifecycle method in StatefulWidget that runs once when the widget is first inserted into the widget tree. Ideal for loading initial data.</div></div>
+  <div class="gloss-item"><div class="gloss-term">model</div><div class="gloss-def">A Dart class that represents one record of application data. Contains properties, a constructor, and often fromMap() and toMap() methods for database integration.</div></div>
+  <div class="gloss-item"><div class="gloss-term">Navigator</div><div class="gloss-def">The Flutter class that manages the navigation stack — pushing new screens and popping them off.</div></div>
+  <div class="gloss-item"><div class="gloss-term">null safety</div><div class="gloss-def">A Dart language feature that forces you to explicitly declare whether a variable can be null, preventing null reference crashes at compile time.</div></div>
+  <div class="gloss-item"><div class="gloss-term">primary key</div><div class="gloss-def">A column in a database table whose value uniquely identifies each row. Typically an auto-incrementing integer called id.</div></div>
+  <div class="gloss-item"><div class="gloss-term">repository</div><div class="gloss-def">A directory tracked by Git, containing all project files plus the complete commit history stored in a .git subfolder.</div></div>
+  <div class="gloss-item"><div class="gloss-term">service</div><div class="gloss-def">A Dart class whose sole responsibility is performing database or network operations. Keeps UI code clean by isolating data-access logic.</div></div>
+  <div class="gloss-item"><div class="gloss-term">setState()</div><div class="gloss-def">A method in StatefulWidget that notifies Flutter that state has changed, triggering a rebuild of the widget and its children.</div></div>
+  <div class="gloss-item"><div class="gloss-term">SQL</div><div class="gloss-def">Structured Query Language — the standard language for creating, querying, and managing relational databases.</div></div>
+  <div class="gloss-item"><div class="gloss-term">SQL Server</div><div class="gloss-def">Microsoft's enterprise relational database management system (RDBMS) that stores and manages structured data.</div></div>
+  <div class="gloss-item"><div class="gloss-term">SSMS</div><div class="gloss-def">SQL Server Management Studio — a graphical application for connecting to SQL Server, writing queries, and managing databases. It is a tool, not the database itself.</div></div>
+  <div class="gloss-item"><div class="gloss-term">state</div><div class="gloss-def">Information that can change while an application is running and that affects what the screen displays.</div></div>
+  <div class="gloss-item"><div class="gloss-term">StatefulWidget</div><div class="gloss-def">A Flutter widget that holds mutable state and can rebuild when that state changes. Used for screens and components that display changing data.</div></div>
+  <div class="gloss-item"><div class="gloss-term">StatelessWidget</div><div class="gloss-def">A Flutter widget with no mutable state. It builds its UI from given data and never changes. Used for static display components.</div></div>
+  <div class="gloss-item"><div class="gloss-term">TextEditingController</div><div class="gloss-def">A Dart object attached to a TextField widget that allows reading, setting, and clearing the text the user has typed.</div></div>
+  <div class="gloss-item"><div class="gloss-term">try/catch</div><div class="gloss-def">A Dart construct for handling errors. Code in the try block runs normally; if an error occurs, the catch block handles it instead of crashing.</div></div>
+  <div class="gloss-item"><div class="gloss-term">widget</div><div class="gloss-def">The fundamental building block of a Flutter UI. Every visible element — text, button, image, container, layout structure — is a widget.</div></div>
+  <div class="gloss-item"><div class="gloss-term">widget tree</div><div class="gloss-def">The hierarchical structure of nested widgets that Flutter traverses to build and render the application's interface.</div></div>
+  <div class="gloss-item"><div class="gloss-term">.gitignore</div><div class="gloss-def">A text file in the root of a Git repository listing file patterns that Git should never track — used to exclude build output, credentials, and personal settings.</div></div>
+
+  <div class="page-nav">
+    <button class="btn btn-ghost" onclick="go(13)">← Ch 13</button>
+    <button class="btn btn-green" onclick="go(0)">🔄 Back to Start</button>
+  </div>
+</div>
+
+  </div><!-- content -->
+</main>
+</div>
+
+<button class="mob-btn" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+
+<script>
+const titles = [
+  'How to Use This Tutorial',
+  'Ch 1 — Mobile App Development',
+  'Ch 2 — The Big Picture',
+  'Ch 3 — Dart Fundamentals',
+  'Ch 4 — OOP & Collections',
+  'Ch 5 — Async Programming',
+  'Ch 6 — Flutter & Widgets',
+  'Ch 7 — Layout & State',
+  'Ch 8 — Navigation & Forms',
+  'Ch 9 — Data Models',
+  'Ch 10 — Databases & SQL',
+  'Ch 11 — Connecting to a Database',
+  'Ch 12 — Git & GitHub',
+  'Ch 13 — Testing & Security',
+  'Ch 14 — Mental Model & Glossary',
+];
+const total = titles.length;
+let visited = new Set();
+
+function go(idx) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('p' + idx).classList.add('active');
+  const nav = document.getElementById('n' + idx);
+  if (nav) nav.classList.add('active');
+  visited.add(idx);
+  for (let i of visited) {
+    const n = document.getElementById('n' + i);
+    if (n && i !== idx) n.classList.add('done');
+  }
+  document.getElementById('topTitle').innerHTML = '<strong>' + titles[idx] + '</strong>';
+  document.getElementById('chBadge').textContent = idx === 0 ? 'Welcome' : 'Chapter ' + idx;
+  const pct = Math.round(visited.size / total * 100);
+  document.getElementById('progFill').style.width = pct + '%';
+  document.getElementById('progLbl').textContent = visited.size + ' of ' + total + ' chapters visited';
+  const dotsEl = document.getElementById('dots');
+  dotsEl.innerHTML = titles.map((t,i) => {
+    let c = 'dot';
+    if (i === idx) c += ' active';
+    else if (visited.has(i)) c += ' done';
+    return '<div class="' + c + '" onclick="go(' + i + ')" title="' + t + '"></div>';
+  }).join('');
+  window.scrollTo(0, 0);
+  if (window.innerWidth < 860) document.getElementById('sidebar').classList.remove('open');
+}
+
+// Quiz logic
+const qAns = {
+  q1_1: { c: 'b', e: 'Cross-platform development lets one codebase run on both Android and iOS, saving development time and cost.' },
+  q1_2: { c: 'b', e: 'A mobile app is installed on the device and runs directly, without a browser. It is a fundamentally different type of software.' },
+  q5_1: { c: 'b', e: 'await pauses the current async function until the Future resolves, then continues. The rest of the app stays responsive during this time.' },
+};
+
+function qa(id, chosen, correct) {
+  const opts = document.getElementById(id).querySelectorAll('.opt-item');
+  opts.forEach(o => { o.style.pointerEvents = 'none'; });
+  opts.forEach((o, i) => {
+    const l = ['a','b','c','d'][i];
+    if (l === correct) o.classList.add('correct');
+    else if (l === chosen && chosen !== correct) o.classList.add('wrong');
+  });
+  const fb = document.getElementById(id + '-fb');
+  const ok = chosen === correct;
+  fb.className = 'qfb show ' + (ok ? 'ok' : 'no');
+  fb.textContent = (ok ? '✅ Correct! ' : '❌ Not quite. ') + (qAns[id] ? qAns[id].e : '');
+}
+
+go(0);
+</script>
+</body>
+</html>
