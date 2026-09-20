@@ -92,7 +92,7 @@ body { font-family: 'DM Sans', Arial, sans-serif; background: var(--bg); color: 
 .code-lang { font-family: 'DM Mono', monospace; font-size: 11px; color: #7ba3c0; letter-spacing: .08em; }
 .copy-btn { font-family: 'DM Mono', monospace; font-size: 11px; background: transparent; border: 1px solid #4a6580; color: #7ba3c0; padding: 3px 10px; border-radius: 5px; cursor: pointer; }
 .copy-btn:hover { background: #4a6580; color: #fff; }
-.code-body { padding: 16px 18px; font-family: 'DM Mono', monospace; font-size: 13.5px; line-height: 1.85; color: #e0e8f0; overflow-x: auto; }
+.code-body { padding: 16px 18px; font-family: 'DM Mono', monospace; font-size: 13.5px; line-height: 1.85; color: #e0e8f0; overflow-x: auto; white-space: pre; }
 .kw { color: #569CD6; } .fn { color: #DCDCAA; } .str { color: #CE9178; }
 .cmt { color: #6A9955; } .num { color: #B5CEA8; } .var { color: #9CDCFE; }
 .out { color: #4EC9B0; } .err { color: #F44747; }
@@ -306,7 +306,9 @@ summary::-webkit-details-marker { display: none; }
     <div class="box-title">🤔 Predict</div>
     <p>Before running anything, what do you think this code will display on the screen?</p>
     <div class="code-block" style="margin:10px 0;">
-      <div class="code-body"><span class="fn">print</span>(<span class="str">"Hello, world!"</span>)</div>
+      <div class="code-body">
+<span class="fn">print</span>(<span class="str">"Hello, world!"</span>)
+    </div>
     </div>
     <details>
       <summary>▶ Check Your Answer</summary>
@@ -325,7 +327,9 @@ summary::-webkit-details-marker { display: none; }
       <summary>▶ Check Your Answer</summary>
       <div class="solution-body">
         <div class="code-block">
-          <div class="code-body"><span class="fn">print</span>(<span class="str">"Hello, Maria!"</span>)</div>
+          <div class="code-body">
+<span class="fn">print</span>(<span class="str">"Hello, Maria!"</span>)
+    </div>
         </div>
         <p>You just changed the text inside the quotes. That is all! Python doesn't care what the message says — it prints whatever you put in there.</p>
       </div>
@@ -344,7 +348,7 @@ This is my first program.</pre>
           <div class="code-body">
 <span class="fn">print</span>(<span class="str">"I am learning Python."</span>)
 <span class="fn">print</span>(<span class="str">"This is my first program."</span>)
-          </div>
+    </div>
         </div>
         <p>Each <code>print()</code> statement produces one line of output. Two <code>print()</code> calls produce two lines.</p>
       </div>
@@ -556,7 +560,7 @@ This is my first program.</pre>
         <div class="code-block"><div class="code-body">
 <span class="fn">print</span>(<span class="var">temperature</span>)     <span class="cmt"># prints: 72</span>
 <span class="fn">print</span>(<span class="str">"temperature"</span>)  <span class="cmt"># prints: temperature</span>
-        </div></div>
+    </div></div>
       </div>
     </details>
   </div>
@@ -753,7 +757,7 @@ This is my first program.</pre>
         <div class="code-block"><div class="code-body">
 <span class="fn">print</span>(<span class="num">25</span> + <span class="num">10</span>)     <span class="cmt"># 35 — math works</span>
 <span class="fn">print</span>(<span class="str">"25"</span> + <span class="str">"10"</span>) <span class="cmt"># "2510" — strings are joined, not added!</span>
-        </div></div>
+    </div></div>
         <p>When Python sees <code>"25" + "10"</code>, it glues the two strings together: <strong>2510</strong>, not 35. This is a very common beginner mistake.</p>
       </div>
     </details>
@@ -856,7 +860,9 @@ This is my first program.</pre>
       <summary>▶ Check Your Answer</summary>
       <div class="solution-body">
         <p><strong>No — it will crash with an error:</strong></p>
-        <div class="code-block"><div class="code-body"><span class="err">TypeError: can only concatenate str (not "int") to str</span></div></div>
+        <div class="code-block"><div class="code-body">
+<span class="err">TypeError: can only concatenate str (not "int") to str</span>
+    </div></div>
         <p><strong>Why?</strong> <code>input()</code> always returns a <strong>string</strong>, even if the user typed a number. So <code>age</code> contains the text <code>"20"</code>, not the number <code>20</code>. When Python tries to do <code>"20" + 1</code>, it sees a string + a number and doesn't know what to do.</p>
       </div>
     </details>
@@ -892,7 +898,9 @@ This is my first program.</pre>
     <details>
       <summary>▶ Check Your Answer</summary>
       <div class="solution-body">
-        <div class="code-block"><div class="code-body"><span class="var">temperature</span> = <span class="num">98.6</span></div></div>
+        <div class="code-block"><div class="code-body">
+<span class="var">temperature</span> = <span class="num">98.6</span>
+    </div></div>
       </div>
     </details>
   </div>
@@ -906,7 +914,7 @@ This is my first program.</pre>
         <div class="code-block"><div class="code-body">
 <span class="var">temperature</span> = <span class="num">98.6</span>
 <span class="fn">print</span>(<span class="str">"Temperature:"</span>, <span class="var">temperature</span>)
-        </div></div>
+    </div></div>
       </div>
     </details>
   </div>
@@ -920,7 +928,7 @@ This is my first program.</pre>
         <div class="code-block"><div class="code-body">
 <span class="var">temperature</span> = <span class="fn">float</span>(<span class="fn">input</span>(<span class="str">"Enter temperature: "</span>))
 <span class="fn">print</span>(<span class="str">"Temperature:"</span>, <span class="var">temperature</span>)
-        </div></div>
+    </div></div>
       </div>
     </details>
   </div>
@@ -1014,7 +1022,7 @@ This is my first program.</pre>
 <span class="var">quantity</span> = <span class="fn">int</span>(<span class="fn">input</span>(<span class="str">"Quantity: "</span>))
 <span class="var">total</span>    = <span class="var">price</span> * <span class="var">quantity</span>
 <span class="fn">print</span>(<span class="str">"Total cost: $"</span>, <span class="var">total</span>)
-        </div></div>
+    </div></div>
       </div>
     </details>
   </div>
@@ -1040,7 +1048,7 @@ This is my first program.</pre>
 <span class="var">double_speed</span> = <span class="var">speed</span> * <span class="num">2</span>
 <span class="var">faster_time</span>  = <span class="var">distance</span> / <span class="var">double_speed</span>
 <span class="fn">print</span>(<span class="str">"Time at double speed:"</span>, <span class="var">faster_time</span>, <span class="str">"hours"</span>)
-        </div></div>
+    </div></div>
         <p>Distance stays 150 miles. At 120 mph, it takes 1.25 hours.</p>
       </div>
     </details>
@@ -1190,7 +1198,7 @@ This is my first program.</pre>
     <span class="fn">print</span>(<span class="str">"Danger: Overheating!"</span>)
 <span class="kw">else</span>:
     <span class="fn">print</span>(<span class="str">"Safe."</span>)
-        </div></div>
+    </div></div>
       </div>
     </details>
   </div>
@@ -1213,7 +1221,7 @@ This is my first program.</pre>
 <span class="var">speed</span> = <span class="num">75</span>
 <span class="kw">if</span> <span class="var">speed</span> > <span class="num">70</span>:
     <span class="fn">print</span>(<span class="str">"Speed limit exceeded!"</span>)
-        </div></div>
+    </div></div>
         <p>Note: the original condition <code>speed = 70</code> was also the wrong logic — we want "greater than 70", not "equal to 70."</p>
       </div>
     </details>
@@ -1272,7 +1280,7 @@ This is my first program.</pre>
 <span class="out">2</span>
 <span class="out">3</span>
 <span class="out">4</span>
-        </div></div>
+    </div></div>
         <p>range(5) gives 0, 1, 2, 3, 4 — <strong>five numbers starting from 0</strong>, not 1 through 5. This surprises many beginners.</p>
       </div>
     </details>
@@ -1384,7 +1392,7 @@ This is my first program.</pre>
         <span class="fn">print</span>(<span class="str">"Danger: Overheating!"</span>)
     <span class="kw">else</span>:
         <span class="fn">print</span>(<span class="str">"Safe."</span>)
-        </div></div>
+    </div></div>
       </div>
     </details>
   </div>
@@ -1501,7 +1509,9 @@ This is my first program.</pre>
     <details>
       <summary>▶ Check Your Answer</summary>
       <div class="solution-body">
-        <div class="code-block"><div class="code-body"><span class="fn">greet</span>(<span class="str">"Engineer!"</span>)</div></div>
+        <div class="code-block"><div class="code-body">
+<span class="fn">greet</span>(<span class="str">"Engineer!"</span>)
+    </div></div>
       </div>
     </details>
   </div>
@@ -1521,7 +1531,7 @@ This is my first program.</pre>
         <div class="code-block"><div class="code-body">
 <span class="kw">def</span> <span class="fn">add</span>(<span class="var">a</span>, <span class="var">b</span>):
     <span class="kw">return</span> <span class="var">a</span> + <span class="var">b</span>
-        </div></div>
+    </div></div>
       </div>
     </details>
   </div>
@@ -1542,7 +1552,7 @@ This is my first program.</pre>
 <span class="fn">check_temperature</span>(<span class="num">72</span>)
 <span class="fn">check_temperature</span>(<span class="num">105</span>)
 <span class="fn">check_temperature</span>(<span class="num">98</span>)
-        </div></div>
+    </div></div>
       </div>
     </details>
   </div>
@@ -1569,13 +1579,13 @@ This is my first program.</pre>
   <p>Python cannot understand the code because it violates the rules of the language. Like a grammatical error in English — if you write a sentence that is completely garbled, the reader gives up.</p>
   <div class="code-block"><div class="code-body">
 <span class="fn">print</span>(<span class="str">"Hello"</span>   <span class="cmt"># SyntaxError: missing closing parenthesis</span>
-  </div></div>
+    </div></div>
 
   <h4>2. Runtime Errors — "Something went wrong while running"</h4>
   <p>The code looks correct, but something goes wrong while it is running. Python crashes and shows an error message.</p>
   <div class="code-block"><div class="code-body">
 <span class="var">x</span> = <span class="fn">int</span>(<span class="str">"hello"</span>)   <span class="cmt"># ValueError: can't convert "hello" to an integer</span>
-  </div></div>
+    </div></div>
 
   <h4>3. Logic Errors — "The program runs but gives the wrong answer"</h4>
   <p>The most sneaky type. Python runs the code without crashing, but the result is wrong because the logic is flawed.</p>
@@ -1584,7 +1594,7 @@ This is my first program.</pre>
 <span class="var">total</span>   = <span class="num">10</span> + <span class="num">20</span> + <span class="num">30</span>
 <span class="var">average</span> = <span class="var">total</span> / <span class="num">2</span>   <span class="cmt"># Bug: should divide by 3, not 2</span>
 <span class="fn">print</span>(<span class="var">average</span>)         <span class="cmt"># prints 30.0 instead of correct 20.0</span>
-  </div></div>
+    </div></div>
 
   <h3>The debugging strategy</h3>
   <div class="callout">
@@ -1598,14 +1608,18 @@ This is my first program.</pre>
   <!-- Bug 1 -->
   <div class="box debug">
     <div class="box-title">🐛 Bug 1 — Missing quotes</div>
-    <div class="code-block"><div class="code-body"><span class="fn">print</span>(Hello, world!)</div></div>
+    <div class="code-block"><div class="code-body">
+<span class="fn">print</span>(Hello, world!)
+    </div></div>
     <p>What type of error is this? What is wrong?</p>
     <details>
       <summary>▶ Check Your Answer</summary>
       <div class="solution-body">
         <p><strong>Syntax Error.</strong> The text "Hello, world!" is missing quotation marks. Without quotes, Python thinks you are using variable names, which don't exist.</p>
         <p><strong>Fixed:</strong></p>
-        <div class="code-block"><div class="code-body"><span class="fn">print</span>(<span class="str">"Hello, world!"</span>)</div></div>
+        <div class="code-block"><div class="code-body">
+<span class="fn">print</span>(<span class="str">"Hello, world!"</span>)
+    </div></div>
       </div>
     </details>
   </div>
@@ -1626,7 +1640,7 @@ This is my first program.</pre>
 <span class="var">x</span> = <span class="num">10</span>
 <span class="kw">if</span> <span class="var">x</span> > <span class="num">5</span>:
     <span class="fn">print</span>(<span class="str">"x is big"</span>)
-        </div></div>
+    </div></div>
       </div>
     </details>
   </div>
@@ -1645,7 +1659,7 @@ This is my first program.</pre>
         <div class="code-block"><div class="code-body">
 <span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">3</span>):
     <span class="fn">print</span>(<span class="var">i</span>)
-        </div></div>
+    </div></div>
       </div>
     </details>
   </div>
@@ -1664,7 +1678,7 @@ This is my first program.</pre>
         <div class="code-block"><div class="code-body">
 <span class="var">temperature</span> = <span class="num">98.6</span>
 <span class="fn">print</span>(<span class="var">temperature</span>)   <span class="cmt"># correct spelling</span>
-        </div></div>
+    </div></div>
       </div>
     </details>
   </div>
@@ -1685,7 +1699,7 @@ This is my first program.</pre>
 <span class="var">status</span> = <span class="str">"on"</span>
 <span class="kw">if</span> <span class="var">status</span> == <span class="str">"on"</span>:
     <span class="fn">print</span>(<span class="str">"LED is on"</span>)
-        </div></div>
+    </div></div>
       </div>
     </details>
   </div>
@@ -1707,7 +1721,7 @@ This is my first program.</pre>
 <span class="var">voltage</span> = <span class="fn">float</span>(<span class="fn">input</span>(<span class="str">"Enter voltage: "</span>))
 <span class="var">double</span>  = <span class="var">voltage</span> * <span class="num">2</span>
 <span class="fn">print</span>(<span class="var">double</span>)   <span class="cmt"># now correctly prints 6.6</span>
-        </div></div>
+    </div></div>
       </div>
     </details>
   </div>
@@ -1728,7 +1742,7 @@ This is my first program.</pre>
         <div class="code-block"><div class="code-body">
 <span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="num">6</span>):
     <span class="fn">print</span>(<span class="var">i</span>)
-        </div></div>
+    </div></div>
       </div>
     </details>
   </div>
@@ -1808,7 +1822,7 @@ This is my first program.</pre>
         <span class="fn">print</span>(<span class="str">"Danger: Overheating!"</span>)
     <span class="kw">else</span>:
         <span class="fn">print</span>(<span class="str">"Safe."</span>)
-      </div></div>
+    </div></div>
       <p>Now write a loop that calls this function 5 times.</p>
     </div>
   </details>
@@ -1842,7 +1856,7 @@ This is my first program.</pre>
 <span class="var">average</span> = <span class="var">total</span> / <span class="var">readings</span>
 <span class="fn">print</span>(<span class="str">"--------------------------"</span>)
 <span class="fn">print</span>(<span class="str">"Average temperature:"</span>, <span class="var">average</span>, <span class="str">"°F"</span>)
-        </div>
+    </div>
       </div>
       <p><strong>Why it works:</strong></p>
       <ul>
@@ -1870,7 +1884,9 @@ This is my first program.</pre>
   <div class="quiz-q">
     <div class="qnum">Question 1 — Multiple Choice</div>
     <p>What does this line do?</p>
-    <div class="code-block"><div class="code-body"><span class="var">x</span> = <span class="num">7</span></div></div>
+    <div class="code-block"><div class="code-body">
+<span class="var">x</span> = <span class="num">7</span>
+    </div></div>
     <ol class="quiz-options" type="A">
       <li>Checks if x equals 7</li>
       <li>Stores the value 7 in a variable called x</li>
@@ -1939,7 +1955,9 @@ This is my first program.</pre>
     <details>
       <summary>▶ Answer</summary>
       <div class="solution-body">
-        <div class="code-block"><div class="code-body"><span class="kw">return</span> <span class="var">length</span> * <span class="var">width</span></div></div>
+        <div class="code-block"><div class="code-body">
+<span class="kw">return</span> <span class="var">length</span> * <span class="var">width</span>
+    </div></div>
         <p>Use <code>return</code> (not <code>print</code>) so the result can be used elsewhere in the program.</p>
       </div>
     </details>
@@ -2016,7 +2034,9 @@ This is my first program.</pre>
   <div class="quiz-q">
     <div class="qnum">Question 10 — Multiple Choice</div>
     <p>What type is the value stored in <code>x</code> after this line?</p>
-    <div class="code-block"><div class="code-body"><span class="var">x</span> = <span class="fn">input</span>(<span class="str">"Enter a number: "</span>)</div></div>
+    <div class="code-block"><div class="code-body">
+<span class="var">x</span> = <span class="fn">input</span>(<span class="str">"Enter a number: "</span>)
+    </div></div>
     <ol class="quiz-options" type="A">
       <li>int</li>
       <li>float</li>
@@ -2048,7 +2068,7 @@ This is my first program.</pre>
         <div class="code-block"><div class="code-body">
 <span class="kw">def</span> <span class="fn">double</span>(<span class="var">n</span>):
     <span class="kw">return</span> <span class="var">n</span> * <span class="num">2</span>   <span class="cmt"># return instead of print</span>
-        </div></div>
+    </div></div>
       </div>
     </details>
   </div>
@@ -2097,7 +2117,7 @@ This is my first program.</pre>
     <span class="fn">print</span>(<span class="str">"Even"</span>)
 <span class="kw">else</span>:
     <span class="fn">print</span>(<span class="str">"Odd"</span>)
-        </div></div>
+    </div></div>
       </div>
     </details>
   </div>
