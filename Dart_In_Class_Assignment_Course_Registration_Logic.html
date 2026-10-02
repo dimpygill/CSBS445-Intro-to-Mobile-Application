@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dart In-Class Assignment — Course Registration Logic</title>
+<style>
+  :root{
+    --navy:#17365d; --blue:#2f75b5; --light:#eef5fb; --ink:#1f2937;
+    --muted:#5f6b7a; --border:#cfd8e3; --green:#eaf7ef; --orange:#fff4e5;
+    --code:#17212b;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:#f5f7fa;color:var(--ink);font-family:Arial,Helvetica,sans-serif;line-height:1.55}
+  .page{max-width:1050px;margin:32px auto;background:white;border:1px solid var(--border);box-shadow:0 4px 18px rgba(0,0,0,.08)}
+  header{background:var(--navy);color:white;padding:34px 42px}
+  header h1{margin:0 0 8px;font-size:32px}
+  header p{margin:5px 0;color:#e7eef7}
+  main{padding:34px 42px 46px}
+  h2{color:var(--navy);border-bottom:2px solid var(--light);padding-bottom:7px;margin-top:34px}
+  h3{color:var(--blue);margin-top:24px}
+  .box{border-left:5px solid var(--blue);background:var(--light);padding:16px 20px;margin:18px 0}
+  .deadline{border-left-color:#b45309;background:var(--orange)}
+  .future{border-left-color:#16834b;background:var(--green)}
+  code{font-family:Consolas,Monaco,monospace}
+  pre{background:var(--code);color:#f8fafc;padding:18px;border-radius:8px;overflow:auto;font-size:14px;line-height:1.5}
+  table{width:100%;border-collapse:collapse;margin:16px 0 24px}
+  th,td{border:1px solid var(--border);padding:11px 12px;text-align:left;vertical-align:top}
+  th{background:var(--navy);color:white}
+  ul,ol{padding-left:26px}
+  li{margin:7px 0}
+  .rule{font-weight:bold;color:#8a3b00}
+  .small{color:var(--muted);font-size:14px}
+  .check{background:#fafbfd;border:1px solid var(--border);padding:18px 22px;border-radius:8px}
+  footer{padding:20px 42px;background:#f0f3f7;color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+<div class="page">
+<header>
+  <h1>Dart In-Class Assignment</h1>
+  <p><strong>Course Registration Logic</strong></p>
+  <p>Practice: variables, Lists, loops, if statements, <code>continue</code>, and <code>break</code></p>
+</header>
+
+<main>
+<div class="box">
+  <strong>Assignment Goal</strong><br>
+  Build the <em>programming logic</em> behind a simple mobile course-registration application using <strong>Dart only</strong>. You are not building the Flutter user interface yet.
+</div>
+
+<div class="box future">
+  <strong>Why are we doing this?</strong><br>
+  Later in the course, we will combine Dart with the <strong>Flutter framework</strong> to build mobile applications. The logic you practice in this assignment—storing course data, looping through courses, making decisions, skipping unavailable courses, calculating totals, and stopping processing when needed—is the same kind of logic that can later be connected to a Flutter user interface.
+</div>
+
+<div class="box deadline">
+  <strong>Due Date:</strong> Thursday, October 8, 2026.<br>
+  Work on this assignment during class. If you do not finish it during class, complete it outside class and <strong>upload your completed Dart program by Thursday</strong>.
+</div>
+
+<h2>Problem</h2>
+<p>A college wants to create a mobile application that helps a student review courses and build a registration plan. Before we create the mobile interface, we need to write and test the registration logic in Dart.</p>
+
+<p>Your program will work with a list of courses. For each course, the program must decide whether the course is available, determine whether adding it would exceed the student's credit limit, and build a list of courses that the student can register for.</p>
+
+<h2>Course Data</h2>
+<p>Use the following course information in your program. You may choose an appropriate Dart structure to represent the data, but your program must use a <strong>List</strong>.</p>
+
+<table>
+<tr><th>Course</th><th>Credits</th><th>Available?</th></tr>
+<tr><td>Mobile App Development</td><td>4</td><td>Yes</td></tr>
+<tr><td>Database Systems</td><td>4</td><td>Yes</td></tr>
+<tr><td>Computer Networks</td><td>4</td><td>No</td></tr>
+<tr><td>Software Engineering</td><td>4</td><td>Yes</td></tr>
+<tr><td>Cybersecurity Fundamentals</td><td>3</td><td>Yes</td></tr>
+<tr><td>Artificial Intelligence</td><td>4</td><td>Yes</td></tr>
+</table>
+
+<p class="small">One possible representation is a List containing Maps. You may use another reasonable Dart representation if you can explain it.</p>
+
+<h2>Program Requirements</h2>
+<ol>
+  <li>Create the course data shown above and store it in a <strong>List</strong>.</li>
+  <li>Create an empty List named something similar to <code>selectedCourses</code> to store the courses that are successfully added.</li>
+  <li>Create a variable to keep track of the student's <strong>total registered credits</strong>.</li>
+  <li>Use <strong>16 credits</strong> as the maximum credit limit.</li>
+  <li>Use a loop to process the courses one at a time.</li>
+  <li>Use an <code>if</code> statement to check whether a course is available.</li>
+  <li>If a course is <strong>not available</strong>:
+    <ul>
+      <li>Print a message identifying the unavailable course.</li>
+      <li>Use <code>continue;</code> so the program skips the remaining registration logic for that course and moves to the next course.</li>
+    </ul>
+  </li>
+  <li>Before adding an available course, check whether:
+    <pre><code>current total credits + course credits &gt; maximum credits</code></pre>
+  </li>
+  <li>If adding the course would exceed the maximum:
+    <ul>
+      <li>Print a message explaining that the credit limit would be exceeded.</li>
+      <li>Use <code>break;</code> to stop the registration-processing loop.</li>
+    </ul>
+  </li>
+  <li>Otherwise:
+    <ul>
+      <li>Add the course to <code>selectedCourses</code>.</li>
+      <li>Add its credits to the running total.</li>
+      <li>Print a confirmation message.</li>
+    </ul>
+  </li>
+  <li>After the loop finishes, display:
+    <ul>
+      <li>the selected courses, and</li>
+      <li>the final number of registered credits.</li>
+    </ul>
+  </li>
+</ol>
+
+<h2>Required Use of Dart Concepts</h2>
+<table>
+<tr><th>Concept</th><th>How It Should Be Used</th></tr>
+<tr><td>Variables</td><td>Store the credit total, maximum credits, and other values.</td></tr>
+<tr><td>List</td><td>Store the available course data and the successfully selected courses.</td></tr>
+<tr><td>Loop</td><td>Process multiple courses without repeating the same code manually.</td></tr>
+<tr><td>if / else</td><td>Make registration decisions.</td></tr>
+<tr><td><code>continue</code></td><td>Skip an unavailable course and move to the next iteration.</td></tr>
+<tr><td><code>break</code></td><td>Stop registration processing when adding another course would exceed the credit limit.</td></tr>
+</table>
+
+<h2>Part 2 — Course Search</h2>
+<p>Add a second piece of logic to your program. Assume the student wants to search for:</p>
+
+<pre><code>Artificial Intelligence</code></pre>
+
+<p>Use another loop to search through the course List.</p>
+<ul>
+  <li>Compare each course name with the course being searched for.</li>
+  <li>When the course is found, print its name, credits, and availability.</li>
+  <li>Use <code>break;</code> immediately after finding it. There is no reason to continue searching once the required course has been found.</li>
+</ul>
+
+<h2>Part 3 — Short Analysis</h2>
+<p>At the bottom of your Dart file, answer these questions using comments:</p>
+<ol>
+  <li>Why did you use <code>continue</code> when a course was unavailable?</li>
+  <li>What would happen if you removed the <code>continue</code> statement?</li>
+  <li>Why did you use <code>break</code> when the credit limit was reached?</li>
+  <li>Why is <code>break</code> useful when searching for a specific course?</li>
+  <li>In a future Flutter application, what information from this Dart program could be displayed on the screen?</li>
+</ol>
+
+<h2>Expected Behavior — Example</h2>
+<p>Your exact wording may be different, but your program should behave logically like this:</p>
+
+<pre><code>Added: Mobile App Development
+Total credits: 4
+
+Added: Database Systems
+Total credits: 8
+
+Computer Networks is unavailable. Skipping...
+
+Added: Software Engineering
+Total credits: 12
+
+Added: Cybersecurity Fundamentals
+Total credits: 15
+
+Cannot add Artificial Intelligence.
+Adding this course would exceed the 16-credit limit.
+
+Registration processing stopped.
+
+Selected Courses:
+Mobile App Development
+Database Systems
+Software Engineering
+Cybersecurity Fundamentals
+
+Final Credits: 15</code></pre>
+
+<div class="box">
+<strong>Important:</strong> Do not simply copy the expected output. Your program must generate the results by processing the List with loops and decision statements.
+</div>
+
+<h2>Challenge — Labeled break</h2>
+<p>This part is optional. It is intended for students who finish the required assignment early.</p>
+
+<p>Create a small nested-loop example in which courses are grouped into categories or departments. Then demonstrate the difference between:</p>
+
+<pre><code>break;</code></pre>
+
+<p>and a labeled break such as:</p>
+
+<pre><code>searchLoop:
+for (...) {
+  for (...) {
+    if (...) {
+      break searchLoop;
+    }
+  }
+}</code></pre>
+
+<p>In a comment, explain why a label is useful with nested loops. Remember: a normal <code>break;</code> exits the current loop, while a labeled break can target a specific enclosing labeled statement.</p>
+
+<h2>Submission Checklist</h2>
+<div class="check">
+<ul>
+  <li>□ Program runs without syntax errors.</li>
+  <li>□ Course information is stored in a List.</li>
+  <li>□ A loop processes the courses.</li>
+  <li>□ <code>if</code> statements make registration decisions.</li>
+  <li>□ <code>continue</code> is used meaningfully.</li>
+  <li>□ <code>break</code> is used meaningfully.</li>
+  <li>□ Selected courses and final credits are displayed.</li>
+  <li>□ Course-search requirement is completed.</li>
+  <li>□ Short-analysis questions are answered as comments.</li>
+  <li>□ File is uploaded by <strong>Thursday, October 8, 2026</strong>.</li>
+</ul>
+</div>
+
+<h2>What to Submit</h2>
+<p>Submit your completed <strong>Dart source file (.dart)</strong>. Your code should be readable and appropriately indented. Include your name in a comment at the top of the file.</p>
+
+</main>
+<footer>
+Dart In-Class Assignment · Course Registration Logic · Preparation for future Flutter application development
+</footer>
+</div>
+</body>
+</html>
