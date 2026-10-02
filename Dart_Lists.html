@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dart Lists — Detailed Tutorial</title>
+<style>
+:root{
+  --navy:#17365D; --blue:#2B6CB0; --light:#F4F7FB; --border:#D8E2EE;
+  --text:#1F2937; --muted:#5B6777; --code:#17212B; --green:#176B45;
+  --warn:#FFF7E6; --warn-border:#E8B04A; --good:#ECF8F1;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#eef3f8;color:var(--text);line-height:1.6}
+header{background:linear-gradient(135deg,#17365D,#2B6CB0);color:white;padding:48px 24px}
+header .wrap,main{max-width:1050px;margin:auto}
+h1{font-size:42px;margin:0 0 8px}
+header p{font-size:19px;margin:4px 0;opacity:.95}
+main{background:white;padding:34px 42px 60px;margin:24px auto;border-radius:14px;box-shadow:0 5px 22px rgba(0,0,0,.08)}
+h2{color:var(--navy);border-bottom:2px solid var(--border);padding-bottom:7px;margin-top:42px}
+h3{color:var(--blue);margin-top:28px}
+code{font-family:Consolas,"Courier New",monospace}
+pre{background:var(--code);color:#f7fafc;padding:18px 20px;border-radius:9px;overflow:auto;font-size:15px;line-height:1.55}
+.note,.tip,.warning{padding:14px 17px;border-radius:8px;margin:16px 0}
+.note{background:#edf5ff;border-left:5px solid var(--blue)}
+.tip{background:var(--good);border-left:5px solid var(--green)}
+.warning{background:var(--warn);border-left:5px solid var(--warn-border)}
+table{width:100%;border-collapse:collapse;margin:16px 0 24px}
+th{background:var(--navy);color:white;text-align:left}
+th,td{padding:11px 12px;border:1px solid var(--border);vertical-align:top}
+tr:nth-child(even) td{background:#f8fafc}
+.output{background:#f4f4f4;border-left:5px solid #64748b;padding:12px 16px;font-family:Consolas,monospace;white-space:pre-wrap}
+kbd{background:#e5e7eb;border:1px solid #cbd5e1;border-radius:4px;padding:1px 5px}
+ul,ol{padding-left:25px}
+.mini{color:var(--muted);font-size:14px}
+.method{font-family:Consolas,monospace;font-weight:bold;color:#174e80}
+</style>
+</head>
+<body>
+<header>
+<div class="wrap">
+<h1>Dart Lists</h1>
+</div>
+</header>
+
+<main>
+<h2>1. What Is a List?</h2>
+<p>A <strong>List</strong> is an ordered collection of values. It is similar to an array or list structure you may have used in other programming languages.</p>
+<ul>
+<li>Elements are stored in a specific order.</li>
+<li>Each element has an <strong>index</strong>.</li>
+<li>Dart List indexes start at <strong>0</strong>.</li>
+<li>A List can contain duplicate values.</li>
+<li>A typed List can restrict all elements to a particular data type.</li>
+<li>Lists are extremely common in applications—for example, courses, products, messages, tasks, names, and scores.</li>
+</ul>
+
+<h3>First Example</h3>
+<pre><code>void main() {
+  List&lt;String&gt; courses = ['Dart', 'Flutter', 'Database'];
+
+  print(courses);
+}</code></pre>
+<div class="output">[Dart, Flutter, Database]</div>
+
+<h2>2. Creating Lists</h2>
+<h3>A. Explicitly Typed List</h3>
+<pre><code>List&lt;String&gt; names = ['Ana', 'Jordan', 'Sam'];
+List&lt;int&gt; scores = [90, 85, 100];
+List&lt;double&gt; prices = [12.50, 9.99, 20.00];</code></pre>
+<p><code>List&lt;String&gt;</code> means the List is intended to contain Strings. Similarly, <code>List&lt;int&gt;</code> contains integers.</p>
+
+<h3>B. Let Dart Infer the Type</h3>
+<pre><code>var names = ['Ana', 'Jordan', 'Sam'];
+var scores = [90, 85, 100];</code></pre>
+<div class="note"><strong>Dart-specific point:</strong> With these initializers, Dart infers <code>names</code> as a String List and <code>scores</code> as an int List. Using <code>var</code> does not mean the variable is freely typeless.</div>
+
+<h3>C. Empty List</h3>
+<pre><code>List&lt;String&gt; courses = [];
+List&lt;int&gt; scores = [];</code></pre>
+
+<h3>D. Empty List with Type Argument on the Literal</h3>
+<pre><code>var courses = &lt;String&gt;[];
+var scores = &lt;int&gt;[];</code></pre>
+
+<h2>3. List Indexes</h2>
+<p>Indexes begin at zero.</p>
+<table>
+<tr><th>Element</th><th>Index</th></tr>
+<tr><td>Dart</td><td>0</td></tr>
+<tr><td>Flutter</td><td>1</td></tr>
+<tr><td>Database</td><td>2</td></tr>
+</table>
+<pre><code>void main() {
+  List&lt;String&gt; courses = ['Dart', 'Flutter', 'Database'];
+
+  print(courses[0]);
+  print(courses[1]);
+  print(courses[2]);
+}</code></pre>
+<div class="output">Dart
+Flutter
+Database</div>
+<div class="warning"><strong>Common error:</strong> If a List has three elements, index 3 is invalid. The valid indexes are 0, 1, and 2. An invalid index can cause a <code>RangeError</code> at runtime.</div>
+
+<h2>4. Updating an Element</h2>
+<pre><code>void main() {
+  List&lt;String&gt; courses = ['Dart', 'Flutter', 'Database'];
+
+  courses[2] = 'Artificial Intelligence';
+
+  print(courses);
+}</code></pre>
+<div class="output">[Dart, Flutter, Artificial Intelligence]</div>
+<p>The List still has three elements. We replaced the value at index 2.</p>
+
+<h2>5. Important List Properties</h2>
+<pre><code>void main() {
+  var courses = ['Dart', 'Flutter', 'Database'];
+
+  print(courses.length);
+  print(courses.first);
+  print(courses.last);
+  print(courses.isEmpty);
+  print(courses.isNotEmpty);
+}</code></pre>
+<div class="output">3
+Dart
+Database
+false
+true</div>
+<table>
+<tr><th>Property</th><th>Purpose</th></tr>
+<tr><td><span class="method">length</span></td><td>Number of elements.</td></tr>
+<tr><td><span class="method">first</span></td><td>First element.</td></tr>
+<tr><td><span class="method">last</span></td><td>Last element.</td></tr>
+<tr><td><span class="method">isEmpty</span></td><td>True when there are no elements.</td></tr>
+<tr><td><span class="method">isNotEmpty</span></td><td>True when at least one element exists.</td></tr>
+</table>
+
+<h2>6. add() — Add One Element</h2>
+<pre><code>void main() {
+  List&lt;String&gt; courses = ['Dart', 'Flutter'];
+
+  courses.add('Database');
+  courses.add('AI');
+
+  print(courses);
+}</code></pre>
+<div class="output">[Dart, Flutter, Database, AI]</div>
+<p><code>add()</code> places one element at the end of a growable List.</p>
+
+<h2>7. addAll() — Add Multiple Elements</h2>
+<pre><code>void main() {
+  List&lt;String&gt; courses = ['Dart'];
+
+  courses.addAll(['Flutter', 'Database', 'AI']);
+
+  print(courses);
+}</code></pre>
+<div class="output">[Dart, Flutter, Database, AI]</div>
+
+<h2>8. insert() — Insert at a Specific Index</h2>
+<pre><code>void main() {
+  var courses = ['Dart', 'Database'];
+
+  courses.insert(1, 'Flutter');
+
+  print(courses);
+}</code></pre>
+<div class="output">[Dart, Flutter, Database]</div>
+<p>The existing element at index 1 moves to the right.</p>
+
+<h2>9. insertAll() — Insert Multiple Values</h2>
+<pre><code>void main() {
+  var courses = ['Dart', 'Database'];
+
+  courses.insertAll(1, ['Flutter', 'AI']);
+
+  print(courses);
+}</code></pre>
+<div class="output">[Dart, Flutter, AI, Database]</div>
+
+<h2>10. Removing Elements</h2>
+<h3>remove(value)</h3>
+<pre><code>var courses = ['Dart', 'Flutter', 'Database'];
+
+courses.remove('Flutter');
+
+print(courses);</code></pre>
+<div class="output">[Dart, Database]</div>
+<p><code>remove()</code> removes the first occurrence of the specified value and returns a Boolean indicating whether a matching element was removed.</p>
+
+<h3>removeAt(index)</h3>
+<pre><code>var courses = ['Dart', 'Flutter', 'Database'];
+
+String removedCourse = courses.removeAt(1);
+
+print(removedCourse);
+print(courses);</code></pre>
+<div class="output">Flutter
+[Dart, Database]</div>
+
+<h3>removeLast()</h3>
+<pre><code>var numbers = [10, 20, 30, 40];
+
+int removed = numbers.removeLast();
+
+print(removed);
+print(numbers);</code></pre>
+<div class="output">40
+[10, 20, 30]</div>
+
+<h3>removeWhere()</h3>
+<pre><code>var scores = [55, 80, 62, 95, 40];
+
+scores.removeWhere((score) =&gt; score &lt; 70);
+
+print(scores);</code></pre>
+<div class="output">[80, 95]</div>
+
+<h3>clear()</h3>
+<pre><code>var courses = ['Dart', 'Flutter', 'Database'];
+
+courses.clear();
+
+print(courses);
+print(courses.isEmpty);</code></pre>
+<div class="output">[]
+true</div>
+
+<h2>11. Searching a List</h2>
+<h3>contains()</h3>
+<pre><code>var courses = ['Dart', 'Flutter', 'Database'];
+
+print(courses.contains('Flutter'));
+print(courses.contains('Java'));</code></pre>
+<div class="output">true
+false</div>
+
+<h3>indexOf()</h3>
+<pre><code>var courses = ['Dart', 'Flutter', 'Database'];
+
+print(courses.indexOf('Flutter'));
+print(courses.indexOf('Java'));</code></pre>
+<div class="output">1
+-1</div>
+<div class="tip"><code>indexOf()</code> returns <strong>-1</strong> when the requested value is not found.</div>
+
+<h2>12. Looping Through a List with for-in</h2>
+<pre><code>void main() {
+  var courses = ['Dart', 'Flutter', 'Database'];
+
+  for (String course in courses) {
+    print(course);
+  }
+}</code></pre>
+<div class="output">Dart
+Flutter
+Database</div>
+<p>Use <code>for-in</code> when you need each element directly and do not need its index.</p>
+
+<h2>13. Looping with an Index</h2>
+<pre><code>void main() {
+  var courses = ['Dart', 'Flutter', 'Database'];
+
+  for (int i = 0; i &lt; courses.length; i++) {
+    print('$i: ${courses[i]}');
+  }
+}</code></pre>
+<div class="output">0: Dart
+1: Flutter
+2: Database</div>
+<p>This form is useful when both the position and the value matter.</p>
+
+<h2>14. forEach()</h2>
+<pre><code>var courses = ['Dart', 'Flutter', 'Database'];
+
+courses.forEach((course) {
+  print(course);
+});</code></pre>
+<p><code>forEach()</code> calls a function for every element.</p>
+<div class="note"><strong>Loop-control note:</strong> If you need normal <code>break</code> or <code>continue</code> behavior, a regular <code>for</code> or <code>for-in</code> loop is usually a better choice than <code>forEach()</code>.</div>
+
+<h2>15. Lists with if, break, and continue</h2>
+<h3>Skip a Particular Value with continue</h3>
+<pre><code>var courses = ['Dart', 'Flutter', 'Database', 'AI'];
+
+for (String course in courses) {
+  if (course == 'Database') {
+    continue;
+  }
+
+  print(course);
+}</code></pre>
+<div class="output">Dart
+Flutter
+AI</div>
+
+<h3>Search and Stop with break</h3>
+<pre><code>var courses = ['Dart', 'Flutter', 'Database', 'AI'];
+
+for (String course in courses) {
+  if (course == 'Database') {
+    print('Found: $course');
+    break;
+  }
+}</code></pre>
+<div class="output">Found: Database</div>
+
+<h2>16. where() — Filter a List</h2>
+<pre><code>void main() {
+  var scores = [55, 72, 88, 61, 95];
+
+  var passingScores =
+      scores.where((score) =&gt; score &gt;= 70).toList();
+
+  print(passingScores);
+}</code></pre>
+<div class="output">[72, 88, 95]</div>
+<p><code>where()</code> returns the elements satisfying the condition. It returns an <code>Iterable</code>; <code>toList()</code> converts that result into a List.</p>
+
+<h2>17. map() — Transform Every Element</h2>
+<pre><code>void main() {
+  var numbers = [1, 2, 3, 4];
+
+  var squares =
+      numbers.map((number) =&gt; number * number).toList();
+
+  print(squares);
+}</code></pre>
+<div class="output">[1, 4, 9, 16]</div>
+
+<h3>Another map() Example</h3>
+<pre><code>var names = ['ana', 'sam', 'jordan'];
+
+var upperNames =
+    names.map((name) =&gt; name.toUpperCase()).toList();
+
+print(upperNames);</code></pre>
+<div class="output">[ANA, SAM, JORDAN]</div>
+<div class="note"><strong>Do not confuse these:</strong> <code>map()</code> is a transformation method. Dart also has a separate <code>Map</code> collection type for key-value data.</div>
+
+<h2>18. firstWhere() — Find the First Matching Element</h2>
+<pre><code>var courses = ['Dart', 'Flutter', 'Database'];
+
+var result = courses.firstWhere(
+  (course) =&gt; course.startsWith('F'),
+  orElse: () =&gt; 'Not Found',
+);
+
+print(result);</code></pre>
+<div class="output">Flutter</div>
+
+<h2>19. any() and every()</h2>
+<h3>any()</h3>
+<pre><code>var scores = [55, 72, 88, 61];
+
+bool hasExcellentScore =
+    scores.any((score) =&gt; score &gt;= 85);
+
+print(hasExcellentScore);</code></pre>
+<div class="output">true</div>
+
+<h3>every()</h3>
+<pre><code>var scores = [75, 82, 90];
+
+bool allPassed =
+    scores.every((score) =&gt; score &gt;= 70);
+
+print(allPassed);</code></pre>
+<div class="output">true</div>
+
+<h2>20. Sorting Lists</h2>
+<h3>Numbers</h3>
+<pre><code>var numbers = [40, 10, 30, 20];
+
+numbers.sort();
+
+print(numbers);</code></pre>
+<div class="output">[10, 20, 30, 40]</div>
+
+<h3>Strings</h3>
+<pre><code>var names = ['Sam', 'Ana', 'Jordan'];
+
+names.sort();
+
+print(names);</code></pre>
+<div class="output">[Ana, Jordan, Sam]</div>
+
+<h3>Descending Numbers</h3>
+<pre><code>var numbers = [40, 10, 30, 20];
+
+numbers.sort((a, b) =&gt; b.compareTo(a));
+
+print(numbers);</code></pre>
+<div class="output">[40, 30, 20, 10]</div>
+<div class="warning"><strong>Important:</strong> <code>sort()</code> changes the original List.</div>
+
+<h2>21. reversed</h2>
+<pre><code>var courses = ['Dart', 'Flutter', 'Database'];
+
+var reversedCourses = courses.reversed.toList();
+
+print(reversedCourses);</code></pre>
+<div class="output">[Database, Flutter, Dart]</div>
+<p><code>reversed</code> returns an Iterable, so use <code>toList()</code> when you specifically need a List.</p>
+
+<h2>22. List.filled()</h2>
+<pre><code>var scores = List&lt;int&gt;.filled(5, 0);
+
+print(scores);</code></pre>
+<div class="output">[0, 0, 0, 0, 0]</div>
+
+<h2>23. List.generate()</h2>
+<pre><code>var numbers = List&lt;int&gt;.generate(
+  5,
+  (index) =&gt; index * 10,
+);
+
+print(numbers);</code></pre>
+<div class="output">[0, 10, 20, 30, 40]</div>
+
+<h3>Generate Squares</h3>
+<pre><code>var squares = List&lt;int&gt;.generate(
+  6,
+  (index) =&gt; index * index,
+);
+
+print(squares);</code></pre>
+<div class="output">[0, 1, 4, 9, 16, 25]</div>
+
+<h2>24. Growable and Fixed-Length Lists</h2>
+<h3>Growable List</h3>
+<pre><code>var numbers = [10, 20, 30];
+
+numbers.add(40);
+numbers.remove(20);
+
+print(numbers);</code></pre>
+<div class="output">[10, 30, 40]</div>
+
+<h3>Fixed-Length List</h3>
+<pre><code>var numbers =
+    List&lt;int&gt;.filled(3, 0, growable: false);
+
+numbers[0] = 10; // valid
+numbers[1] = 20; // valid
+
+// numbers.add(30); // Unsupported operation</code></pre>
+<p>A fixed-length List allows element replacement, but its number of positions cannot be changed.</p>
+
+<h2>25. final List vs const List</h2>
+<h3>final List</h3>
+<pre><code>final numbers = [1, 2, 3];
+
+numbers.add(4);       // valid
+numbers[0] = 100;     // valid
+
+// numbers = [9, 10]; // invalid: variable cannot be reassigned</code></pre>
+<p><code>final</code> prevents the variable from referring to another List, but it does not automatically make the List object immutable.</p>
+
+<h3>const List</h3>
+<pre><code>const numbers = [1, 2, 3];
+
+// numbers.add(4);   // invalid at runtime: const list is unmodifiable
+// numbers[0] = 10; // invalid at runtime</code></pre>
+
+<h2>26. Copying Lists — A Very Important Concept</h2>
+<pre><code>void main() {
+  var original = [10, 20, 30];
+  var another = original;
+
+  another.add(40);
+
+  print(original);
+  print(another);
+}</code></pre>
+<div class="output">[10, 20, 30, 40]
+[10, 20, 30, 40]</div>
+<p>Both variables refer to the same List object.</p>
+
+<h3>Create a Separate Shallow Copy</h3>
+<pre><code>var original = [10, 20, 30];
+var copy = [...original];
+
+copy.add(40);
+
+print(original);
+print(copy);</code></pre>
+<div class="output">[10, 20, 30]
+[10, 20, 30, 40]</div>
+
+<h2>27. Spread Operator (...)</h2>
+<pre><code>var requiredCourses = ['Dart', 'Database'];
+var electives = ['AI', 'Networks'];
+
+var allCourses = [
+  ...requiredCourses,
+  ...electives,
+];
+
+print(allCourses);</code></pre>
+<div class="output">[Dart, Database, AI, Networks]</div>
+
+<h2>28. Null-Aware Spread Operator (...?)</h2>
+<pre><code>List&lt;String&gt;? electives;
+
+var courses = [
+  'Dart',
+  'Database',
+  ...?electives,
+];
+
+print(courses);</code></pre>
+<div class="output">[Dart, Database]</div>
+<p>If <code>electives</code> is null, the null-aware spread simply adds nothing.</p>
+
+<h2>29. Collection if</h2>
+<p>Dart allows an <code>if</code> directly inside a collection literal.</p>
+<pre><code>bool isAdmin = true;
+
+var menuItems = [
+  'Home',
+  'Profile',
+  if (isAdmin) 'Admin Panel',
+];
+
+print(menuItems);</code></pre>
+<div class="output">[Home, Profile, Admin Panel]</div>
+
+<h2>30. Collection for</h2>
+<pre><code>var scores = [80, 90, 100];
+
+var labels = [
+  for (var score in scores)
+    'Score: $score'
+];
+
+print(labels);</code></pre>
+<div class="output">[Score: 80, Score: 90, Score: 100]</div>
+
+<h2>31. List of Lists</h2>
+<pre><code>List&lt;List&lt;int&gt;&gt; matrix = [
+  [1, 2, 3],
+  [4, 5, 6],
+  [7, 8, 9],
+];
+
+print(matrix[0]);
+print(matrix[1][2]);</code></pre>
+<div class="output">[1, 2, 3]
+6</div>
+
+<h3>Nested Loop Example</h3>
+<pre><code>for (var row in matrix) {
+  for (var number in row) {
+    print(number);
+  }
+}</code></pre>
+
+<h2>32. List of Maps — Practical Application Data</h2>
+<pre><code>List&lt;Map&lt;String, dynamic&gt;&gt; courses = [
+  {
+    'name': 'Mobile App Development',
+    'credits': 4,
+    'available': true
+  },
+  {
+    'name': 'Database Systems',
+    'credits': 4,
+    'available': false
+  },
+  {
+    'name': 'Artificial Intelligence',
+    'credits': 4,
+    'available': true
+  },
+];</code></pre>
+
+<h3>Access One Course</h3>
+<pre><code>print(courses[0]['name']);
+print(courses[0]['credits']);</code></pre>
+<div class="output">Mobile App Development
+4</div>
+
+<h3>Loop Through Course Records</h3>
+<pre><code>for (var course in courses) {
+  print('${course['name']} - ${course['credits']} credits');
+}</code></pre>
+
+<h2>33. Practical Example — Display Only Available Courses</h2>
+<pre><code>void main() {
+  List&lt;Map&lt;String, dynamic&gt;&gt; courses = [
+    {'name': 'Dart', 'credits': 4, 'available': true},
+    {'name': 'Database', 'credits': 4, 'available': false},
+    {'name': 'AI', 'credits': 4, 'available': true},
+  ];
+
+  for (var course in courses) {
+    if (course['available'] == false) {
+      continue;
+    }
+
+    print('${course['name']} - ${course['credits']} credits');
+  }
+}</code></pre>
+<div class="output">Dart - 4 credits
+AI - 4 credits</div>
+
+<h2>34. Practical Example — Calculate an Average</h2>
+<pre><code>void main() {
+  List&lt;double&gt; grades = [90, 85, 95, 80];
+
+  double total = 0;
+
+  for (double grade in grades) {
+    total += grade;
+  }
+
+  double average = total / grades.length;
+
+  print('Average: $average');
+}</code></pre>
+<div class="output">Average: 87.5</div>
+
+<h2>35. Practical Example — Find the Highest Score</h2>
+<pre><code>void main() {
+  List&lt;int&gt; scores = [75, 92, 88, 100, 81];
+
+  int highest = scores[0];
+
+  for (int score in scores) {
+    if (score &gt; highest) {
+      highest = score;
+    }
+  }
+
+  print('Highest score: $highest');
+}</code></pre>
+<div class="output">Highest score: 100</div>
+
+<h2>36. Practical Example — Search for a Course</h2>
+<pre><code>void main() {
+  var courses = ['Dart', 'Database', 'AI', 'Networks'];
+
+  String searchCourse = 'AI';
+  bool found = false;
+
+  for (String course in courses) {
+    if (course == searchCourse) {
+      found = true;
+      print('$searchCourse was found.');
+      break;
+    }
+  }
+
+  if (!found) {
+    print('$searchCourse was not found.');
+  }
+}</code></pre>
+
+<h2>37. Practical Example — Registration Credit Limit</h2>
+<pre><code>void main() {
+  List&lt;Map&lt;String, dynamic&gt;&gt; courses = [
+    {'name': 'Dart', 'credits': 4},
+    {'name': 'Database', 'credits': 4},
+    {'name': 'Networks', 'credits': 4},
+    {'name': 'AI', 'credits': 4},
+    {'name': 'Cybersecurity', 'credits': 3},
+  ];
+
+  const int maxCredits = 16;
+  int totalCredits = 0;
+  List&lt;String&gt; selectedCourses = [];
+
+  for (var course in courses) {
+    int credits = course['credits'];
+
+    if (totalCredits + credits &gt; maxCredits) {
+      print('Cannot add ${course['name']}. Credit limit reached.');
+      break;
+    }
+
+    selectedCourses.add(course['name']);
+    totalCredits += credits;
+  }
+
+  print('Selected: $selectedCourses');
+  print('Total credits: $totalCredits');
+}</code></pre>
+
+<h2>38. List Method Quick Reference</h2>
+<table>
+<tr><th>Method / Property</th><th>Purpose</th><th>Example</th></tr>
+<tr><td><code>length</code></td><td>Number of elements</td><td><code>list.length</code></td></tr>
+<tr><td><code>add()</code></td><td>Add one element</td><td><code>list.add('AI')</code></td></tr>
+<tr><td><code>addAll()</code></td><td>Add several elements</td><td><code>list.addAll(other)</code></td></tr>
+<tr><td><code>insert()</code></td><td>Insert at index</td><td><code>list.insert(1, 'AI')</code></td></tr>
+<tr><td><code>remove()</code></td><td>Remove first matching value</td><td><code>list.remove('AI')</code></td></tr>
+<tr><td><code>removeAt()</code></td><td>Remove by index</td><td><code>list.removeAt(1)</code></td></tr>
+<tr><td><code>removeLast()</code></td><td>Remove last element</td><td><code>list.removeLast()</code></td></tr>
+<tr><td><code>removeWhere()</code></td><td>Remove matching elements</td><td><code>list.removeWhere(...)</code></td></tr>
+<tr><td><code>clear()</code></td><td>Remove everything</td><td><code>list.clear()</code></td></tr>
+<tr><td><code>contains()</code></td><td>Check whether value exists</td><td><code>list.contains('AI')</code></td></tr>
+<tr><td><code>indexOf()</code></td><td>Find index</td><td><code>list.indexOf('AI')</code></td></tr>
+<tr><td><code>where()</code></td><td>Filter elements</td><td><code>list.where(...)</code></td></tr>
+<tr><td><code>map()</code></td><td>Transform elements</td><td><code>list.map(...)</code></td></tr>
+<tr><td><code>firstWhere()</code></td><td>Find first match</td><td><code>list.firstWhere(...)</code></td></tr>
+<tr><td><code>any()</code></td><td>Does any element match?</td><td><code>list.any(...)</code></td></tr>
+<tr><td><code>every()</code></td><td>Do all elements match?</td><td><code>list.every(...)</code></td></tr>
+<tr><td><code>sort()</code></td><td>Sort List in place</td><td><code>list.sort()</code></td></tr>
+<tr><td><code>reversed</code></td><td>Reverse-order Iterable</td><td><code>list.reversed.toList()</code></td></tr>
+</table>
+
+<h2>39. Common Errors</h2>
+<h3>Error 1: Wrong Index</h3>
+<pre><code>var courses = ['Dart', 'Flutter'];
+
+// print(courses[2]); // RangeError</code></pre>
+
+<h3>Error 2: Wrong Element Type</h3>
+<pre><code>List&lt;int&gt; scores = [80, 90];
+
+// scores.add('100'); // compile-time type error
+scores.add(100);      // correct</code></pre>
+
+<h3>Error 3: Assuming var Means dynamic</h3>
+<pre><code>var scores = [80, 90];
+
+// scores = ['A', 'B']; // incompatible with inferred List&lt;int&gt;</code></pre>
+
+<h3>Error 4: Modifying a const List</h3>
+<pre><code>const courses = ['Dart', 'Flutter'];
+
+// courses.add('Database'); // not allowed</code></pre>
+
+<h3>Error 5: Forgetting toList()</h3>
+<pre><code>var scores = [50, 80, 90];
+
+Iterable&lt;int&gt; result =
+    scores.where((score) =&gt; score &gt;= 70);
+
+List&lt;int&gt; passingScores = result.toList();</code></pre>
+
+<h2>40. Practice Problems</h2>
+<ol>
+<li>Create a List containing five course names. Print the entire List.</li>
+<li>Print the first course, third course, and last course.</li>
+<li>Add two new courses using <code>add()</code> and <code>addAll()</code>.</li>
+<li>Insert a course at index 1.</li>
+<li>Remove one course by value and another by index.</li>
+<li>Use a loop to print every course.</li>
+<li>Print each course together with its index.</li>
+<li>Check whether <code>'Mobile App Development'</code> exists in the List.</li>
+<li>Create a List of scores and calculate the average.</li>
+<li>Use <code>where()</code> to create a List containing only scores of 70 or higher.</li>
+<li>Use <code>map()</code> to create a new List containing the square of each number.</li>
+<li>Sort a List of numbers from lowest to highest and then highest to lowest.</li>
+<li>Create a List of course Maps containing name, credits, and availability.</li>
+<li>Use <code>continue</code> to skip unavailable courses.</li>
+<li>Search for a particular course and use <code>break</code> when it is found.</li>
+</ol>
+
+<h2>41. Key Takeaways</h2>
+<ul>
+<li>A Dart List is an <strong>ordered, zero-indexed collection</strong>.</li>
+<li><code>List&lt;T&gt;</code> specifies the type of elements the List should contain.</li>
+<li>Use indexes to read or replace individual elements.</li>
+<li>Growable Lists support adding and removing elements.</li>
+<li>Dart provides useful operations for searching, filtering, transforming, sorting, and generating Lists.</li>
+<li><code>where()</code>, <code>map()</code>, <code>firstWhere()</code>, <code>any()</code>, and <code>every()</code> are especially useful for application data.</li>
+<li>Lists work naturally with <code>if</code>, loops, <code>break</code>, and <code>continue</code>.</li>
+<li>Later, the same Dart List data and logic can be connected to Flutter UI components.</li>
+</ul>
+
+<div class="tip">At this stage, focus on understanding the Dart data and logic. When Flutter is introduced, Lists can provide the data used to build screens such as course lists, task lists, menus, product lists, and search results.</div>
+</main>
+</body>
+</html>
