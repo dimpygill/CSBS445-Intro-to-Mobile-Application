@@ -1,0 +1,460 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Dart Dictionaries (Maps) — Detailed Tutorial</title><style>
+*{box-sizing:border-box}body{margin:0;background:#f4f6f9;color:#203047;font-family:Calibri,Arial,sans-serif;line-height:1.5;font-size:17px}main{max-width:1040px;margin:auto;padding:28px}header{background:#123c60;color:white;padding:30px;border-radius:12px}h1{margin:0 0 10px;font-size:34px}h2{font-size:24px;color:#123c60;margin:0 0 12px}h3{font-size:17px;margin:14px 0 6px}section{background:white;padding:24px;margin-top:18px;border:1px solid #dde4eb;border-radius:10px}p{margin:9px 0}li{margin:6px 0}pre{margin:0;max-width:850px;overflow:auto;padding:16px;background:#f5f7fa;border-left:4px solid #147c9e;border-radius:4px;color:#172b41;font:14px/1.55 Consolas,monospace;white-space:pre}pre.output{background:#eef7f1;border-color:#41946d}p code{font:15px Consolas,monospace}.table{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:15px}th,td{text-align:left;padding:9px 12px;border:1px solid #dce4ec;vertical-align:top}th{background:#eaf1f7;color:#123c60}nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 20px}a{color:#12658c}footer{padding:20px;font-size:14px}@media(max-width:650px){main{padding:12px}section,header{padding:18px}nav{grid-template-columns:1fr}h1{font-size:27px}}@media print{body{background:white;font-size:11pt}main{max-width:none;padding:0}header{background:white;color:#123c60;border-bottom:2px solid #123c60}section{border:0;padding:15px 0}pre{white-space:pre-wrap;overflow:visible;font-size:9pt}nav{display:none}tr,pre{break-inside:avoid}h2,h3{break-after:avoid}}
+</style></head><body><main><header><h1>Dart Dictionaries (Maps)</h1></header><section><h2>Contents</h2><nav><a href="#s1">1. What is a dictionary in Dart?</a><a href="#s2">2. Read the syntax</a><a href="#s3">3. Create typed, inferred, and empty maps</a><a href="#s4">4. Access values and handle missing keys</a><a href="#s5">5. Add and update entries</a><a href="#s6">6. Understand built-in methods and callbacks</a><a href="#s7">7. Remove entries</a><a href="#s8">8. Check keys, values, and size</a><a href="#s9">9. Loop through a map</a><a href="#s10">10. Order and safe iteration</a><a href="#s11">11. Combine maps</a><a href="#s12">12. Transform entries with map()</a><a href="#s13">13. Mixed types, nullable values, and dynamic</a><a href="#s14">14. Nested maps</a><a href="#s15">15. Lists of maps</a><a href="#s16">16. Maps and functions</a><a href="#s17">17. var, final, const, and unmodifiable maps</a><a href="#s18">18. Maps and JSON</a><a href="#s19">19. Complete example: grade management</a><a href="#s20">20. Python dictionary comparison</a><a href="#s21">21. Common mistakes</a><a href="#s22">22. Method and property reference</a><a href="#s23">23. Practice exercises</a><a href="#s24">24. Built-in Map methods: complete examples</a><a href="#s25">25. Properties and operators</a><a href="#s26">26. Map constructors</a><a href="#s27">27. Callback arguments</a></nav></section><section id="s1"><h2>1. What is a dictionary in Dart?</h2><p>In Dart, a dictionary is called a <strong>Map</strong>. It stores <strong>key–value pairs</strong>: use a key to find its associated value. Keys are unique; different keys may have the same value. No import is needed for Map because it belongs to dart:core.</p><div class="table"><table><thead><tr><th>Key</th><th>Value</th></tr></thead><tbody><tr><td>id</td><td>101</td></tr><tr><td>name</td><td>Alex</td></tr><tr><td>age</td><td>20</td></tr><tr><td>major</td><td>Computer Science</td></tr></tbody></table></div><h3>Example</h3><pre><code>void main() {
+  Map&lt;String, Object&gt; student = {
+    &#x27;id&#x27;: 101,
+    &#x27;name&#x27;: &#x27;Alex&#x27;,
+    &#x27;age&#x27;: 20,
+    &#x27;major&#x27;: &#x27;Computer Science&#x27;,
+  };
+  print(student[&#x27;name&#x27;]);
+}</code></pre><h3>Expected output</h3><pre class="output">Alex</pre></section><section id="s2"><h2>2. Read the syntax</h2><div class="table"><table><thead><tr><th>Part</th><th>Meaning</th></tr></thead><tbody><tr><td>Map&lt;String, int&gt;</td><td>Keys are strings; values are integers.</td></tr><tr><td>scores</td><td>A variable name you choose.</td></tr><tr><td>&#x27;Alex&#x27;: 90</td><td>One entry: key followed by value.</td></tr><tr><td>{ }</td><td>Encloses map entries.</td></tr><tr><td>:</td><td>Separates a key and value.</td></tr><tr><td>,</td><td>Separates entries; a trailing comma is allowed.</td></tr><tr><td>;</td><td>Ends the declaration.</td></tr></tbody></table></div><p><strong>What can you change?</strong> Choose your variable name, keys, and values. Keep the punctuation and built-in names such as Map, String, and int as written. These braces create a map literal; this is Dart code, not JSON.</p><h3>Example</h3><pre><code>Map&lt;String, int&gt; scores = {
+  &#x27;Alex&#x27;: 90,
+  &#x27;Sara&#x27;: 85,
+};</code></pre></section><section id="s3"><h2>3. Create typed, inferred, and empty maps</h2><p>Use explicit types to make your intention clear. With var, Dart infers the types from the initial entries. A typed literal begins with &lt;KeyType, ValueType&gt;. Map&lt;String, int&gt;() is a constructor call; &lt;String, int&gt;{} is a literal.</p><h3>Example</h3><pre><code>void main() {
+  Map&lt;String, int&gt; a = {&#x27;Alex&#x27;: 90};
+  var b = {&#x27;Sara&#x27;: 85}; // Inferred Map&lt;String, int&gt;.
+  var c = &lt;String, int&gt;{}; // Empty typed map literal.
+  var d = Map&lt;String, int&gt;(); // Empty map constructor.
+  c[&#x27;John&#x27;] = 95;
+  print(a);
+  print(b);
+  print(c);
+  print(d);
+}</code></pre><h3>Expected output</h3><pre class="output">{Alex: 90}
+{Sara: 85}
+{John: 95}
+{}</pre></section><section id="s4"><h2>4. Access values and handle missing keys</h2><ol><li>Put the key inside square brackets.</li><li>A missing key returns null.</li><li>For Map&lt;String, int&gt;, a lookup has type int?, even when you expect the key to exist.</li><li>Use ?? to provide a fallback, or check the looked-up value for null.</li></ol><h3>Why is the lookup type int?</h3><p><code>int?</code> means <strong>an integer or null</strong>. The question mark marks a nullable type. <code>Map&lt;String, int&gt;</code> stores integer values, but looking up a key might find no entry. A missing key returns null, so the lookup result has type int?. This applies even when you know that Alex is present.</p><pre><code>Map&lt;String, int&gt; scores = {'Alex': 90};
+
+print(scores['Alex']); // 90: the key exists.
+print(scores['Sara']); // null: the key does not exist.
+
+int? score = scores['Alex']; // Allowed: accepts an integer or null.
+// int score = scores['Alex']; // Error: int? cannot be assigned to int.
+
+int safeScore = scores['Alex'] ?? 0; // 90
+int missingScore = scores['Sara'] ?? 0; // 0</code></pre><p><strong>Read <code>?? 0</code> as:</strong> “Use the retrieved value; if it is null, use 0.” This gives the whole expression a non-null integer result that can be stored in an int variable.</p><h3>Example</h3><pre><code>void main() {
+  var scores = {&#x27;Alex&#x27;: 90};
+  int? alex = scores[&#x27;Alex&#x27;];
+  int david = scores[&#x27;David&#x27;] ?? 0;
+  print(alex);
+  print(scores[&#x27;David&#x27;]);
+  print(david);
+  if (alex != null) {
+    print(alex + 5);
+  }
+}</code></pre><h3>Expected output</h3><pre class="output">90
+null
+0
+95</pre></section><section id="s5"><h2>5. Add and update entries</h2><p>The same assignment syntax adds a missing key or replaces the value of an existing key. It does not create duplicate entries for that key.</p><h3>Example</h3><pre><code>void main() {
+  var scores = {&#x27;Alex&#x27;: 90, &#x27;Sara&#x27;: 85};
+  scores[&#x27;John&#x27;] = 95; // Add.
+  scores[&#x27;Alex&#x27;] = 98; // Update.
+  print(scores);
+}</code></pre><h3>Expected output</h3><pre class="output">{Alex: 98, Sara: 85, John: 95}</pre></section><section id="s6"><h2>6. Understand built-in methods and callbacks</h2><h3>Built-in methods versus your functions</h3><p>A dictionary in Dart is a <strong>Map</strong>. A <strong>method</strong> is a function called through an object. Methods such as <code>scores.update()</code> are supplied by Dart; you do not define them. A function such as <code>increaseScore()</code> is one you write yourself.</p><p>Some Map methods need your function to decide what to do with a value. This supplied function is called a <strong>callback</strong>. Pass the function name without parentheses; the Map method calls it with the appropriate arguments.</p><article><h3>update(): one existing value</h3><p>update() finds the key, sends its old value to your function, stores the returned value, and returns that new value. For Alex, it calls increaseScore(90). A missing key throws an error unless you provide ifAbsent.</p><pre><code>// A standard named function: you write this.
+int increaseScore(int oldScore) {
+  return oldScore + 5;
+}
+
+void main() {
+  Map&lt;String, int&gt; scores = {&#x27;Alex&#x27;: 90};
+  print(scores);
+
+  // update() is a built-in Map method.
+  // It gets 90 from the map and calls increaseScore(90).
+  // increaseScore returns 95; update stores 95 under &#x27;Alex&#x27;.
+  int newScore = scores.update(&#x27;Alex&#x27;, increaseScore);
+  print(newScore);
+  print(scores);
+}</code></pre><h3>Expected output</h3><pre class="output">{Alex: 90}
+95
+{Alex: 95}</pre></article><article><h3>update() with ifAbsent</h3><p>ifAbsent is a predefined named parameter. Its function takes no arguments and returns the value to insert if the key is missing. The update callback is not called for a missing key.</p><pre><code>int increaseScore(int oldScore) {
+  return oldScore + 5;
+}
+
+int startingScore() {
+  return 80;
+}
+
+void main() {
+  var scores = {&#x27;Alex&#x27;: 90};
+  scores.update(&#x27;John&#x27;, increaseScore, ifAbsent: startingScore);
+  print(scores);
+}</code></pre><h3>Expected output</h3><pre class="output">{Alex: 90, John: 80}</pre></article><h3>Three ways to write the same callback</h3><p>The following alternatives perform the same update. Choose one; running all three would add 15.</p><pre><code>// Named function (defined above):
+scores.update(&#x27;Alex&#x27;, increaseScore);
+
+// Anonymous function with a standard body:
+scores.update(&#x27;Alex&#x27;, (int oldScore) {
+  return oldScore + 5;
+});
+
+// Anonymous function with arrow syntax:
+scores.update(&#x27;Alex&#x27;, (oldScore) =&gt; oldScore + 5);</code></pre><p><code>oldScore</code> is a parameter name you can choose. <code>=&gt;</code> means the function returns the result of the single expression that follows.</p></section><section id="s7"><h2>7. Remove entries</h2><p>remove() deletes by key and returns the removed value, or null if absent. removeWhere() deletes entries matching a condition. clear() removes all entries.</p><h3>Example</h3><pre><code>void main() {
+  var scores = {&#x27;Alex&#x27;: 90, &#x27;Sara&#x27;: 55, &#x27;John&#x27;: 95};
+  print(scores.remove(&#x27;John&#x27;));
+  scores.removeWhere((name, score) =&gt; score &lt; 60);
+  print(scores);
+  scores.clear();
+  print(scores);
+}</code></pre><h3>Expected output</h3><pre class="output">95
+{Alex: 90}
+{}</pre></section><section id="s8"><h2>8. Check keys, values, and size</h2><p>Properties such as length do not use parentheses. Methods such as containsKey() do.</p><h3>Example</h3><pre><code>void main() {
+  var scores = {&#x27;Alex&#x27;: 90, &#x27;Sara&#x27;: 85};
+  print(scores.containsKey(&#x27;Alex&#x27;));
+  print(scores.containsKey(&#x27;John&#x27;));
+  print(scores.containsValue(85));
+  print(scores.length);
+  print(scores.isEmpty);
+  print(scores.isNotEmpty);
+  print(scores.keys.toList());
+  print(scores.values.toList());
+}</code></pre><h3>Expected output</h3><pre class="output">true
+false
+true
+2
+false
+true
+[Alex, Sara]
+[90, 85]</pre></section><section id="s9"><h2>9. Loop through a map</h2><p>A Map is not itself an Iterable. Loop through keys, values, or entries. An entry exposes key and value. Map.forEach() calls a function with both.</p><h3>Example</h3><pre><code>void main() {
+  var scores = {&#x27;Alex&#x27;: 90, &#x27;Sara&#x27;: 85};
+  for (var name in scores.keys) {
+    print(name);
+  }
+  for (var score in scores.values) {
+    print(score);
+  }
+  for (var entry in scores.entries) {
+    print(&#x27;${entry.key}: ${entry.value}&#x27;);
+  }
+  scores.forEach((name, score) {
+    print(&#x27;$name scored $score&#x27;);
+  });
+}</code></pre><h3>Expected output</h3><pre class="output">Alex
+Sara
+90
+85
+Alex: 90
+Sara: 85
+Alex scored 90
+Sara scored 85</pre></section><section id="s10"><h2>10. Order and safe iteration</h2><p>Ordinary map literals and Map() preserve insertion order. Updating an existing key keeps its position. Removing and then adding it places it at the end. Other implementations can have different ordering rules.</p><p>Avoid adding or removing keys while iterating over the map. Use removeWhere() for conditional deletion, or iterate over a copy of the keys.</p><h3>Example</h3><pre><code>void main() {
+  var scores = {&#x27;Alex&#x27;: 90, &#x27;Sara&#x27;: 55};
+  for (var name in scores.keys.toList()) {
+    if ((scores[name] ?? 0) &lt; 60) {
+      scores.remove(name);
+    }
+  }
+  print(scores);
+}</code></pre><h3>Expected output</h3><pre class="output">{Alex: 90}</pre></section><section id="s11"><h2>11. Combine maps</h2><p>addAll() modifies the receiving map. The spread operator (...) copies entries into a new map. When a key repeats, the later value wins. These are shallow copies: nested mutable objects remain shared.</p><h3>Example</h3><pre><code>void main() {
+  var first = {&#x27;Alex&#x27;: 90};
+  var second = {&#x27;Alex&#x27;: 95, &#x27;Sara&#x27;: 85};
+  var combined = {...first, ...second};
+  print(first);
+  print(combined);
+  first.addAll(second);
+  print(first);
+}</code></pre><h3>Expected output</h3><pre class="output">{Alex: 90}
+{Alex: 95, Sara: 85}
+{Alex: 95, Sara: 85}</pre></section><section id="s12"><h2>12. Transform entries with map()</h2><p>Map is a type; map() is a method. The method builds a new map from the MapEntry objects returned by its callback. The original remains unchanged. Transformed keys must stay unique if you want to retain every entry.</p><h3>Example</h3><pre><code>void main() {
+  var scores = {&#x27;Alex&#x27;: 90, &#x27;Sara&#x27;: 85};
+  var adjusted = scores.map(
+    (name, score) =&gt; MapEntry(name, score + 5),
+  );
+  print(scores);
+  print(adjusted);
+}</code></pre><h3>Expected output</h3><pre class="output">{Alex: 90, Sara: 85}
+{Alex: 95, Sara: 90}</pre></section><section id="s13"><h2>13. Mixed types, nullable values, and dynamic</h2><p>Map&lt;String, Object&gt; permits mixed non-null values while retaining type checking when values are used. Object? also permits null. dynamic permits mixed values and postpones many checks until runtime. Prefer specific types where practical.</p><p>With nullable values, a null lookup can mean either an absent key or a stored null. containsKey() distinguishes them.</p><h3>Example</h3><pre><code>void main() {
+  Map&lt;String, Object&gt; student = {
+    &#x27;name&#x27;: &#x27;Alex&#x27;, &#x27;age&#x27;: 20, &#x27;gpa&#x27;: 3.8, &#x27;enrolled&#x27;: true,
+  };
+  var name = student[&#x27;name&#x27;];
+  if (name is String) {
+    print(name.toUpperCase());
+  }
+  Map&lt;String, int?&gt; scores = {&#x27;Alex&#x27;: null};
+  print(scores[&#x27;Alex&#x27;]);
+  print(scores.containsKey(&#x27;Alex&#x27;));
+  print(scores.containsKey(&#x27;Sara&#x27;));
+}</code></pre><h3>Expected output</h3><pre class="output">ALEX
+null
+true
+false</pre></section><section id="s14"><h2>14. Nested maps</h2><p>A nested map stores other maps as values. First look up the record, then a field. The null-aware index operator ?[] skips the second lookup if the first returns null.</p><h3>Example</h3><pre><code>void main() {
+  Map&lt;String, Map&lt;String, Object&gt;&gt; students = {
+    &#x27;S101&#x27;: {&#x27;name&#x27;: &#x27;Alex&#x27;, &#x27;age&#x27;: 20, &#x27;gpa&#x27;: 3.8},
+    &#x27;S102&#x27;: {&#x27;name&#x27;: &#x27;Sara&#x27;, &#x27;age&#x27;: 21, &#x27;gpa&#x27;: 3.9},
+  };
+  print(students[&#x27;S101&#x27;]?[&#x27;name&#x27;]);
+  print(students[&#x27;S102&#x27;]?[&#x27;gpa&#x27;]);
+  print(students[&#x27;S999&#x27;]?[&#x27;name&#x27;] ?? &#x27;Not found&#x27;);
+}</code></pre><h3>Expected output</h3><pre class="output">Alex
+3.9
+Not found</pre></section><section id="s15"><h2>15. Lists of maps</h2><p>A list of maps stores records by position. A nested map stores records by identifier. Choose based on how you need to access the records.</p><h3>Example</h3><pre><code>void main() {
+  List&lt;Map&lt;String, Object&gt;&gt; students = [
+    {&#x27;id&#x27;: 101, &#x27;name&#x27;: &#x27;Alex&#x27;, &#x27;gpa&#x27;: 3.8},
+    {&#x27;id&#x27;: 102, &#x27;name&#x27;: &#x27;Sara&#x27;, &#x27;gpa&#x27;: 3.9},
+  ];
+  print(students[0][&#x27;name&#x27;]);
+  for (var student in students) {
+    print(&#x27;${student[&#x27;name&#x27;]}: ${student[&#x27;gpa&#x27;]}&#x27;);
+  }
+}</code></pre><h3>Expected output</h3><pre class="output">Alex
+Alex: 3.8
+Sara: 3.9</pre></section><section id="s16"><h2>16. Maps and functions</h2><p>A function can accept or return a map. Dart passes arguments by value; for objects, that value is a reference. The function can therefore modify the same map object. Reassigning the function parameter does not reassign the caller’s variable.</p><h3>Example</h3><pre><code>Map&lt;String, int&gt; createScores() {
+  return {&#x27;Alex&#x27;: 90};
+}
+
+void addScore(Map&lt;String, int&gt; scores, String name, int score) {
+  scores[name] = score;
+}
+
+void main() {
+  var scores = createScores();
+  addScore(scores, &#x27;Sara&#x27;, 85);
+  print(scores);
+}</code></pre><h3>Expected output</h3><pre class="output">{Alex: 90, Sara: 85}</pre></section><section id="s17"><h2>17. var, final, const, and unmodifiable maps</h2><div class="table"><table><thead><tr><th>Declaration</th><th>Reassign variable?</th><th>Modify entries?</th></tr></thead><tbody><tr><td>var scores = {...};</td><td>Yes, compatible type</td><td>Yes</td></tr><tr><td>final scores = {...};</td><td>No</td><td>Yes</td></tr><tr><td>const scores = {...};</td><td>No</td><td>No</td></tr><tr><td>final scores = Map.unmodifiable(other);</td><td>No</td><td>No</td></tr></tbody></table></div><p>final controls the variable binding. const creates a compile-time constant map. Map.unmodifiable() creates an unmodifiable copy at runtime; nested mutable values are not automatically frozen.</p><h3>Example</h3><pre><code>void main() {
+  final scores = {&#x27;Alex&#x27;: 90};
+  scores[&#x27;Alex&#x27;] = 95; // Allowed.
+  const fixed = {&#x27;Alex&#x27;: 90};
+  // fixed[&#x27;Alex&#x27;] = 95; // Throws if executed.
+  var readOnly = Map&lt;String, int&gt;.unmodifiable(scores);
+  print(scores);
+  print(fixed);
+  print(readOnly);
+}</code></pre><h3>Expected output</h3><pre class="output">{Alex: 95}
+{Alex: 90}
+{Alex: 95}</pre></section><section id="s18"><h2>18. Maps and JSON</h2><p>A Dart map and JSON text are different things. JSON is a text format used for files and APIs. Import dart:convert to encode a map as JSON or decode JSON. JSON object keys must be strings and values must be JSON-compatible. jsonDecode() returns dynamic; validate external data before relying on its structure.</p><h3>Example</h3><pre><code>import &#x27;dart:convert&#x27;;
+
+void main() {
+  var student = {&#x27;name&#x27;: &#x27;Alex&#x27;, &#x27;age&#x27;: 20};
+  String jsonText = jsonEncode(student);
+  print(jsonText);
+  Map&lt;String, dynamic&gt; decoded =
+      jsonDecode(jsonText) as Map&lt;String, dynamic&gt;;
+  print(decoded[&#x27;name&#x27;]);
+}</code></pre><h3>Expected output</h3><pre class="output">{&quot;name&quot;:&quot;Alex&quot;,&quot;age&quot;:20}
+Alex</pre></section><section id="s19"><h2>19. Complete example: grade management</h2><p>This program adds records, searches by name, calculates an average, and removes a record. The empty-map average returns 0 by an explicit design choice.</p><h3>Example</h3><pre><code>void addStudent(Map&lt;String, int&gt; grades, String name, int grade) {
+  grades[name] = grade;
+}
+
+void displayStudents(Map&lt;String, int&gt; grades) {
+  for (var entry in grades.entries) {
+    print(&#x27;${entry.key}: ${entry.value}&#x27;);
+  }
+}
+
+double calculateAverage(Map&lt;String, int&gt; grades) {
+  if (grades.isEmpty) return 0;
+  int total = 0;
+  for (int grade in grades.values) {
+    total += grade;
+  }
+  return total / grades.length;
+}
+
+void searchStudent(Map&lt;String, int&gt; grades, String name) {
+  int? grade = grades[name];
+  if (grade == null) {
+    print(&#x27;Student not found&#x27;);
+  } else {
+    print(&#x27;$name scored $grade&#x27;);
+  }
+}
+
+void main() {
+  var grades = &lt;String, int&gt;{};
+  addStudent(grades, &#x27;Alex&#x27;, 90);
+  addStudent(grades, &#x27;Sara&#x27;, 85);
+  addStudent(grades, &#x27;John&#x27;, 95);
+  print(&#x27;All students:&#x27;);
+  displayStudents(grades);
+  searchStudent(grades, &#x27;Sara&#x27;);
+  print(&#x27;Average: ${calculateAverage(grades).toStringAsFixed(1)}&#x27;);
+  grades.remove(&#x27;John&#x27;);
+  print(&#x27;After deletion:&#x27;);
+  displayStudents(grades);
+}</code></pre><h3>Expected output</h3><pre class="output">All students:
+Alex: 90
+Sara: 85
+John: 95
+Sara scored 85
+Average: 90.0
+After deletion:
+Alex: 90
+Sara: 85</pre></section><section id="s20"><h2>20. Python dictionary comparison</h2><div class="table"><table><thead><tr><th>Operation</th><th>Python</th><th>Dart</th></tr></thead><tbody><tr><td>Create</td><td>d = {&#x27;a&#x27;: 1}</td><td>var d = {&#x27;a&#x27;: 1};</td></tr><tr><td>Lookup</td><td>d[&#x27;a&#x27;]</td><td>d[&#x27;a&#x27;]</td></tr><tr><td>Missing key</td><td>KeyError</td><td>null</td></tr><tr><td>Fallback</td><td>d.get(&#x27;x&#x27;, 0)</td><td>d[&#x27;x&#x27;] ?? 0</td></tr><tr><td>Add/update</td><td>d[&#x27;b&#x27;] = 2</td><td>d[&#x27;b&#x27;] = 2;</td></tr><tr><td>Remove</td><td>del d[&#x27;a&#x27;]</td><td>d.remove(&#x27;a&#x27;);</td></tr><tr><td>Check key</td><td>&#x27;a&#x27; in d</td><td>d.containsKey(&#x27;a&#x27;)</td></tr><tr><td>Keys</td><td>d.keys()</td><td>d.keys</td></tr><tr><td>Values</td><td>d.values()</td><td>d.values</td></tr><tr><td>Pairs</td><td>d.items()</td><td>d.entries</td></tr><tr><td>Size</td><td>len(d)</td><td>d.length</td></tr></tbody></table></div><p>The Dart fallback also applies to a stored null. Python get() uses the fallback only when the key is absent.</p></section><section id="s21"><h2>21. Common mistakes</h2><div class="table"><table><thead><tr><th>Mistake</th><th>Reason / correction</th></tr></thead><tbody><tr><td>Map&lt;String, int&gt; scores = {&#x27;Alex&#x27;: &#x27;90&#x27;};</td><td>Use integer 90, without quotes.</td></tr><tr><td>int x = scores[&#x27;Alex&#x27;];</td><td>Lookup is int?; use int? or a fallback.</td></tr><tr><td>scores[&#x27;alex&#x27;] instead of scores[&#x27;Alex&#x27;]</td><td>String keys are case-sensitive.</td></tr><tr><td>scores.length()</td><td>length is a property: scores.length.</td></tr><tr><td>for (var item in scores)</td><td>Loop through scores.entries, keys, or values.</td></tr><tr><td>Changing a const map</td><td>Use a mutable map when changes are needed.</td></tr><tr><td>Assuming final freezes entries</td><td>final prevents reassignment only.</td></tr><tr><td>Using ! on a missing lookup</td><td>The null assertion fails at runtime; check null first.</td></tr><tr><td>var data = {}; then expecting typed values</td><td>Specify &lt;String, int&gt;{} or another intended type.</td></tr></tbody></table></div></section><section id="s22"><h2>22. Method and property reference</h2><div class="table"><table><thead><tr><th>Member</th><th>Purpose</th><th>Example</th></tr></thead><tbody><tr><td>[]</td><td>Look up by key</td><td>scores[&#x27;Alex&#x27;]</td></tr><tr><td>[]=</td><td>Add or replace</td><td>scores[&#x27;Alex&#x27;] = 95</td></tr><tr><td>putIfAbsent</td><td>Insert only when missing</td><td>scores.putIfAbsent(&#x27;John&#x27;, () =&gt; 80)</td></tr><tr><td>update</td><td>Replace one value using a callback</td><td>scores.update(&#x27;Alex&#x27;, (v) =&gt; v + 1)</td></tr><tr><td>updateAll</td><td>Replace every value</td><td>scores.updateAll((k, v) =&gt; v + 1)</td></tr><tr><td>remove</td><td>Delete by key</td><td>scores.remove(&#x27;Alex&#x27;)</td></tr><tr><td>removeWhere</td><td>Delete matching entries</td><td>scores.removeWhere((k, v) =&gt; v &lt; 60)</td></tr><tr><td>clear</td><td>Delete all entries</td><td>scores.clear()</td></tr><tr><td>containsKey</td><td>Check key presence</td><td>scores.containsKey(&#x27;Alex&#x27;)</td></tr><tr><td>containsValue</td><td>Check value presence</td><td>scores.containsValue(90)</td></tr><tr><td>addAll</td><td>Merge into existing map</td><td>scores.addAll(other)</td></tr><tr><td>map</td><td>Build a transformed map</td><td>scores.map((k, v) =&gt; MapEntry(k, v + 1))</td></tr><tr><td>forEach</td><td>Act on each pair</td><td>scores.forEach((k, v) =&gt; print(v))</td></tr><tr><td>length</td><td>Count entries</td><td>scores.length</td></tr><tr><td>keys / values / entries</td><td>Iterable views</td><td>scores.entries</td></tr><tr><td>isEmpty / isNotEmpty</td><td>Check emptiness</td><td>scores.isEmpty</td></tr></tbody></table></div></section><section id="s23"><h2>23. Practice exercises</h2><ol><li>Create a map of three product names and prices. Print one price using its key.</li><li>Add a product, update one price, and remove another. Display the final map.</li><li>Look up a missing product and display “Product not found” safely.</li><li>Loop through entries and display each product with its price.</li><li>Write a function that calculates the total of all prices.</li><li>Create a nested map keyed by product ID, with name and price fields.</li><li>Use map() to produce a new map with prices increased by 10%; preserve the original.</li><li>Explain why a final map can be changed but a const map cannot.</li></ol><p><strong>Try it:</strong> Save a complete example as maps_demo.dart, open a terminal in that folder, and run <code>dart run maps_demo.dart</code>. You can also paste the example into DartPad. These are console programs; print() writes to the console rather than a Flutter app screen.</p></section><section id="s24"><h2>24. Built-in Map methods: complete examples</h2><p>Each example is a separate console program. Copy one complete example at a time. Section 6 explains update() in detail.</p><article><h3>addAll(): add another map</h3><p>Copies all entries into the receiving map. Existing keys are overwritten. It returns void (no useful result).</p><pre><code>void main() {
+  var scores = {&#x27;Alex&#x27;: 90};
+  scores.addAll({&#x27;Alex&#x27;: 95, &#x27;Sara&#x27;: 85});
+  print(scores);
+}</code></pre><h3>Expected output</h3><pre class="output">{Alex: 95, Sara: 85}</pre></article><article><h3>addEntries(): add MapEntry objects</h3><p>MapEntry holds one key and one value. addEntries() accepts an Iterable of entries, such as a list. Existing keys are overwritten; the method returns void.</p><pre><code>void main() {
+  var scores = {&#x27;Alex&#x27;: 90};
+  scores.addEntries([
+    MapEntry(&#x27;Sara&#x27;, 85),
+    MapEntry(&#x27;John&#x27;, 95),
+  ]);
+  print(scores);
+}</code></pre><h3>Expected output</h3><pre class="output">{Alex: 90, Sara: 85, John: 95}</pre></article><article><h3>containsKey() and containsValue(): check presence</h3><p>Each returns bool (true or false). containsKey() checks keys; containsValue() checks values. String keys are case-sensitive.</p><pre><code>void main() {
+  var scores = {&#x27;Alex&#x27;: 90};
+  print(scores.containsKey(&#x27;Alex&#x27;));
+  print(scores.containsKey(&#x27;alex&#x27;));
+  print(scores.containsValue(90));
+  print(scores.containsValue(100));
+}</code></pre><h3>Expected output</h3><pre class="output">true
+false
+true
+false</pre></article><article><h3>putIfAbsent(): insert only when missing</h3><p>If the key exists, it returns the existing value and does not call your function. If missing, it calls your zero-argument function, inserts its result, and returns that result.</p><pre><code>int startingScore() {
+  return 80;
+}
+
+void main() {
+  var scores = {&#x27;Alex&#x27;: 90};
+  print(scores.putIfAbsent(&#x27;Alex&#x27;, startingScore));
+  print(scores.putIfAbsent(&#x27;Sara&#x27;, startingScore));
+  print(scores);
+}</code></pre><h3>Expected output</h3><pre class="output">90
+80
+{Alex: 90, Sara: 80}</pre></article><article><h3>updateAll(): update every value</h3><p>Calls your function for each entry with two arguments: key and old value. Each returned value replaces that entry’s value. updateAll() returns void.</p><pre><code>int increaseEveryScore(String name, int oldScore) {
+  return oldScore + 5;
+}
+
+void main() {
+  var scores = {&#x27;Alex&#x27;: 90, &#x27;Sara&#x27;: 85};
+  scores.updateAll(increaseEveryScore);
+  print(scores);
+}</code></pre><h3>Expected output</h3><pre class="output">{Alex: 95, Sara: 90}</pre></article><article><h3>forEach(): perform an action for each pair</h3><p>Calls your function with the key and value. Your function returns void; it can print or perform another action. forEach() does not replace values with callback results. Do not add or remove keys during this traversal.</p><pre><code>void displayScore(String name, int score) {
+  print(&#x27;$name scored $score&#x27;);
+}
+
+void main() {
+  var scores = {&#x27;Alex&#x27;: 90, &#x27;Sara&#x27;: 85};
+  scores.forEach(displayScore);
+}</code></pre><h3>Expected output</h3><pre class="output">Alex scored 90
+Sara scored 85</pre></article><article><h3>map(): create a transformed map</h3><p>Calls your function with each key and value. Your function must return a MapEntry. The method returns a new map; the original is unchanged. If transformed keys collide, entries are overwritten.</p><pre><code>MapEntry&lt;String, int&gt; adjustEntry(String name, int score) {
+  return MapEntry(name, score + 5);
+}
+
+void main() {
+  var scores = {&#x27;Alex&#x27;: 90, &#x27;Sara&#x27;: 85};
+  Map&lt;String, int&gt; adjusted = scores.map(adjustEntry);
+  print(scores);
+  print(adjusted);
+}</code></pre><h3>Expected output</h3><pre class="output">{Alex: 90, Sara: 85}
+{Alex: 95, Sara: 90}</pre></article><article><h3>remove(): delete by key</h3><p>Deletes one entry and returns its previous value. If the key is missing, it returns null. For Map<String, int>, its return type is int?.</p><pre><code>void main() {
+  var scores = {&#x27;Alex&#x27;: 90, &#x27;Sara&#x27;: 85};
+  int? removed = scores.remove(&#x27;Sara&#x27;);
+  print(removed);
+  print(scores.remove(&#x27;John&#x27;));
+  print(scores);
+}</code></pre><h3>Expected output</h3><pre class="output">85
+null
+{Alex: 90}</pre></article><article><h3>removeWhere(): delete matching entries</h3><p>Calls your function with each key and value. Return true to remove an entry; return false to keep it. The method returns void.</p><pre><code>bool isFailing(String name, int score) {
+  return score &lt; 60;
+}
+
+void main() {
+  var scores = {&#x27;Alex&#x27;: 90, &#x27;Sara&#x27;: 55, &#x27;John&#x27;: 95};
+  scores.removeWhere(isFailing);
+  print(scores);
+}</code></pre><h3>Expected output</h3><pre class="output">{Alex: 90, John: 95}</pre></article><article><h3>clear(): empty the map</h3><p>Removes every entry. The map variable still refers to the same map object, which is now empty. It returns void.</p><pre><code>void main() {
+  var scores = {&#x27;Alex&#x27;: 90};
+  scores.clear();
+  print(scores);
+  print(scores.isEmpty);
+}</code></pre><h3>Expected output</h3><pre class="output">{}
+true</pre></article><article><h3>cast(): view a map with specified types</h3><p>Advanced: returns a typed view, not a converted copy. Values are not converted (a string “90” does not become integer 90). Incompatible entries cause errors when accessed through the view. Changes through this view affect the original map.</p><pre><code>void main() {
+  Map&lt;Object, Object&gt; original = {&#x27;Alex&#x27;: 90};
+  Map&lt;String, int&gt; scores = original.cast&lt;String, int&gt;();
+  scores[&#x27;Alex&#x27;] = 95;
+  print(original);
+  print(scores);
+}</code></pre><h3>Expected output</h3><pre class="output">{Alex: 95}
+{Alex: 95}</pre></article><article><h3>Map.castFrom(): static typed view</h3><p>Advanced: a static method is called on Map itself. Like cast(), castFrom() adapts a map to different declared key and value types without converting the entries. The view shares the underlying map; incompatible entries can fail at runtime.</p><pre><code>void main() {
+  Map&lt;Object, Object&gt; original = {&#x27;Alex&#x27;: 90};
+  var scores = Map.castFrom&lt;Object, Object, String, int&gt;(original);
+  print(scores[&#x27;Alex&#x27;]);
+}</code></pre><h3>Expected output</h3><pre class="output">90</pre></article><article><h3>toString(): text representation</h3><p>Inherited from Object. Returns a String representation; print(scores) uses this representation automatically. This text is not JSON.</p><pre><code>void main() {
+  var scores = {&#x27;Alex&#x27;: 90};
+  String text = scores.toString();
+  print(text);
+}</code></pre><h3>Expected output</h3><pre class="output">{Alex: 90}</pre></article></section><section id="s25"><h2>25. Map properties and operators</h2><p>Properties are read without parentheses. Operators provide special syntax rather than method names.</p><pre><code>void main() {
+  var scores = {&#x27;Alex&#x27;: 90, &#x27;Sara&#x27;: 85};
+  print(scores.length); // 2
+  print(scores.isEmpty); // false
+  print(scores.isNotEmpty); // true
+  print(scores.keys.toList()); // [Alex, Sara]
+  print(scores.values.toList()); // [90, 85]
+  for (var entry in scores.entries) {
+    print(&#x27;${entry.key}: ${entry.value}&#x27;);
+  }
+  print(scores[&#x27;Alex&#x27;]); // [] lookup: 90, with type int?.
+  scores[&#x27;Alex&#x27;] = 95; // []= assignment: add or replace.
+}</code></pre><p><code>keys</code>, <code>values</code>, and <code>entries</code> are iterable views. <code>toList()</code> here belongs to Iterable, not Map.</p><p>Inherited properties: <code>runtimeType</code> describes the object’s runtime type; its printed name may vary by platform. <code>hashCode</code> returns an integer used for hashing, not a summary of the entries.</p><p>Ordinary Dart maps use object identity for <code>==</code>; two separate maps with the same entries are not automatically equal. A map compares equal to itself. The inherited <code>noSuchMethod()</code> participates in handling missing members and normally throws; it is not an operation for manipulating entries.</p></section><section id="s26"><h2>26. Map constructors: ways to create a map</h2><p>A constructor creates an object. These are different from methods called on an existing map.</p><article><h3>Map(), Map.of(), and Map.from()</h3><p>Map() creates an empty map. Map.of() copies a map with compatible declared types. Map.from() can copy from a broadly typed map and checks entries against the requested types at runtime. Copies are shallow.</p><pre><code>void main() {
+  var empty = Map&lt;String, int&gt;();
+  var original = {&#x27;Alex&#x27;: 90};
+  var copy = Map&lt;String, int&gt;.of(original);
+  Map&lt;Object, Object&gt; broad = {&#x27;Sara&#x27;: 85};
+  var checked = Map&lt;String, int&gt;.from(broad);
+  copy[&#x27;Alex&#x27;] = 95;
+  print(empty);
+  print(original);
+  print(copy);
+  print(checked);
+}</code></pre><h3>Expected output</h3><pre class="output">{}
+{Alex: 90}
+{Alex: 95}
+{Sara: 85}</pre></article><article><h3>Map.fromEntries()</h3><p>Creates a new map from MapEntry objects. Duplicate keys use the last supplied value.</p><pre><code>void main() {
+  var scores = Map&lt;String, int&gt;.fromEntries([
+    MapEntry(&#x27;Alex&#x27;, 90),
+    MapEntry(&#x27;Sara&#x27;, 85),
+  ]);
+  print(scores);
+}</code></pre><h3>Expected output</h3><pre class="output">{Alex: 90, Sara: 85}</pre></article><article><h3>Map.fromIterables()</h3><p>Pairs the first key with the first value, and so on. Both iterables must contain the same number of elements, or it throws an error. Repeated keys are overwritten.</p><pre><code>void main() {
+  var names = [&#x27;Alex&#x27;, &#x27;Sara&#x27;];
+  var grades = [90, 85];
+  var scores = Map&lt;String, int&gt;.fromIterables(names, grades);
+  print(scores);
+}</code></pre><h3>Expected output</h3><pre class="output">{Alex: 90, Sara: 85}</pre></article><article><h3>Map.fromIterable()</h3><p>Creates keys and values from each element of one iterable. The key and value callbacks each receive that element. If a callback is omitted, the element itself is used for that part.</p><pre><code>String useName(dynamic element) {
+  return element as String;
+}
+
+int nameLength(dynamic element) {
+  return (element as String).length;
+}
+
+void main() {
+  var lengths = Map&lt;String, int&gt;.fromIterable(
+    [&#x27;Alex&#x27;, &#x27;Sara&#x27;], key: useName, value: nameLength,
+  );
+  print(lengths);
+}</code></pre><h3>Expected output</h3><pre class="output">{Alex: 4, Sara: 4}</pre></article><article><h3>Map.identity()</h3><p>Advanced: compares keys using identical() rather than ordinary equality. Two distinct objects can be separate keys even when their == says they are equal.</p><pre><code>class Person {
+  final String name;
+  Person(this.name);
+
+  @override
+  bool operator ==(Object other) {
+    return other is Person &amp;&amp; other.name == name;
+  }
+
+  @override
+  int get hashCode =&gt; name.hashCode;
+}
+
+void main() {
+  var a = Person(&#x27;Alex&#x27;);
+  var b = Person(&#x27;Alex&#x27;);
+  var normal = &lt;Person, int&gt;{a: 90, b: 95};
+  var identity = Map&lt;Person, int&gt;.identity();
+  identity[a] = 90;
+  identity[b] = 95;
+  print(a == b);
+  print(normal.length);
+  print(identity.length);
+}</code></pre><h3>Expected output</h3><pre class="output">true
+1
+2</pre></article><article><h3>Map.unmodifiable() and Map.unmodifiableOf()</h3><p>Both create shallow unmodifiable copies. unmodifiable() accepts a broadly typed source and checks types at runtime; unmodifiableOf() expects a source with compatible declared types. Attempts to add, update, or remove entries throw. unmodifiableOf() is listed in the current API; older SDKs may require unmodifiable().</p><pre><code>void main() {
+  var scores = {&#x27;Alex&#x27;: 90};
+  var first = Map&lt;String, int&gt;.unmodifiable(scores);
+  var second = Map&lt;String, int&gt;.unmodifiableOf(scores);
+  scores[&#x27;Alex&#x27;] = 95;
+  print(first);
+  print(second);
+  // first[&#x27;Alex&#x27;] = 100; // Throws: map is unmodifiable.
+}</code></pre><h3>Expected output</h3><pre class="output">{Alex: 90}
+{Alex: 90}</pre></article></section><section id="s27"><h2>27. Which arguments does each callback receive?</h2><table><thead><tr><th>Map operation</th><th>Arguments supplied automatically</th><th>Your function returns</th></tr></thead><tbody><tr><td>update()</td><td>Old value</td><td>New value</td></tr><tr><td>update(..., ifAbsent: ...)</td><td>No arguments to ifAbsent</td><td>Value to insert</td></tr><tr><td>putIfAbsent()</td><td>No arguments</td><td>Value to insert</td></tr><tr><td>updateAll()</td><td>Key, old value</td><td>New value</td></tr><tr><td>forEach()</td><td>Key, value</td><td>void</td></tr><tr><td>map()</td><td>Key, value</td><td>MapEntry for the new map</td></tr><tr><td>removeWhere()</td><td>Key, value</td><td>bool: true removes the entry</td></tr><tr><td>Map.fromIterable()</td><td>One element to each callback</td><td>Key or value</td></tr></tbody></table><p>With Map&lt;String, int&gt;, update() supplies an int to its callback because it calls that callback only for an existing entry. This differs from a general square-bracket lookup, which can return null.</p></section><footer><strong>Official references</strong><ul><li><a href="https://dart.dev/language/collections">Dart collections and map literals</a></li><li><a href="https://api.dart.dev/dart-core/Map-class.html">Map API: methods and properties</a></li><li><a href="https://dart.dev/libraries/dart-convert">JSON conversion</a></li><li><a href="https://dartpad.dev/">DartPad</a></li></ul></footer></main></body></html>
