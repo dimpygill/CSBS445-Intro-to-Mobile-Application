@@ -1,0 +1,77 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Dart Final Fields — Beginner Tutorial</title><style>body{font-family:Arial,Helvetica,sans-serif;background:#f7f9fc;color:#1e293b;line-height:1.65;margin:0;padding:25px}.page{max-width:940px;margin:auto;background:#fff;padding:32px;border:1px solid #e2e8f0;border-radius:14px}h1{color:#173b70;margin:0}h2{font-size:1.3rem;color:#17477f;border-left:5px solid #3b82f6;padding-left:12px;margin-top:30px}.intro{background:#eaf3ff;border-radius:8px;padding:15px;margin-top:15px}.note{background:#fff7e6;border-left:4px solid #e9a23b;padding:12px;margin:13px 0}.code{background:#f1f5f9;border:1px solid #d5e0ec;border-radius:8px;padding:16px;overflow-x:auto;color:#182a42;font:14px/1.65 Consolas,'Courier New',monospace;white-space:pre}.comment{color:#207245}.keyword{color:#7c3aed;font-weight:bold}.output{background:#ecfdf5;border-left:4px solid #10b981;padding:10px 14px;margin:10px 0}table{width:100%;border-collapse:collapse;margin:15px 0}th,td{padding:10px;border:1px solid #cbd5e1;text-align:left}th{background:#e8f1ff}p{margin:10px 0}code{font-family:Consolas,monospace}footer{border-top:1px solid #ddd;margin-top:30px;padding-top:12px;color:#475569}@media(max-width:600px){body{padding:8px}.page{padding:16px}.code{font-size:12px}}</style></head><body><main class="page"><h1>Understanding <code>final</code> Fields in Dart</h1><p><strong>Beginner reference • Classes, objects, and constructors</strong></p><div class="intro">A <strong><code>final</code> field</strong> is an instance variable that can be assigned a value <strong>only once</strong>. Once initialized, the field cannot be assigned a different value.</div>
+<h2>1. Regular Field vs. Final Field</h2><pre class="code"><span class="keyword">class</span> Student {
+  String name = "John";       <span class="comment">// Regular field: can change</span>
+  <span class="keyword">final</span> int studentId = 101; <span class="comment">// Final field: assign once</span>
+}
+
+<span class="keyword">void</span> main() {
+  Student s = Student();
+  s.name = "Mary";           <span class="comment">// Allowed</span>
+  print(s.name);             <span class="comment">// Mary</span>
+  print(s.studentId);        <span class="comment">// 101</span>
+  <span class="comment">// s.studentId = 202;    // ERROR: final field</span>
+}</pre><div class="output"><strong>Output:</strong> Mary<br>101</div><p><code>name</code> can be reassigned. <code>studentId</code> cannot be reassigned after its initial value is set.</p>
+<h2>2. Traditional Constructor with an Initializer List</h2><pre class="code"><span class="keyword">class</span> Student {
+  <span class="keyword">final</span> int studentId;
+  String name;
+
+  <span class="comment">// Initialize fields before the constructor body runs</span>
+  Student(int id, String studentName)
+      : studentId = id,
+        name = studentName;
+}
+
+<span class="keyword">void</span> main() {
+  Student s = Student(101, "John");
+  print(s.studentId); <span class="comment">// 101</span>
+  print(s.name);      <span class="comment">// John</span>
+  s.name = "Mary";   <span class="comment">// Allowed</span>
+  <span class="comment">// s.studentId = 202; // ERROR</span>
+}</pre><div class="output"><strong>Output:</strong> 101<br>John</div><div class="note"><strong>Important:</strong> An uninitialized <code>final</code> instance field cannot be assigned inside an ordinary generative constructor body. Initialize it with an initializer list or <code>this.field</code> in the constructor parameters.</div>
+<h2>3. Constructor Shorthand: <code>this.field</code></h2><pre class="code"><span class="keyword">class</span> Student {
+  <span class="keyword">final</span> int studentId;
+  <span class="keyword">final</span> String name;
+
+  <span class="comment">// Shorthand initializes both final fields</span>
+  Student(this.studentId, this.name);
+
+  <span class="keyword">void</span> display() {
+    print("$studentId - $name");
+  }
+}
+
+<span class="keyword">void</span> main() {
+  Student s = Student(101, "John");
+  s.display(); <span class="comment">// 101 - John</span>
+}</pre><div class="output"><strong>Output:</strong> 101 - John</div><p>The constructor assigns each argument directly to the corresponding field.</p>
+<h2>4. Final Fields with Named Parameters</h2><pre class="code"><span class="keyword">class</span> Product {
+  <span class="keyword">final</span> String name;
+  <span class="keyword">final</span> double price;
+
+  Product({
+    <span class="keyword">required</span> this.name,
+    <span class="keyword">required</span> this.price,
+  });
+}
+
+<span class="keyword">void</span> main() {
+  Product p = Product(name: "Laptop", price: 899.99);
+  print(p.name);  <span class="comment">// Laptop</span>
+  print(p.price); <span class="comment">// 899.99</span>
+}</pre><div class="output"><strong>Output:</strong> Laptop<br>899.99</div><p><code>required</code> means the caller must supply that named argument. <code>final</code> means the field cannot be reassigned afterward.</p>
+<h2>5. Final Does Not Make a List Unchangeable</h2><pre class="code"><span class="keyword">class</span> ShoppingCart {
+  <span class="keyword">final</span> List&lt;String&gt; items = [];
+
+  <span class="keyword">void</span> addItem(String item) {
+    items.add(item); <span class="comment">// Allowed: modify existing list</span>
+  }
+}
+
+<span class="keyword">void</span> main() {
+  ShoppingCart cart = ShoppingCart();
+  cart.addItem("Book");
+  cart.addItem("Pen");
+  print(cart.items); <span class="comment">// [Book, Pen]</span>
+  <span class="comment">// cart.items = ["Laptop"]; // ERROR: reassignment</span>
+}</pre><div class="output"><strong>Output:</strong> [Book, Pen]</div><p>The <code>items</code> field always refers to the same list, but elements can still be added to that list.</p>
+<h2>6. Comparison: Regular, Final, and Const</h2><table><thead><tr><th>Declaration</th><th>Can reassign?</th><th>When is it initialized?</th></tr></thead><tbody><tr><td><code>int age = 20;</code></td><td>Yes</td><td>When the object is created</td></tr><tr><td><code>final int id = 101;</code></td><td>No</td><td>Once, during object initialization</td></tr><tr><td><code>static const int max = 100;</code></td><td>No</td><td>Compile time</td></tr></tbody></table><div class="note"><strong>Remember:</strong> <code>final</code> means <strong>assign once</strong>—not necessarily that the object or collection it refers to can never change. Constructors often initialize <code>final</code> fields so each instance has its own fixed field values.</div><footer>Learning reference • Dart classes and constructors</footer></main></body></html>
