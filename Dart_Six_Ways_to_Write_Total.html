@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dart: Six Ways to Calculate a Total</title>
+<style>
+body{font-family:Arial,Helvetica,sans-serif;background:#f5f7fb;color:#172235;line-height:1.55;margin:0;padding:24px}
+.wrap{max-width:920px;margin:auto;background:white;border:1px solid #e2e8f0;border-radius:14px;padding:28px}
+h1{font-size:26px;margin:0 0 8px;color:#152b4c}.lead{color:#4b5b72;margin:0 0 20px}
+.note{background:#eff6ff;border-left:4px solid #2563eb;padding:12px 16px;margin:18px 0;border-radius:5px}
+.section{border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;margin:20px 0}
+.section h2{font-size:18px;margin:0;padding:11px 16px;color:white}
+.section p{margin:12px 16px}
+pre{background:#111827;color:#f3f4f6;overflow-x:auto;padding:18px;font-size:14px;line-height:1.65;margin:0;tab-size:2}
+code{font-family:Consolas,'Courier New',monospace}
+.comment{color:#a7f3d0}.keyword{color:#c4b5fd}.type{color:#93c5fd}.num{color:#fcd34d}
+.blue h2{background:#1d4ed8}.green h2{background:#15803d}.amber h2{background:#a16207}.purple h2{background:#7e22ce}.orange h2{background:#c2410c}.red h2{background:#b91c1c}
+.output{background:#f1f5f9;padding:12px 16px;border-top:1px solid #e2e8f0;font-size:14px}
+.footer{margin-top:22px;padding:15px;background:#f8fafc;border-radius:8px}
+@media(max-width:600px){body{padding:8px}.wrap{padding:15px}pre{font-size:12px;padding:12px}}
+</style>
+</head>
+<body><main class="wrap">
+<h1>Dart: Six Ways to Write a <code>total()</code> Calculation</h1>
+<p class="lead">All six approaches calculate <strong>3 + 5 = 8</strong>. Compare method syntax, object creation, constructors, getters, and static methods. Each example below is a <strong>complete, independent Dart program</strong>.</p>
+<div class="note"><strong>Learning reference — 0 points.</strong> Read the examples and compare how each method is defined and called.</div>
+
+<section class="section blue"><h2>1. Expression Body (=&gt;)</h2><p>Use <code>=&gt;</code> when a method returns the value of one expression.</p><pre><code><span class="keyword">class</span> Price {
+  <span class="type">int</span> total(<span class="type">int</span> a, <span class="type">int</span> b) =&gt; a + b; <span class="comment">// Return the sum directly</span>
+}
+
+<span class="type">void</span> main() {
+  print(Price().total(<span class="num">3</span>, <span class="num">5</span>)); <span class="comment">// Create object and call method</span>
+}</code></pre><div class="output"><strong>Output:</strong> <code>8</code></div></section>
+
+<section class="section green"><h2>2. Block Body with return</h2><p>Use braces and <code>return</code> to write the method body explicitly.</p><pre><code><span class="keyword">class</span> Price {
+  <span class="type">int</span> total(<span class="type">int</span> a, <span class="type">int</span> b) {
+    <span class="keyword">return</span> a + b; <span class="comment">// Return the calculated sum</span>
+  }
+}
+
+<span class="type">void</span> main() {
+  Price p = Price();          <span class="comment">// Create an object</span>
+  <span class="type">int</span> result = p.total(<span class="num">3</span>, <span class="num">5</span>); <span class="comment">// Call method</span>
+  print(result);             <span class="comment">// Display 8</span>
+}</code></pre><div class="output"><strong>Output:</strong> <code>8</code></div></section>
+
+<section class="section amber"><h2>3. Block Body with a Local Variable</h2><p>Store an intermediate result in a variable before returning it.</p><pre><code><span class="keyword">class</span> Price {
+  <span class="type">int</span> total(<span class="type">int</span> a, <span class="type">int</span> b) {
+    <span class="type">int</span> sum = a + b; <span class="comment">// Store intermediate result</span>
+    <span class="keyword">return</span> sum;    <span class="comment">// Return the result</span>
+  }
+}
+
+<span class="type">void</span> main() {
+  Price p = Price();         <span class="comment">// Create an object</span>
+  print(p.total(<span class="num">3</span>, <span class="num">5</span>));     <span class="comment">// Call method and print 8</span>
+}</code></pre><div class="output"><strong>Output:</strong> <code>8</code></div></section>
+
+<section class="section purple"><h2>4. Constructor and Instance Fields</h2><p>Pass values when creating the object. The method reads the object's stored fields instead of accepting parameters.</p><pre><code><span class="keyword">class</span> Price {
+  <span class="type">int</span> a; <span class="comment">// Instance field</span>
+  <span class="type">int</span> b; <span class="comment">// Instance field</span>
+
+  Price(<span class="keyword">this</span>.a, <span class="keyword">this</span>.b); <span class="comment">// Constructor initializes fields</span>
+
+  <span class="type">int</span> total() {
+    <span class="keyword">return</span> a + b; <span class="comment">// Use the stored field values</span>
+  }
+}
+
+<span class="type">void</span> main() {
+  Price p = Price(<span class="num">3</span>, <span class="num">5</span>); <span class="comment">// Supply constructor values</span>
+  print(p.total());       <span class="comment">// No method arguments needed</span>
+}</code></pre><div class="output"><strong>Output:</strong> <code>8</code></div></section>
+
+<section class="section orange"><h2>5. Getter</h2><p>A getter calculates a value but is accessed like a property, without parentheses.</p><pre><code><span class="keyword">class</span> Price {
+  <span class="type">int</span> a;
+  <span class="type">int</span> b;
+
+  Price(<span class="keyword">this</span>.a, <span class="keyword">this</span>.b); <span class="comment">// Initialize fields</span>
+
+  <span class="type">int</span> <span class="keyword">get</span> total =&gt; a + b; <span class="comment">// Computed property</span>
+}
+
+<span class="type">void</span> main() {
+  Price p = Price(<span class="num">3</span>, <span class="num">5</span>); <span class="comment">// Create an object</span>
+  print(p.total);         <span class="comment">// Getter: NO parentheses</span>
+}</code></pre><div class="output"><strong>Output:</strong> <code>8</code></div></section>
+
+<section class="section red"><h2>6. Static Method</h2><p>A static method belongs to the class and can be called without creating an object.</p><pre><code><span class="keyword">class</span> Price {
+  <span class="keyword">static</span> <span class="type">int</span> total(<span class="type">int</span> a, <span class="type">int</span> b) {
+    <span class="keyword">return</span> a + b; <span class="comment">// Calculate and return the sum</span>
+  }
+}
+
+<span class="type">void</span> main() {
+  print(Price.total(<span class="num">3</span>, <span class="num">5</span>)); <span class="comment">// Call using class name</span>
+}</code></pre><div class="output"><strong>Output:</strong> <code>8</code></div></section>
+
+<div class="footer"><strong>Key differences:</strong> Methods 1–3 accept parameters; method 4 uses constructor-initialized fields; method 5 is a getter accessed without <code>()</code>; method 6 is static and does not require an object.</div>
+</main></body></html>
