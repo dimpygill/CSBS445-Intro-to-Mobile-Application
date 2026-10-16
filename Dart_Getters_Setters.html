@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Dart Getters and Setters — Examples</title>
+<style>
+body{font-family:Arial,Helvetica,sans-serif;background:#f5f8fc;color:#172b46;line-height:1.55;margin:0;padding:24px}.wrap{max-width:920px;margin:auto}h1{font-size:28px;margin:0 0 8px}p{margin:8px 0 16px}.intro{background:#eaf3ff;border-left:5px solid #2878c8;padding:14px 18px;border-radius:8px}.card{background:white;border:1px solid #dbe5f0;border-radius:12px;padding:20px;margin:20px 0;box-shadow:0 2px 8px #19385a0b}h2{font-size:19px;margin:0 0 10px;color:#175fa5}.green h2{color:#137b60}.purple h2{color:#7550ad}.orange h2{color:#a45d14}pre{background:#f4f7fb;border:1px solid #dce5f0;border-radius:9px;padding:17px;overflow-x:auto;line-height:1.65;font-size:14px;color:#182a41}code{font-family:Consolas,'Courier New',monospace}.comment{color:#267e50}.kw{color:#7a3db5;font-weight:bold}.note{background:#f7fafc;border-left:4px solid #89a9c9;padding:10px 14px;margin-top:12px}.output{background:#eef8f1;border-left:4px solid #2d9a62;padding:10px 14px;border-radius:5px}table{width:100%;border-collapse:collapse;background:white}th,td{padding:10px;border:1px solid #d9e3ed;text-align:left}th{background:#eaf2fc}small{color:#536b84}@media(max-width:600px){body{padding:12px}.card{padding:13px}pre{font-size:12px}}
+</style></head><body><main class="wrap"><h1>Dart Getters and Setters</h1><p>A beginner-friendly reference with small programs, explanations, and outputs.</p><div class="intro"><strong>Getter:</strong> reads a property using <code>get</code> (no parentheses). <strong>Setter:</strong> changes a property using <code>set</code> (assignment syntax). The leading underscore in <code>_amount</code> means library-private in Dart.</div>
+<section class="card"><h2>Example 1 — Simple getter and setter</h2><pre><code><span class="kw">class</span> Price {
+  int _amount = 0; <span class="comment">// Field that stores the price</span>
+
+  <span class="comment">// SETTER: receives and stores a new value</span>
+  <span class="kw">set</span> amount(int value) {
+    _amount = value;
+  }
+
+  <span class="comment">// GETTER: returns the stored value</span>
+  int <span class="kw">get</span> amount {
+    <span class="kw">return</span> _amount;
+  }
+}
+
+void main() {
+  Price p = Price(); <span class="comment">// Create an object</span>
+  p.amount = 100;   <span class="comment">// Calls the setter</span>
+  print(p.amount);  <span class="comment">// Calls the getter</span>
+  p.amount = 250;   <span class="comment">// Updates through setter</span>
+  print(p.amount);
+}</code></pre><div class="output"><strong>Output</strong><br><code>100<br>250</code></div><div class="note">The same name, <code>amount</code>, can be used for both getter and setter. The syntax determines which one is called.</div></section>
+<section class="card green"><h2>Example 2 — Setter with validation</h2><pre><code><span class="kw">class</span> Price {
+  int _amount = 0;
+
+  <span class="comment">// Reject negative prices</span>
+  <span class="kw">set</span> amount(int value) {
+    <span class="kw">if</span> (value &gt;= 0) {
+      _amount = value; <span class="comment">// Accept valid price</span>
+    } <span class="kw">else</span> {
+      print('Price cannot be negative');
+    }
+  }
+
+  <span class="comment">// Short expression-body getter</span>
+  int <span class="kw">get</span> amount =&gt; _amount;
+}
+
+void main() {
+  Price p = Price();
+  p.amount = 100;  <span class="comment">// Valid update</span>
+  print(p.amount);
+  p.amount = -50;  <span class="comment">// Rejected: amount stays 100</span>
+  print(p.amount);
+}</code></pre><div class="output"><strong>Output</strong><br><code>100<br>Price cannot be negative<br>100</code></div><div class="note">A setter can enforce rules before changing data. Here, an invalid value leaves the previous price unchanged.</div></section>
+<section class="card purple"><h2>Example 3 — Constructor, getter, and setter</h2><pre><code><span class="kw">class</span> Price {
+  int _amount;
+
+  <span class="comment">// Constructor sets the initial price</span>
+  Price(this._amount);
+
+  <span class="comment">// Read the current price</span>
+  int <span class="kw">get</span> amount =&gt; _amount;
+
+  <span class="comment">// Change the price only if nonnegative</span>
+  <span class="kw">set</span> amount(int value) {
+    <span class="kw">if</span> (value &gt;= 0) {
+      _amount = value;
+    }
+  }
+}
+
+void main() {
+  Price p = Price(50); <span class="comment">// Initial value: 50</span>
+  print(p.amount);    <span class="comment">// Getter</span>
+  p.amount = 80;      <span class="comment">// Setter</span>
+  print(p.amount);    <span class="comment">// Getter again</span>
+}</code></pre><div class="output"><strong>Output</strong><br><code>50<br>80</code></div><div class="note">The constructor initializes the field; later assignments use the setter. Note that this constructor does not validate the initial value.</div></section>
+<section class="card orange"><h2>Example 4 — Read-only computed getter</h2><pre><code><span class="kw">class</span> Cart {
+  int price;
+  int quantity;
+
+  Cart(this.price, this.quantity);
+
+  <span class="comment">// Getter calculates a value; no setter needed</span>
+  int <span class="kw">get</span> total =&gt; price * quantity;
+}
+
+void main() {
+  Cart cart = Cart(20, 3);
+  print(cart.total); <span class="comment">// 20 × 3 = 60</span>
+  cart.quantity = 4;
+  print(cart.total); <span class="comment">// 20 × 4 = 80</span>
+}</code></pre><div class="output"><strong>Output</strong><br><code>60<br>80</code></div><div class="note">A getter does not have to return a stored field. It can calculate a result whenever it is accessed.</div></section>
+<section class="card"><h2>Quick comparison</h2><table><thead><tr><th>Feature</th><th>Definition</th><th>How it is used</th></tr></thead><tbody><tr><td>Getter</td><td><code>int get amount =&gt; _amount;</code></td><td><code>print(p.amount);</code></td></tr><tr><td>Setter</td><td><code>set amount(int value) { _amount = value; }</code></td><td><code>p.amount = 100;</code></td></tr><tr><td>Regular method</td><td><code>void update(int value) { _amount = value; }</code></td><td><code>p.update(100);</code></td></tr></tbody></table><p><small><strong>Remember:</strong> Setters take one argument, have no return value, and use assignment syntax. Getters take no arguments and use property-access syntax.</small></p></section></main></body></html>
