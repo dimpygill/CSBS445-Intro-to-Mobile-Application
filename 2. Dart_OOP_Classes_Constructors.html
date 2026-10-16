@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dart Classes & Constructors Tutorial (C# & Java Transition)</title>
+    <style>
+        :root {
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-color: #212529;
+            --text-muted: #6c757d;
+            --primary-color: #0175c2;
+            --primary-hover: #01579b;
+            --accent-color: #1389fd;
+            --border-color: #dee2e6;
+            --code-bg: #f1f3f5;
+            --code-text: #d63384;
+            --pre-bg: #212529;
+            --pre-text: #f8f9fa;
+            --success-color: #2b8a3e;
+            --success-bg: #ebfbee;
+            --error-color: #c92a2a;
+            --error-bg: #fff5f5;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: var(--card-bg);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        h1, h2, h3 {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 8px;
+            margin-top: 30px;
+        }
+
+        h1 { font-size: 2.2rem; border-bottom: 3px solid var(--primary-color); }
+        h2 { font-size: 1.5rem; }
+        h3 { font-size: 1.2rem; border-bottom: none; color: #343a40; }
+
+        p, li {
+            font-size: 1.05rem;
+        }
+
+        code {
+            background-color: var(--code-bg);
+            color: var(--code-text);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+            font-size: 0.95em;
+        }
+
+        pre {
+            background-color: var(--pre-bg);
+            color: var(--pre-text);
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+            font-size: 0.95rem;
+        }
+
+        pre code {
+            background-color: transparent;
+            color: inherit;
+            padding: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: var(--code-bg);
+            color: var(--text-color);
+        }
+
+        .note-box {
+            background-color: #e7f5ff;
+            border-left: 5px solid var(--accent-color);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .warning-box {
+            background-color: var(--error-bg);
+            border-left: 5px solid var(--error-color);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .quiz-container, .exercise-container {
+            background-color: #f1f3f5;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 10px;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .feedback {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Dart OOP Tutorial for C# & Java Developers</h1>
+    <p>Welcome! This comprehensive guide is designed specifically for developers and educators coming from a <strong>C# or Java</strong> background. We will explore how Dart handles Classes, Objects, Method Syntax Variations, Visibility (Public/Private), constructor alternatives to overloading, and crucial constructor rules.</p>
+
+    <div class="note-box">
+        <strong>Quick Transition Note:</strong> If you know C# or Java, Dart's object-oriented concepts will feel very familiar, but with cleaner syntax and specific constructor-only features like Initializing Lists, Shorthand Parameters, and Standard Bodies.
+    </div>
+
+    <h2>1. Classes and Objects</h2>
+    <p>Just like in C# and Java, a <strong>Class</strong> is a blueprint for creating objects, and an <strong>Object</strong> is an instance of that class.</p>
+    <pre><code>class Rectangle {
+  int width = 0;
+  int height = 0;
+
+  // Method
+  int calculateArea() {
+    return width * height;
+  }
+}
+
+void main() {
+  // Creating an object (no 'new' keyword required in Dart, though optional)
+  Rectangle rect = Rectangle();
+  rect.width = 10;
+  rect.height = 5;
+  print("Area: ${rect.calculateArea()}"); // Area: 50
+}</code></pre>
+
+    <h2>2. Ways to Write Methods & Getters in Dart</h2>
+    <p>In Dart, you can write computations as standard methods, arrow-syntax methods, or read-only getters. Here is how they compare:</p>
+
+    <h3>A. Traditional Body Syntax (Standard Method)</h3>
+    <p>Uses explicit curly braces <code>{}</code> and <code>return</code> keyword, requiring parentheses <code>()</code> when called.</p>
+    <pre><code>class Rectangle {
+  int width = 0;
+  int height = 0;
+
+  int calculateArea() {
+    return width * height;
+  }
+}
+
+// Usage:
+// print(rect.calculateArea()); // Parentheses () are required!</code></pre>
+
+    <h3>B. Arrow Syntax (Expression Body Shorthand)</h3>
+    <p>For single-expression methods, Dart offers the arrow operator <code>=></code>.</p>
+    <pre><code>int calculateArea() => width * height;</code></pre>
+
+    <h3>C. Getter Syntax (Read-Only Property)</h3>
+    <p>When a method takes no parameters and computes a value, defining it with the <code>get</code> keyword allows callers to access it like a field or property without parentheses <code>()</code>.</p>
+    <pre><code>class Rectangle {
+  int width = 0;
+  int height = 0;
+
+  // Getter form
+  int get area => width * height;
+}
+
+// Usage:
+// print(rect.area); // Notice: No parentheses ()!</code></pre>
+
+    <h2>3. Standard Constructor Bodies vs. Methods</h2>
+    <p>Just like in C# and Java, a constructor can be written with a standard body using curly braces <code>Rectangle(int w, int h) { ... }</code> to execute custom initialization logic. <strong>Important Rule:</strong> You cannot nest method definitions inside a constructor body; constructors and methods must be separate members inside the class.</p>
+    
+    <pre><code>class Rectangle {
+  int width = 0;
+  int height = 0;
+
+  // 1. Standard Constructor Body (used for initialization)
+  Rectangle(int w, int h) {
+    width = w;
+    height = h;
+    print("Rectangle created with width: $width and height:$height");
+  }
+
+  // 2. Regular Method (defined separately in the class body)
+  int calculateArea() {
+    return width * height;
+  }
+}
+
+void main() {
+  Rectangle rect = Rectangle(10, 5);
+  print("Area: ${rect.calculateArea()}"); // Area: 50
+}</code></pre>
+
+    <h2>4. Public and Private Members & Shorthand Constructors</h2>
+    <p>Unlike C# (which uses <code>public</code>, <code>private</code> keywords) or Java:</p>
+    <ul>
+        <li><strong>Public:</strong> By default, all variables, methods, and classes in Dart are public. No keyword is needed.</li>
+        <li><strong>Private:</strong> Dart has <strong>library-level privacy</strong>. You make a member private by prefixing its name with an underscore (<code>_</code>). It can only be accessed within the same file (library).</li>
+    </ul>
+
+    <h3>Dart Shorthand Constructors (Initializing Formals)</h3>
+    <p>Instead of manually writing repetitive assignment statements inside the constructor body, Dart lets you use <code>this.fieldName</code> directly in the parameter list. This automatically assigns arguments to fields—<strong>even private fields</strong> like `this._balance`!</p>
+    
+    <pre><code>class BankAccount {
+  String accountHolder; // Public
+  double _balance;      // Private (accessible only within this file)
+
+  // Shorthand Constructor: Automatically assigns parameters to fields
+  BankAccount(this.accountHolder, this._balance);
+
+  // Getter to securely read private balance
+  double get balance => _balance;
+  
+  // Method to modify private state
+  void deposit(double amount) {
+    if (amount > 0) _balance += amount;
+  }
+}</code></pre>
+
+    <h2>5. Constructor Initializer Lists (Exclusive to Constructors)</h2>
+    <p>Dart constructors can include an <strong>Initializer List</strong> placed after a colon (<code>:</code>) before the constructor body runs. This syntax is <strong>strictly exclusive to constructors</strong> and cannot be used in regular methods or functions.</p>
+    <pre><code>class Point {
+  final double x;
+  final double y;
+
+  // Constructor Initializer List (sets fields before body runs)
+  Point() : x = 0.0, y = 0.0;
+}</code></pre>
+
+    <h2>6. The Default Constructor Rule & Multiple Constructors</h2>
+    
+    <h3>Part A: How the Default Constructor Works Normally</h3>
+    <p>If you write a class and <strong>do not define any constructors at all</strong>, Dart automatically provides a hidden, parameterless default constructor behind the scenes (e.g., `Rectangle()`). This allows you to instantiate the class without passing any arguments.</p>
+    <pre><code>class Rectangle {
+  int width = 0;
+  int height = 0;
+  // No custom constructor written here. Dart provides Rectangle() automatically.
+}
+
+void main() {
+  var r = Rectangle(); // Works fine because of the automatic default constructor!
+}</code></pre>
+
+    <h3>Part B: Multiple Constructors using Named Constructors</h3>
+    <p>Having <strong>multiple constructors</strong> in a class is fully supported in Dart! Since Dart does not support traditional constructor overloading (multiple constructors with the exact same name), Dart achieves this using **Named Constructors** (e.g., `Rectangle.square(...)`).</p>
+    <p>Here is an example with a parameterized constructor and a named constructor that <strong>runs without errors</strong> because we are properly passing arguments to the constructors we defined:</p>
+    <pre><code>class Rectangle {
+  int width;
+  int height;
+
+  // Parameterized Constructor
+  Rectangle(this.width, this.height);
+
+  // Named Constructor for a square
+  Rectangle.square(int size) : width = size, height = size;
+}
+
+void main() {
+  var r1 = Rectangle(10, 5);      // Calls the parameterized constructor successfully!
+  var r2 = Rectangle.square(4); // Calls the named constructor successfully!
+}</code></pre>
+
+    <h3>Part C: When Does an Error Occur? (The Missing Parameterless Constructor)</h3>
+    <div class="warning-box">
+        <strong>Crucial Rule (Same in C# & Java):</strong> The moment you explicitly define <em>any</em> custom constructor (such as our parameterized `Rectangle(this.width, this.height)`), Dart stops generating the automatic parameterless default constructor.
+    </div>
+    <p>Therefore, if you try to instantiate the class <strong>without passing arguments</strong> like `Rectangle()`, Dart will throw a compile-time error:</p>
+    <pre><code>class Rectangle {
+  int width;
+  int height;
+
+  Rectangle(this.width, this.height);
+}
+
+void main() {
+  // ❌ COMPILE ERROR! The parameterless default constructor was suppressed.
+  // var r = Rectangle(); 
+
+  // ✅ Correct:
+  var r2 = Rectangle(10, 20); 
+}</code></pre>
+
+    <h2>7. Constructor Overloading: C#/Java vs. Dart</h2>
+    <table>
+        <tr>
+            <th>Feature</th>
+            <th>C# / Java</th>
+            <th>Dart</th>
+        </tr>
+        <tr>
+            <td><strong>Constructor Overloading</strong></td>
+            <td>Supported (multiple constructors with same name, different parameters).</td>
+            <td><strong>Not Supported.</strong> You cannot have multiple constructors with the exact same name.</td>
+        </tr>
+        <tr>
+            <td><strong>Alternative Solution</strong></td>
+            <td>N/A</td>
+            <td>Uses <strong>Named Constructors</strong> (e.g., <code>Rectangle.dimensions(...)</code>) or optional/named parameters.</td>
+        </tr>
+    </table>
+
+    <p>Example of Dart Named Constructors:</p>
+    <pre><code>class Point {
+  double x, y;
+
+  // Default Constructor using Initializer List
+  Point() : x = 0.0, y = 0.0;
+
+  // Named Constructor 1
+  Point.origin() : x = 0.0, y = 0.0;
+
+  // Named Constructor 2
+  Point.fromJson(Map&lt;String, double&gt; json) 
+      : x = json['x'] ?? 0.0, y = json['y'] ?? 0.0;
+}
+
+void main() {
+  var p1 = Point();
+  var p2 = Point.origin();
+  var p3 = Point.fromJson({'x': 10.0, 'y': 20.0});
+}</code></pre>
+
+    <div class="exercise-container">
+        <h2>Practice Questions</h2>
+        <ol>
+            <li><strong>Question 1:</strong> Why does `var r1 = Rectangle(10, 5);` run successfully even though the automatic default constructor was suppressed?</li>
+            <li><strong>Question 2:</strong> How does Dart achieve having multiple constructors since traditional constructor overloading is not supported?</li>
+            <li><strong>Question 3:</strong> What is Dart's shorthand feature called when you write `BankAccount(this.accountHolder, this._balance);`?</li><li><strong>Question 4:</strong> What is the purpose of <code>@override</code> in a subclass?</li>
+        </ol>
+        <details>
+            <summary><strong>Click here for Solutions</strong></summary>
+            <p><strong>Solution 1:</strong> Because it calls the explicitly defined parameterized constructor `Rectangle(this.width, this.height)`, not the missing parameterless default constructor.</p>
+            <p><strong>Solution 2:</strong> Dart uses <strong>Named Constructors</strong> (e.g., `ClassName.constructorName()`).</p>
+            <p><strong>Solution 3:</strong> It is called <strong>Initializing Formals</strong>.</p><p><strong>Solution 4:</strong> It marks an intentional override and enables analyzer checks. The subclass provides a compatible implementation of an inherited method.</p>
+        </details>
+    </div>
+
+    <div class="quiz-container">
+        <h2>Interactive Quick Quiz</h2>
+        <p><strong>Question:</strong> When does defining a parameterized constructor like `Rectangle(this.width, this.height)` cause an error?</p>
+        <form id="quizForm">
+            <label><input type="radio" name="q1" value="a"> A) Whenever you call `Rectangle(10, 5)` with arguments.</label><br>
+            <label><input type="radio" name="q1" value="b"> B) Whenever you try to call `Rectangle()` with zero arguments, because the parameterless default constructor was suppressed.</label><br>
+            <label><input type="radio" name="q1" value="c"> C) Whenever you use a named constructor like `Rectangle.square(4)`.</label><br>
+            <button type="button" onclick="checkQuiz()">Submit Answer</button>
+        </form>
+        <p id="quizFeedback" class="feedback"></p>
+    </div>
+</div>
+
+<script>
+    function checkQuiz() {
+        const radios = document.getElementsByName('q1');
+        let selected = '';
+        for (const radio of radios) {
+            if (radio.checked) {
+                selected = radio.value;
+                break;
+            }
+        }
+        const feedback = document.getElementById('quizFeedback');
+        if (selected === 'b') {
+            feedback.style.color = 'var(--success-color)';
+            feedback.innerHTML = 'Correct! Calling `Rectangle()` with zero arguments fails because the default parameterless constructor is suppressed.';
+        } else if (selected === '') {
+            feedback.style.color = 'var(--text-muted)';
+            feedback.innerHTML = 'Please select an option first!';
+        } else {
+            feedback.style.color = 'var(--error-color)';
+            feedback.innerHTML = 'Incorrect. Passing arguments or using named constructors works fine; calling `Rectangle()` with zero args causes the error.';
+        }
+    }
+</script>
+
+</body>
+</html>
