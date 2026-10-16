@@ -1,0 +1,116 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Dart Constructors: Different Ways to Write Them</title><style>body{font:16px/1.65 Arial,sans-serif;background:#f7f9fc;color:#17243a;margin:0}.wrap{max-width:1000px;margin:auto;padding:30px 20px}header{background:#eaf2ff;border-left:7px solid #3269bd;padding:22px 28px;border-radius:12px}h1{margin:0 0 8px;font-size:30px}h2{font-size:22px;margin:0 0 10px;color:#204b89}.card{background:#fff;border:1px solid #dce5f1;border-radius:12px;margin:20px 0;padding:23px;box-shadow:0 2px 8px #1a365d0a}.note{background:#fff8e6;border-left:4px solid #d79b18;padding:12px 16px;margin:14px 0}.ok{background:#e9f8ee;border-left:4px solid #23884c;padding:10px 15px}.code{background:#f1f5fb;border:1px solid #d7e2ef;border-radius:8px;padding:16px;overflow-x:auto;color:#17243a;font:14px/1.65 Consolas,'Courier New',monospace;white-space:pre}.comment{color:#28764c}.keyword{color:#6c3db7;font-weight:bold}.type{color:#1b62a0}.output{background:#edf8f0;border-radius:8px;padding:10px 14px;font-family:Consolas,monospace}table{border-collapse:collapse;width:100%}th,td{border:1px solid #d8e1ed;padding:10px;text-align:left;vertical-align:top}th{background:#eaf2ff}code{font-family:Consolas,monospace}footer{color:#5b6879;font-size:14px;padding:12px 0}</style></head><body><main class="wrap"><header><h1>Dart Constructors: 9 Ways to Write Them</h1><p>Beginner-friendly examples of implicit default, explicit traditional, parameterized, shorthand, named, optional, initializer-list, redirecting, and factory constructors.</p><p><strong>How to use:</strong> Each example is a separate, complete Dart program. Run one example at a time.</p></header>
+<section class="card"><h2>1. Implicit default constructor (Dart provides it)</h2><p>If a class declares <strong>no constructor</strong>, Dart automatically supplies an unnamed, zero-argument constructor.</p><pre class="code">class Price {
+  int amount = 0; <span class="comment">// Field has a default value</span>
+  <span class="comment">// No constructor is written here.</span>
+}
+
+void main() {
+  Price p = Price(); <span class="comment">// Calls the implicit default constructor</span>
+  print(p.amount);
+}</pre><div class="output">Output: 0</div><div class="note">Dart only provides this implicit constructor when you have not declared any constructor.</div></section>
+<section class="card"><h2>2. Explicit zero-argument constructor (traditional block body)</h2><p>Write the class name followed by parentheses and a body. This is the most familiar constructor style for beginners.</p><pre class="code">class Price {
+  int amount = 0;
+
+  Price() { <span class="comment">// Explicit constructor; runs on object creation</span>
+    amount = 100; <span class="comment">// Initialize the field</span>
+  }
+}
+
+void main() {
+  Price p = Price();
+  print(p.amount);
+}</pre><div class="output">Output: 100</div></section>
+<section class="card"><h2>3. Traditional parameterized constructor (assign fields in body)</h2><p>Pass a value to the constructor and assign it to a field inside the constructor body.</p><pre class="code">class Price {
+  late int amount; <span class="comment">// Assigned before first use</span>
+
+  Price(int startingAmount) {
+    amount = startingAmount; <span class="comment">// Traditional assignment</span>
+  }
+}
+
+void main() {
+  Price p = Price(250);
+  print(p.amount);
+}</pre><div class="output">Output: 250</div></section>
+<section class="card"><h2>4. Field-formal parameter shorthand (this.field)</h2><p>Dart can declare a constructor parameter that initializes an instance field directly, avoiding a separate assignment.</p><pre class="code">class Price {
+  int amount;
+
+  Price(this.amount); <span class="comment">// Shorthand for initializing amount</span>
+}
+
+void main() {
+  Price p = Price(250);
+  print(p.amount);
+}</pre><div class="output">Output: 250</div><div class="ok">Compare examples 3 and 4: both produce the same result; example 4 is shorter.</div></section>
+<section class="card"><h2>5. Named constructors (multiple ways to create objects)</h2><p>Dart does not support traditional constructor overloading by parameter signatures. Instead, use <strong>named constructors</strong>.</p><pre class="code">class Price {
+  int amount;
+
+  Price(this.amount); <span class="comment">// Unnamed constructor</span>
+
+  Price.free() : amount = 0; <span class="comment">// Named constructor</span>
+
+  Price.discounted(int original)
+      : amount = original - 20; <span class="comment">// Another named constructor</span>
+}
+
+void main() {
+  print(Price(100).amount);
+  print(Price.free().amount);
+  print(Price.discounted(100).amount);
+}</pre><div class="output">Output:<br>100<br>0<br>80</div></section>
+<section class="card"><h2>6. Optional named parameters with defaults</h2><p>Use braces <code>{ }</code> in the parameter list and a default value. This allows readable object creation.</p><pre class="code">class Price {
+  int amount;
+  String currency;
+
+  Price({this.amount = 0, this.currency = 'USD'});
+}
+
+void main() {
+  Price first = Price(); <span class="comment">// Both defaults</span>
+  Price second = Price(amount: 75); <span class="comment">// Override one default</span>
+  print('${first.amount} ${first.currency}');
+  print('${second.amount} ${second.currency}');
+}</pre><div class="output">Output:<br>0 USD<br>75 USD</div></section>
+<section class="card"><h2>7. Initializer list (initialize before constructor body)</h2><p>An initializer list starts with a colon <code>:</code>. It is useful for initializing <code>final</code> fields and for computing initial values.</p><pre class="code">class Price {
+  final int amount;
+  final int tax;
+
+  Price(int base)
+      : amount = base,
+        tax = base ~/ 10 { <span class="comment">// Integer division: 10% tax</span>
+    print('Constructor body runs');
+  }
+}
+
+void main() {
+  Price p = Price(100);
+  print(p.amount + p.tax);
+}</pre><div class="output">Output:<br>Constructor body runs<br>110</div></section>
+<section class="card"><h2>8. Redirecting constructor (reuse another constructor)</h2><p>A constructor can redirect to another constructor of the same class using <code>: this(...)</code>.</p><pre class="code">class Price {
+  int amount;
+
+  Price(this.amount); <span class="comment">// Main constructor</span>
+
+  Price.zero() : this(0); <span class="comment">// Redirects to Price(0)</span>
+}
+
+void main() {
+  print(Price(30).amount);
+  print(Price.zero().amount);
+}</pre><div class="output">Output:<br>30<br>0</div></section>
+<section class="card"><h2>9. Factory constructor (controls object creation)</h2><p>A <code>factory</code> constructor returns an object rather than directly initializing <code>this</code>. It can choose which instance to return.</p><pre class="code">class Price {
+  final int amount;
+
+  Price._(this.amount); <span class="comment">// Named private constructor (library-private)</span>
+
+  factory Price.nonNegative(int value) {
+    <span class="comment">// Replace negative inputs with zero.</span>
+    return Price._(value < 0 ? 0 : value);
+  }
+}
+
+void main() {
+  print(Price.nonNegative(40).amount);
+  print(Price.nonNegative(-5).amount);
+}</pre><div class="output">Output:<br>40<br>0</div></section>
+<section class="card"><h2>Quick comparison</h2><table><thead><tr><th>Style</th><th>Constructor syntax</th><th>When to use</th></tr></thead><tbody><tr><td>Implicit default</td><td>No constructor written</td><td>Simple classes with initialized fields</td></tr><tr><td>Explicit default</td><td><code>Price() { ... }</code></td><td>Initialization steps with no inputs</td></tr><tr><td>Traditional parameterized</td><td><code>Price(int x) { ... }</code></td><td>Teaching explicit assignments</td></tr><tr><td>Shorthand</td><td><code>Price(this.amount);</code></td><td>Concise field initialization</td></tr><tr><td>Named</td><td><code>Price.free()</code></td><td>Alternative creation paths</td></tr><tr><td>Optional named parameters</td><td><code>Price({this.amount = 0})</code></td><td>Flexible, readable inputs</td></tr><tr><td>Initializer list</td><td><code>Price(int x) : amount = x;</code></td><td>Initializing final/computed fields</td></tr><tr><td>Redirecting</td><td><code>Price.zero() : this(0);</code></td><td>Reusing another constructor</td></tr><tr><td>Factory</td><td><code>factory Price.make(...) { ... }</code></td><td>Controlling which object is returned</td></tr></tbody></table><div class="note"><strong>Important distinction:</strong> “Default constructor” may mean the automatically supplied no-argument constructor or an explicitly written no-argument constructor. In Dart, the automatic one disappears when any constructor is declared.</div></section><footer>Classroom reference • Dart language • Light background • Independent runnable examples</footer></main></body></html>
