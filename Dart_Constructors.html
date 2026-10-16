@@ -8,7 +8,7 @@ void main() {
   Price p = Price(); <span class="comment">// Calls the implicit default constructor</span>
   print(p.amount);
 }</pre><div class="output">Output: 0</div><div class="note">Dart only provides this implicit constructor when you have not declared any constructor.</div></section>
-<section class="card"><h2>2. Explicit zero-argument constructor (traditional block body)</h2><p>Write the class name followed by parentheses and a body. This is the most familiar constructor style for beginners.</p><pre class="code">class Price {
+<section class="card"><h2>2. Explicit zero-argument constructor (traditional block body)</h2><p>Write the class name followed by parentheses and a body. This is the most familiar constructor style.</p><pre class="code">class Price {
   int amount = 0;
 
   Price() { <span class="comment">// Explicit constructor; runs on object creation</span>
