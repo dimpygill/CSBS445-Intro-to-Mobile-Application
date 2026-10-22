@@ -1,0 +1,269 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Dart Inheritance: Beginner Tutorial</title><style>body{font:16px/1.65 Arial,sans-serif;background:#f5f8fc;color:#203047;margin:0;padding:20px}.wrap{max-width:960px;margin:auto}.hero{background:#e8f2ff;padding:26px;border-radius:14px;border-left:6px solid #2476c7}h1{margin:0;color:#124b83;font-size:30px}h2{font-size:22px;color:#145b96;margin-top:0}h3{font-size:19px;color:#194e7d}.card{background:#fff;border:1px solid #d9e4f0;border-radius:12px;padding:22px;margin:17px 0;box-shadow:0 2px 8px #163a6008}p{margin:10px 0}pre{background:#f1f5fa;color:#182a40;padding:15px;border-radius:8px;overflow:auto;font:14px/1.6 Consolas,monospace}code{font-family:Consolas,monospace}p code,td code{background:#edf3fa;padding:1px 4px;border-radius:3px}.output{border-left:4px solid #28936b;background:#f0faf5;padding:9px 14px;border-radius:6px}.output pre{background:transparent;padding:0;margin:6px 0}.diagram{display:flex;flex-direction:column;align-items:center;gap:8px;margin:20px}.node{border:2px solid #2476c7;background:#eef6ff;border-radius:10px;padding:12px 30px;text-align:center;font-weight:bold}.node small{font-weight:normal}.arrow{font-size:20px;color:#2476c7}table{border-collapse:collapse;width:100%}td,th{border:1px solid #d8e2ed;padding:9px;text-align:left}th{background:#eaf2fb}details{border:1px solid #cbd9e8;padding:12px;border-radius:8px}summary{cursor:pointer;font-weight:bold}.question{padding:12px 0;border-bottom:1px solid #e0e8f0}.question label{display:block;margin:7px 0}button{background:#1766a7;border:0;color:white;padding:9px 15px;border-radius:6px;cursor:pointer}.feedback{color:#205c4d;font-weight:600}@media(max-width:600px){body{padding:8px}.card,.hero{padding:15px}pre{font-size:12px}}</style></head><body><main class="wrap"><header class="hero"><h1>Dart Inheritance: From Parent and Child Classes to Method Overriding</h1><p>A step-by-step beginner tutorial with independent runnable examples, expected output, mobile app connections, guided exercises, and a self-check quiz.</p></header><section class="card"><h2>Learning objectives</h2><p>This self-contained tutorial introduces inheritance through classes, objects, fields, constructors, and methods. It then explains method overriding and polymorphism through progressively more detailed examples.</p><ol><li>Recognize an <em>is-a</em> relationship.</li><li>Use <code>extends</code> to inherit accessible fields and methods.</li><li>Pass constructor values to a parent using <code>super</code>.</li><li>Explain overriding, <code>@override</code>, and <code>super.method()</code>.</li><li>Use parent-typed variables to understand polymorphism.</li></ol><p><strong>How to practice:</strong> Every numbered example is a separate, complete program. Copy only one program at a time into DartPad or a Dart file and run it.</p></section><section class="card"><h3>1. Understanding a class and an object</h3><p>A class defines data and behavior; an object is an instance of that class. This first example establishes the basic vocabulary before introducing inheritance.</p><pre><code>class Student {
+  String name;
+  Student(this.name);
+  void introduce() {
+    print(&#x27;My name is $name&#x27;);
+  }
+}
+void main() {
+  Student s = Student(&#x27;Maya&#x27;);
+  s.introduce();
+}</code></pre><div class="output"><strong>Expected output</strong><pre>My name is Maya</pre></div><p><strong>Trace it:</strong> The constructor stores Maya in name; the method prints the stored value.</p></section><section class="card"><h2>What is inheritance?</h2><p>Inheritance lets one class reuse accessible instance behavior defined by another class. The existing class is the <strong>parent / superclass</strong>; the new class is the <strong>child / subclass</strong>. Write <code>class Dog extends Animal</code>.</p><div class="diagram"><div class="node">Animal <small>parent</small><br>eat()</div><div class="arrow">↓ extends</div><div class="node">Dog <small>child</small><br>bark() + inherited eat()</div></div><p><strong>Is-a test:</strong> A dog <em>is an</em> animal, so inheritance is sensible. A dog <em>has a</em> collar, so a collar is better represented by a field rather than inheritance.</p></section><section class="card"><h3>2. The first inheritance example</h3><p>The child defines only bark(). It does not need to copy eat().</p><pre><code>class Animal {
+  void eat() {
+    print(&#x27;Animal is eating&#x27;);
+  }
+}
+class Dog extends Animal {
+  void bark() {
+    print(&#x27;Woof!&#x27;);
+  }
+}
+void main() {
+  Dog dog = Dog();
+  dog.eat();  // Inherited from Animal
+  dog.bark(); // Defined in Dog
+}</code></pre><div class="output"><strong>Expected output</strong><pre>Animal is eating
+Woof!</pre></div><p><strong>Trace it:</strong> Dart finds eat() in Animal and bark() in Dog. A child has access to inherited public instance methods.</p></section><section class="card"><h3>3. Inherited fields and methods</h3><p>A child can use a field declared by its parent.</p><pre><code>class Person {
+  String name = &#x27;Maya&#x27;;
+  void introduce() {
+    print(&#x27;Hello, I am $name&#x27;);
+  }
+}
+class Student extends Person {
+  void study() {
+    print(&#x27;$name is studying Dart&#x27;);
+  }
+}
+void main() {
+  Student s = Student();
+  s.introduce();
+  s.study();
+  s.name = &#x27;Alex&#x27;;
+  s.introduce();
+}</code></pre><div class="output"><strong>Expected output</strong><pre>Hello, I am Maya
+Maya is studying Dart
+Hello, I am Alex</pre></div><p><strong>Trace it:</strong> Student inherits name and introduce(). Updating name changes what introduce() prints.</p></section><section class="card"><h3>4. Two children share one parent</h3><p>Different child classes can reuse the same parent method.</p><pre><code>class Animal {
+  void eat() =&gt; print(&#x27;Eating food&#x27;);
+}
+class Dog extends Animal {
+  void bark() =&gt; print(&#x27;Woof&#x27;);
+}
+class Cat extends Animal {
+  void meow() =&gt; print(&#x27;Meow&#x27;);
+}
+void main() {
+  Dog d = Dog();
+  Cat c = Cat();
+  d.eat();
+  d.bark();
+  c.eat();
+  c.meow();
+}</code></pre><div class="output"><strong>Expected output</strong><pre>Eating food
+Woof
+Eating food
+Meow</pre></div><p><strong>Trace it:</strong> Both children reuse eat() but have their own special methods.</p></section><section class="card"><h2>Constructor inheritance: an important distinction</h2><p>Fields and instance methods can be inherited, but <strong>constructors are not inherited</strong>. A child constructor must arrange for the parent constructor to run. If the parent has an accessible unnamed zero-argument constructor, Dart can call it implicitly. If the parent requires arguments, the child must supply them, often using <code>: super(...)</code> or a <code>super</code> parameter.</p></section><section class="card"><h3>5. Parent constructor needs arguments</h3><p>Here Person requires a name, so Student explicitly passes the name to Person.</p><pre><code>class Person {
+  String name;
+  Person(this.name);
+  void introduce() =&gt; print(&#x27;I am $name&#x27;);
+}
+class Student extends Person {
+  int grade;
+  Student(String name, this.grade) : super(name);
+  void showGrade() =&gt; print(&#x27;Grade: $grade&#x27;);
+}
+void main() {
+  Student s = Student(&#x27;Maya&#x27;, 12);
+  s.introduce();
+  s.showGrade();
+}</code></pre><div class="output"><strong>Expected output</strong><pre>I am Maya
+Grade: 12</pre></div><p><strong>Trace it:</strong> Student receives Maya and 12; super(name) initializes the Person part, and this.grade initializes the Student field.</p></section><section class="card"><h3>6. Modern shorthand: super parameters</h3><p>Dart also supports forwarding constructor parameters with super.name.</p><pre><code>class Person {
+  final String name;
+  Person(this.name);
+}
+class Student extends Person {
+  final int grade;
+  Student(super.name, this.grade);
+}
+void main() {
+  Student s = Student(&#x27;Alex&#x27;, 11);
+  print(&#x27;${s.name}: ${s.grade}&#x27;);
+}</code></pre><div class="output"><strong>Expected output</strong><pre>Alex: 11</pre></div><p><strong>Trace it:</strong> super.name forwards the argument to Person(name). This is a concise way to forward a constructor argument to the parent.</p></section><section class="card"><h3>7. Order of constructor execution</h3><p>Observe which constructor body executes first.</p><pre><code>class Parent {
+  Parent() {
+    print(&#x27;Parent constructor&#x27;);
+  }
+}
+class Child extends Parent {
+  Child() {
+    print(&#x27;Child constructor&#x27;);
+  }
+}
+void main() {
+  Child c = Child();
+}</code></pre><div class="output"><strong>Expected output</strong><pre>Parent constructor
+Child constructor</pre></div><p><strong>Trace it:</strong> The parent constructor completes before the child constructor body runs.</p></section><section class="card"><h2>What is method overriding?</h2><p>Inheritance means the child <strong>reuses</strong> a parent method. <strong>Overriding</strong> means the child provides its <em>own implementation</em> of an inherited method. Use <code>@override</code> to make that intention clear and allow the analyzer to check it. The overriding method must have a compatible signature.</p></section><section class="card"><h3>8. First method override</h3><p>Dog replaces the inherited sound() behavior.</p><pre><code>class Animal {
+  void sound() {
+    print(&#x27;Some animal sound&#x27;);
+  }
+}
+class Dog extends Animal {
+  @override
+  void sound() {
+    print(&#x27;Woof!&#x27;);
+  }
+}
+void main() {
+  Animal a = Animal();
+  Dog d = Dog();
+  a.sound();
+  d.sound();
+}</code></pre><div class="output"><strong>Expected output</strong><pre>Some animal sound
+Woof!</pre></div><p><strong>Trace it:</strong> Animal uses the original sound(); Dog uses its overridden sound().</p></section><section class="card"><h3>9. Override with a returned value</h3><p>An override can return a value rather than printing.</p><pre><code>class Employee {
+  String role() =&gt; &#x27;Employee&#x27;;
+}
+class Manager extends Employee {
+  @override
+  String role() =&gt; &#x27;Manager&#x27;;
+}
+void main() {
+  print(Employee().role());
+  print(Manager().role());
+}</code></pre><div class="output"><strong>Expected output</strong><pre>Employee
+Manager</pre></div><p><strong>Trace it:</strong> Both role() methods return String, but the implementations differ.</p></section><section class="card"><h3>10. Override a method with a parameter</h3><p>Method parameters must also remain compatible.</p><pre><code>class Notification {
+  void send(String message) {
+    print(&#x27;Notification: $message&#x27;);
+  }
+}
+class EmailNotification extends Notification {
+  @override
+  void send(String message) {
+    print(&#x27;Email: $message&#x27;);
+  }
+}
+void main() {
+  EmailNotification().send(&#x27;Welcome&#x27;);
+}</code></pre><div class="output"><strong>Expected output</strong><pre>Email: Welcome</pre></div><p><strong>Trace it:</strong> The same argument is accepted, but the child changes how the message is presented.</p></section><section class="card"><h3>11. Use super.method() to keep parent behavior</h3><p>An override can add to the parent behavior rather than completely replacing it.</p><pre><code>class User {
+  void login() {
+    print(&#x27;Checking username and password&#x27;);
+  }
+}
+class Admin extends User {
+  @override
+  void login() {
+    super.login();
+    print(&#x27;Opening admin dashboard&#x27;);
+  }
+}
+void main() {
+  Admin().login();
+}</code></pre><div class="output"><strong>Expected output</strong><pre>Checking username and password
+Opening admin dashboard</pre></div><p><strong>Trace it:</strong> super.login() explicitly runs the parent method, then the child prints its extra step.</p></section><section class="card"><h3>12. Getters can be overridden</h3><p>A getter can also be overridden in a child class. The example demonstrates how the returned value can vary by object type.</p><pre><code>class Product {
+  double get price =&gt; 100;
+}
+class SaleProduct extends Product {
+  @override
+  double get price =&gt; 80;
+}
+void main() {
+  print(Product().price);
+  print(SaleProduct().price);
+}</code></pre><div class="output"><strong>Expected output</strong><pre>100.0
+80.0</pre></div><p><strong>Trace it:</strong> A getter is accessed without parentheses, and the child supplies a different computed value.</p></section><section class="card"><h2>Polymorphism: one parent type, different behaviors</h2><p>A variable typed as the parent can refer to an object of a child class. Calling an overridden method selects the implementation based on the <strong>actual object</strong>, not just the variable type. This is called runtime polymorphism.</p></section><section class="card"><h3>13. Parent variable referring to a child</h3><p>Notice the declared type and actual object type.</p><pre><code>class Animal {
+  void sound() =&gt; print(&#x27;Animal sound&#x27;);
+}
+class Dog extends Animal {
+  @override
+  void sound() =&gt; print(&#x27;Woof&#x27;);
+}
+void main() {
+  Animal pet = Dog();
+  pet.sound();
+}</code></pre><div class="output"><strong>Expected output</strong><pre>Woof</pre></div><p><strong>Trace it:</strong> pet is declared Animal, but it refers to a Dog. Dog.sound() runs.</p></section><section class="card"><h3>14. A list of different child objects</h3><p>One loop can call the same method on multiple types.</p><pre><code>class Animal {
+  void sound() =&gt; print(&#x27;Animal sound&#x27;);
+}
+class Dog extends Animal {
+  @override
+  void sound() =&gt; print(&#x27;Woof&#x27;);
+}
+class Cat extends Animal {
+  @override
+  void sound() =&gt; print(&#x27;Meow&#x27;);
+}
+void main() {
+  List&lt;Animal&gt; animals = [Dog(), Cat(), Animal()];
+  for (Animal animal in animals) {
+    animal.sound();
+  }
+}</code></pre><div class="output"><strong>Expected output</strong><pre>Woof
+Meow
+Animal sound</pre></div><p><strong>Trace it:</strong> Each element is treated as Animal, but its actual class determines the sound.</p></section><section class="card"><h3>15. Mobile app example: different screen messages</h3><p>This simplified app example shows how different screens can share an interface-like parent behavior. It uses plain Dart, so Flutter is not required.</p><pre><code>class AppScreen {
+  String title() =&gt; &#x27;App&#x27;;
+  void open() =&gt; print(&#x27;Opening ${title()}&#x27;);
+}
+class HomeScreen extends AppScreen {
+  @override
+  String title() =&gt; &#x27;Home&#x27;;
+}
+class SettingsScreen extends AppScreen {
+  @override
+  String title() =&gt; &#x27;Settings&#x27;;
+}
+void main() {
+  List&lt;AppScreen&gt; screens = [HomeScreen(), SettingsScreen()];
+  for (AppScreen screen in screens) {
+    screen.open();
+  }
+}</code></pre><div class="output"><strong>Expected output</strong><pre>Opening Home
+Opening Settings</pre></div><p><strong>Trace it:</strong> open() is inherited unchanged, but it calls the overridden title() for each actual screen object.</p></section><section class="card"><h3>16. Mobile app example: notification styles</h3><p>Use polymorphism to avoid separate if statements for every notification type.</p><pre><code>class AppAlert {
+  void display(String text) =&gt; print(&#x27;Alert: $text&#x27;);
+}
+class SuccessAlert extends AppAlert {
+  @override
+  void display(String text) =&gt; print(&#x27;SUCCESS: $text&#x27;);
+}
+class ErrorAlert extends AppAlert {
+  @override
+  void display(String text) =&gt; print(&#x27;ERROR: $text&#x27;);
+}
+void main() {
+  List&lt;AppAlert&gt; alerts = [SuccessAlert(), ErrorAlert()];
+  for (AppAlert alert in alerts) {
+    alert.display(&#x27;Saved&#x27;);
+  }
+}</code></pre><div class="output"><strong>Expected output</strong><pre>SUCCESS: Saved
+ERROR: Saved</pre></div><p><strong>Trace it:</strong> The loop calls one common method; each child supplies its own behavior.</p></section><section class="card"><h2>Common mistakes and design rules</h2><table><tr><th>Situation</th><th>Correct understanding</th></tr><tr><td><code>class Dog extends Animal</code></td><td>Dog is a subclass of Animal.</td></tr><tr><td>Calling inherited <code>eat()</code></td><td>Reuse; not overriding.</td></tr><tr><td>Writing <code>@override void sound()</code></td><td>Child supplies compatible behavior for inherited sound().</td></tr><tr><td><code>super.sound()</code></td><td>Explicitly invokes the parent implementation.</td></tr><tr><td><code>super(name)</code></td><td>Calls the parent constructor; constructors are not inherited.</td></tr><tr><td><code>Animal a = Dog()</code></td><td>Legal: a parent-typed variable can hold a child object.</td></tr><tr><td><code>a.bark()</code> when a is typed Animal</td><td>Not allowed unless Animal declares bark() or the type is narrowed.</td></tr><tr><td><code>extends</code> multiple classes</td><td>Dart classes directly extend at most one class.</td></tr><tr><td>Private names beginning <code>_</code></td><td>Library-private, not simply class-private; visibility depends on the library.</td></tr><tr><td><code>final</code> inherited field</td><td>Can be read but cannot be reassigned after initialization.</td></tr></table><p><strong>Design choice:</strong> Prefer inheritance for genuine <em>is-a</em> relationships. For <em>has-a</em> relationships, store an object in a field (composition). Flutter also frequently uses composition to build widget trees.</p></section><section class="card"><h2>Guided practice: predict before running</h2><p><strong>Exercise A:</strong> Create a Vehicle parent with move() printing “Vehicle moving”. Create Bicycle extending Vehicle with ringBell() printing “Ring ring”. In main, call both methods on a Bicycle.</p><p><strong>Exercise B:</strong> Add an override of move() in Bicycle to print “Bicycle pedaling”. Predict the new output.</p><p><strong>Exercise C:</strong> Create a Person parent whose constructor requires a name. Create Teacher extending Person with a subject field. Print both fields.</p><p><strong>Exercise D:</strong> Create a List&lt;Vehicle&gt; containing a Bicycle and a Vehicle. Call move() on each and predict the output.</p><details><summary>Show worked solutions and explanations</summary><pre><code>// A + B + D: run together
+class Vehicle {
+  void move() =&gt; print(&#x27;Vehicle moving&#x27;);
+}
+class Bicycle extends Vehicle {
+  @override
+  void move() =&gt; print(&#x27;Bicycle pedaling&#x27;);
+  void ringBell() =&gt; print(&#x27;Ring ring&#x27;);
+}
+void main() {
+  Bicycle b = Bicycle();
+  b.move();
+  b.ringBell();
+  List&lt;Vehicle&gt; vehicles = [Bicycle(), Vehicle()];
+  for (Vehicle v in vehicles) {
+    v.move();
+  }
+}
+// Output:
+// Bicycle pedaling
+// Ring ring
+// Bicycle pedaling
+// Vehicle moving</code></pre><p>For A before adding the override, the first line would be “Vehicle moving”. B changes that line because Bicycle overrides move(). D demonstrates polymorphism.</p><pre><code>// C: run separately
+class Person {
+  final String name;
+  Person(this.name);
+}
+class Teacher extends Person {
+  final String subject;
+  Teacher(String name, this.subject) : super(name);
+}
+void main() {
+  Teacher t = Teacher(&#x27;Maya&#x27;, &#x27;Dart&#x27;);
+  print(&#x27;${t.name} teaches ${t.subject}&#x27;);
+}
+// Output: Maya teaches Dart</code></pre><p>Teacher passes name to the parent constructor and initializes its own subject field.</p></details></section></section><section class="card"><h2>Knowledge check: formative quiz</h2><p>Choose an answer, then check it. Each response explains the concept; retry as often as needed.</p><div id="quiz"></div></section><section class="card"><h2>Summary</h2><p><strong>Inheritance:</strong> <code>extends</code> shares accessible behavior. <strong>Overriding:</strong> the child customizes an inherited method. <strong>super:</strong> accesses a parent constructor or implementation. <strong>Polymorphism:</strong> a parent-typed reference can invoke different child implementations. These ideas support reusable Dart code and prepare you for Flutter class hierarchies.</p></section></main><script>const questions=[["What does extends mean in class Dog extends Animal?", ["Dog creates an Animal object", "Dog inherits accessible members from Animal", "Animal inherits Dog methods"], "1", "extends makes Dog a subclass. It can use accessible instance methods and fields declared by Animal."], ["Which call is inherited?", ["dog.eat() when eat() is declared in Animal", "dog.bark() when bark() is declared in Dog", "Dog()"], "0", "eat() is declared by the parent and used by the child without copying it."], ["What is overriding?", ["Calling a constructor twice", "Changing a variable name", "Providing a child implementation of an inherited method"], "2", "Overriding replaces or specializes inherited instance behavior with a compatible implementation."], ["What does super.describe() do?", ["Calls the parent describe() implementation", "Creates a new parent object", "Deletes the child method"], "0", "super.method() invokes the superclass implementation on the current object."], ["What prints when Animal pet = Dog(); pet.sound(); and Dog overrides sound()?", ["Always the Animal version", "The Dog version", "A compile error"], "1", "Dynamic dispatch selects Dog.sound() because the actual object is a Dog."], ["If Person only has Person(this.name), how can Student call it?", ["The constructor is automatically inherited", "Using : super(name) in Student constructor", "Calling Person() with no arguments"], "1", "Constructors are not inherited. Student must provide the required argument to Person."], ["Which statement about constructors is true?", ["Children inherit all parent constructors", "Parent constructor bodies run after child constructor bodies", "A child can call a parent constructor using super"], "2", "super invokes the appropriate parent constructor; parent initialization happens before the child constructor body."], ["Why use @override?", ["To signal intent and get analyzer checks", "To make every method static", "To avoid writing extends"], "0", "@override is an annotation that makes overriding intent explicit and helps detect mistakes."], ["Which is a good inheritance relationship?", ["Car has Engine", "Dog is Animal", "Screen has Button"], "1", "Use inheritance for an is-a relationship; has-a is usually composition."], ["Which statement is true of List<Animal> containing Dog() and Cat()?", ["Each object can run its own overridden sound()", "Every object must print the same sound", "Dart cannot store child objects in a parent-typed list"], "0", "A parent-typed list can hold subclasses; overridden calls use the actual object type."]];
+const root=document.getElementById("quiz");questions.forEach((q,i)=>{const d=document.createElement("div");d.className="question";const h=document.createElement("p");h.innerHTML="<strong>Question "+(i+1)+".</strong> "+q[0];d.append(h);q[1].forEach((a,j)=>{const label=document.createElement("label");const r=document.createElement("input");r.type="radio";r.name="q"+i;r.value=j;label.append(r,document.createTextNode(" "+String.fromCharCode(65+j)+". "+a));d.append(label)});const b=document.createElement("button");b.textContent="Check answer";const feedback=document.createElement("p");feedback.setAttribute("aria-live","polite");b.onclick=()=>{const v=d.querySelector("input:checked");feedback.textContent=!v?"Choose an answer first.":Number(v.value)===Number(q[2])?"Correct. "+q[3]:"Not quite. "+q[3]+" Correct answer: "+String.fromCharCode(65+Number(q[2]))+".";feedback.className="feedback"};d.append(b,feedback);root.append(d)});</script></body></html>
