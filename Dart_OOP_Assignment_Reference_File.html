@@ -1,0 +1,309 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Dart Programming Reference — OOP, Collections, Input & Validation</title><style>
+:root{--ink:#1c2938;--muted:#465a70;--blue:#245a95;--line:#d9e4ee;--bg:#f6f9fc;--paper:#fff;--code:#f1f5fa}*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Arial,Helvetica,sans-serif;line-height:1.65;color:var(--ink)}main{max-width:1040px;margin:30px auto;padding:0 18px 45px}header{background:linear-gradient(120deg,#eaf2ff,#fff);border:1px solid var(--line);border-radius:18px;padding:34px 40px}.eyebrow{text-transform:uppercase;letter-spacing:2px;color:var(--blue);font-size:12px;font-weight:700}h1{font-size:34px;line-height:1.22;margin:10px 0}h2{font-size:22px;color:#234c79;margin:0 0 10px}p{margin:8px 0 15px;color:var(--muted)}.meta{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}.tag{background:#fff;border:1px solid #d3e2f3;border-radius:22px;padding:6px 13px;font-size:13px;font-weight:bold;color:#315c8a}.intro{background:#fff;border-left:4px solid #5e91cb;padding:18px 22px;margin:24px 0;border-radius:6px}.topic{background:var(--paper);border:1px solid var(--line);border-radius:14px;margin:17px 0;padding:24px 30px;break-inside:avoid}pre{margin:0 0 14px;background:var(--code);border:1px solid #e2eaf3;border-radius:8px;padding:16px 18px;white-space:pre;overflow:auto;font:13.5px/1.58 Consolas,'Courier New',monospace;color:#172b43}pre.output{background:#f7fbf8;border-color:#d9e8dd;white-space:pre-wrap}.codehead,.outhead{font-size:12px;letter-spacing:.6px;text-transform:uppercase;font-weight:700;color:#48688b;margin:13px 0 7px}.outhead{color:#397052}.explain{border-left:3px solid #8db0d5;background:#f7faff;padding:11px 15px;font-size:14px;color:#3d5369}.toc{background:#fff;border:1px solid var(--line);border-radius:12px;padding:20px 26px;margin-top:20px}.toc ol{columns:2;column-gap:36px;padding-left:24px}.toc li{margin-bottom:5px;break-inside:avoid}.footer{font-size:13px;color:#687a8c;padding:16px}@media(max-width:680px){header{padding:23px}h1{font-size:27px}.topic{padding:19px}.toc ol{columns:1}}@media print{body{background:white}main{margin:0;padding:0;max-width:none}header{background:white}.topic{break-inside:avoid}}
+</style></head><body><main><header><div class="eyebrow">Programming Reference Document</div><h1>Dart Fundamentals for Object-Oriented Programming</h1><p>Classes, Constructors, Inheritance, Method Overriding, Polymorphism, Lists, Maps, Console Input, and Validation</p>
+
+</header><div class="intro"><strong>How to use this reference:</strong> This document supports the Dart programming assignment by explaining relevant concepts and syntax. The examples use <strong>books, vehicles, animals, shapes, school scores, voting, and shopping</strong>—not the assignment's daily-activity scenario. Use the explanations as guidance, then write and test your own assignment solution. This is a reference, not an answer key. Flutter is not required for the current assignment.</div><div class="toc"><strong>Topics at a glance</strong><ol><li>OOP basics</li><li>Fields, methods, constructors</li><li>Inheritance and super</li><li>Method overriding</li><li>Calling parent methods</li><li>Polymorphism</li><li>Overriding vs. overloading</li><li>Lists</li><li>Maps</li><li>Nested Maps</li><li>Accumulation</li><li>Console input</li><li>Input conversion</li><li>Loops and menus</li><li>DateTime validation</li><li>Regular expressions</li><li>Class organization</li><li>Running and testing</li></ol></div><section class="topic"><h2>1. What is Object-Oriented Programming (OOP)?</h2><p>OOP organizes a program around <strong>objects</strong>. A class describes what an object knows (fields) and what it can do (methods). A Dart program can create many objects from one class.</p><div class="codehead">Dart example</div><pre><code>class Book {
+  String title;
+  int pages;
+
+  Book(this.title, this.pages);
+
+  void describe() {
+    print(&#x27;$title has $pages pages.&#x27;);
+  }
+}
+
+void main() {
+  Book firstBook = Book(&#x27;The Blue Planet&#x27;, 120);
+  firstBook.describe();
+}</code></pre><div class="outhead">Expected output</div><pre class="output">The Blue Planet has 120 pages.</pre><div class="explain"><strong>Key idea:</strong> <code>Book</code> is the class; <code>firstBook</code> is an object. <code>title</code> and <code>pages</code> are fields; <code>describe()</code> is a method.</div></section>
+<section class="topic"><h2>2. Fields, methods, and constructors</h2><p>A <strong>constructor</strong> initializes a new object. Its name matches the class name. The shorthand <code>this.field</code> assigns constructor arguments directly to fields.</p><div class="codehead">Dart example</div><pre><code>class Student {
+  String name;
+  int grade;
+
+  Student(this.name, this.grade);
+
+  void introduce() {
+    print(&#x27;I am $name, in grade $grade.&#x27;);
+  }
+}
+
+void main() {
+  Student student = Student(&#x27;Maya&#x27;, 11);
+  student.introduce();
+}</code></pre><div class="outhead">Expected output</div><pre class="output">I am Maya, in grade 11.</pre><div class="explain"><strong>Key idea:</strong> <code>Student(this.name, this.grade)</code> is a generative constructor. <code>this.name</code> refers to the object’s field.</div></section>
+<section class="topic"><h2>3. Inheritance: extends and super</h2><p><strong>Inheritance</strong> allows a child class to reuse behavior defined in a parent class. Use <code>extends</code> when the child truly <em>is a kind of</em> parent. Use <code>super(...)</code> to call the parent constructor.</p><div class="codehead">Dart example</div><pre><code>class Vehicle {
+  String brand;
+
+  Vehicle(this.brand);
+
+  void start() {
+    print(&#x27;$brand is starting.&#x27;);
+  }
+}
+
+class Car extends Vehicle {
+  int doors;
+
+  Car(String brand, this.doors) : super(brand);
+
+  void showDoors() {
+    print(&#x27;Doors: $doors&#x27;);
+  }
+}
+
+void main() {
+  Car car = Car(&#x27;Honda&#x27;, 4);
+  car.start();
+  car.showDoors();
+}</code></pre><div class="outhead">Expected output</div><pre class="output">Honda is starting.
+Doors: 4</pre><div class="explain"><strong>Key idea:</strong> <code>Car</code> inherits <code>start()</code> from <code>Vehicle</code>. It also defines its own <code>showDoors()</code>. Prefer a small, meaningful hierarchy over inheritance everywhere.</div></section>
+<section class="topic"><h2>4. Method overriding and @override</h2><p>A child class can provide its own implementation of an inherited method. The method name and compatible signature stay the same. The <code>@override</code> annotation makes the intention explicit.</p><div class="codehead">Dart example</div><pre><code>class Animal {
+  void makeSound() {
+    print(&#x27;An animal makes a sound.&#x27;);
+  }
+}
+
+class Dog extends Animal {
+  @override
+  void makeSound() {
+    print(&#x27;Woof!&#x27;);
+  }
+}
+
+class Cat extends Animal {
+  @override
+  void makeSound() {
+    print(&#x27;Meow!&#x27;);
+  }
+}
+
+void main() {
+  Dog dog = Dog();
+  Cat cat = Cat();
+  dog.makeSound();
+  cat.makeSound();
+}</code></pre><div class="outhead">Expected output</div><pre class="output">Woof!
+Meow!</pre><div class="explain"><strong>Key idea:</strong> The child version runs instead of the parent version for that child object. Overriding is different from overloading.</div></section>
+<section class="topic"><h2>5. Calling a parent method with super</h2><p>The <code>super</code> keyword can also call the parent implementation of an overridden method. This is useful when you want to extend rather than completely replace the parent behavior.</p><div class="codehead">Dart example</div><pre><code>class Employee {
+  void showRole() {
+    print(&#x27;Works at the company&#x27;);
+  }
+}
+
+class Manager extends Employee {
+  @override
+  void showRole() {
+    super.showRole();
+    print(&#x27;Also manages a team&#x27;);
+  }
+}
+
+void main() {
+  Manager manager = Manager();
+  manager.showRole();
+}</code></pre><div class="outhead">Expected output</div><pre class="output">Works at the company
+Also manages a team</pre><div class="explain"><strong>Key idea:</strong> <code>super.showRole()</code> invokes the parent method before the child adds extra behavior.</div></section>
+<section class="topic"><h2>6. Polymorphism: one parent type, many child objects</h2><p><strong>Polymorphism</strong> means the same method call can behave differently depending on the actual object. A variable or List typed as a parent can hold objects of its child classes.</p><div class="codehead">Dart example</div><pre><code>class Shape {
+  void draw() {
+    print(&#x27;Drawing a shape&#x27;);
+  }
+}
+
+class Circle extends Shape {
+  @override
+  void draw() {
+    print(&#x27;Drawing a circle&#x27;);
+  }
+}
+
+class Square extends Shape {
+  @override
+  void draw() {
+    print(&#x27;Drawing a square&#x27;);
+  }
+}
+
+void main() {
+  List&lt;Shape&gt; shapes = [Circle(), Square()];
+
+  for (Shape shape in shapes) {
+    shape.draw();
+  }
+}</code></pre><div class="outhead">Expected output</div><pre class="output">Drawing a circle
+Drawing a square</pre><div class="explain"><strong>Key idea:</strong> <code>shape</code> has the parent type <code>Shape</code>, but Dart runs the overridden method belonging to the actual object. Inheritance enables this example, but the two concepts are not identical.</div></section>
+<section class="topic"><h2>7. Overriding versus overloading in Dart</h2><p><strong>Overriding</strong> changes an inherited method. Dart does <strong>not</strong> support Java/C#-style overloading by declaring multiple methods with the same name but different parameter lists. Instead, Dart provides optional positional and named parameters.</p><div class="codehead">Dart example</div><pre><code>class Greeting {
+  void sayHello(String name, [String greeting = &#x27;Hello&#x27;]) {
+    print(&#x27;$greeting, $name!&#x27;);
+  }
+}
+
+void main() {
+  Greeting greeting = Greeting();
+  greeting.sayHello(&#x27;Ava&#x27;);
+  greeting.sayHello(&#x27;Ava&#x27;, &#x27;Good morning&#x27;);
+}</code></pre><div class="outhead">Expected output</div><pre class="output">Hello, Ava!
+Good morning, Ava!</pre><div class="explain"><strong>Key idea:</strong> This is <em>one method with an optional positional parameter</em>, not traditional method overloading. The square brackets make the second argument optional.</div></section>
+<section class="topic"><h2>8. Lists: storing several values</h2><p>A <code>List&lt;T&gt;</code> stores ordered values. Indexes begin at 0. A normal <code>for</code> loop is useful when displaying numbered choices.</p><div class="codehead">Dart example</div><pre><code>void main() {
+  List&lt;String&gt; fruits = [&#x27;Apple&#x27;, &#x27;Banana&#x27;, &#x27;Orange&#x27;];
+
+  for (int i = 0; i &lt; fruits.length; i++) {
+    print(&#x27;${i + 1}. ${fruits[i]}&#x27;);
+  }
+
+  print(&#x27;First item: ${fruits[0]}&#x27;);
+}</code></pre><div class="outhead">Expected output</div><pre class="output">1. Apple
+2. Banana
+3. Orange
+First item: Apple</pre><div class="explain"><strong>Key idea:</strong> <code>i + 1</code> displays user-friendly numbering; <code>fruits[i]</code> still uses zero-based indexes.</div></section>
+<section class="topic"><h2>9. Maps: keys and values</h2><p>A <code>Map&lt;K,V&gt;</code> associates a key with a value. Use <code>containsKey()</code> to check whether a key exists and square brackets to access or update a value.</p><div class="codehead">Dart example</div><pre><code>void main() {
+  Map&lt;String, int&gt; inventory = {
+    &#x27;Pencils&#x27;: 10,
+    &#x27;Notebooks&#x27;: 4
+  };
+
+  if (inventory.containsKey(&#x27;Pencils&#x27;)) {
+    inventory[&#x27;Pencils&#x27;] = inventory[&#x27;Pencils&#x27;]! + 5;
+  }
+
+  print(&#x27;Pencils: ${inventory[&#x27;Pencils&#x27;]}&#x27;);
+  print(&#x27;Notebooks: ${inventory[&#x27;Notebooks&#x27;]}&#x27;);
+}</code></pre><div class="outhead">Expected output</div><pre class="output">Pencils: 15
+Notebooks: 4</pre><div class="explain"><strong>Key idea:</strong> The <code>!</code> tells Dart that the value is not null. Use it only when the value is known to exist. Maps are useful for counting and accumulating values.</div></section>
+<section class="topic"><h2>10. Nested Maps: grouping data by a key</h2><p>A nested Map stores a Map inside another Map. For example, a school can track scores by class and student. This example is deliberately different from the assignment.</p><div class="codehead">Dart example</div><pre><code>void main() {
+  Map&lt;String, Map&lt;String, int&gt;&gt; scores = {};
+
+  scores[&#x27;Math&#x27;] = {};
+  scores[&#x27;Math&#x27;]![&#x27;Ava&#x27;] = 80;
+  scores[&#x27;Math&#x27;]![&#x27;Noah&#x27;] = 90;
+
+  scores[&#x27;Science&#x27;] = {};
+  scores[&#x27;Science&#x27;]![&#x27;Ava&#x27;] = 95;
+
+  print(scores[&#x27;Math&#x27;]![&#x27;Ava&#x27;]);
+  print(scores[&#x27;Science&#x27;]![&#x27;Ava&#x27;]);
+}</code></pre><div class="outhead">Expected output</div><pre class="output">80
+95</pre><div class="explain"><strong>Key idea:</strong> The outer key identifies the group; the inner key identifies a value within that group. The same student can have separate scores in different subjects.</div></section>
+<section class="topic"><h2>11. Accumulating values instead of duplicating them</h2><p>To add repeated values together, check whether the key already exists. If it does, update the stored number. Otherwise, create a new entry.</p><div class="codehead">Dart example</div><pre><code>void main() {
+  Map&lt;String, int&gt; votes = {};
+  List&lt;String&gt; responses = [&#x27;Blue&#x27;, &#x27;Red&#x27;, &#x27;Blue&#x27;];
+
+  for (String response in responses) {
+    if (votes.containsKey(response)) {
+      votes[response] = votes[response]! + 1;
+    } else {
+      votes[response] = 1;
+    }
+  }
+
+  print(&#x27;Blue: ${votes[&#x27;Blue&#x27;]}&#x27;);
+  print(&#x27;Red: ${votes[&#x27;Red&#x27;]}&#x27;);
+}</code></pre><div class="outhead">Expected output</div><pre class="output">Blue: 2
+Red: 1</pre><div class="explain"><strong>Key idea:</strong> This pattern is called <em>aggregation</em>. It is useful whenever repeated input should update an existing total.</div></section>
+<section class="topic"><h2>12. Console input with dart:io</h2><p>Use <code>import 'dart:io';</code> to access standard input and output. <code>stdout.write()</code> keeps the cursor on the same line; <code>stdin.readLineSync()</code> reads text.</p><div class="codehead">Dart example</div><pre><code>import &#x27;dart:io&#x27;;
+
+void main() {
+  stdout.write(&#x27;What is your favorite color? &#x27;);
+  String color = stdin.readLineSync() ?? &#x27;&#x27;;
+  print(&#x27;You chose $color.&#x27;);
+}</code></pre><div class="outhead">Expected output</div><pre class="output">What is your favorite color? Green
+You chose Green.</pre><div class="explain"><strong>Key idea:</strong> <code>readLineSync()</code> returns <code>String?</code>, so <code>?? ''</code> supplies an empty string when no text is returned.</div></section>
+<section class="topic"><h2>13. Converting input and preventing crashes</h2><p>User input arrives as text. <code>int.tryParse()</code> safely converts a numeric string into an integer; invalid text returns <code>null</code>. Validate before using the number.</p><div class="codehead">Dart example</div><pre><code>import &#x27;dart:io&#x27;;
+
+void main() {
+  stdout.write(&#x27;Enter your age: &#x27;);
+  String input = stdin.readLineSync() ?? &#x27;&#x27;;
+  int? age = int.tryParse(input);
+
+  if (age == null) {
+    print(&#x27;Please enter a whole number.&#x27;);
+  } else if (age &lt;= 0) {
+    print(&#x27;Age must be positive.&#x27;);
+  } else {
+    print(&#x27;Age accepted: $age&#x27;);
+  }
+}</code></pre><div class="outhead">Expected output</div><pre class="output">Enter your age: abc
+Please enter a whole number.</pre><div class="explain"><strong>Key idea:</strong> Use <code>tryParse</code> rather than <code>parse</code> when input may be invalid. A question mark in <code>int?</code> means the variable may contain <code>null</code>.</div></section>
+<section class="topic"><h2>14. Repeating menus with while, if/else, and break</h2><p>A <code>while</code> loop can keep a console program running until the user chooses to exit. <code>break</code> ends the loop; <code>continue</code> starts the next iteration.</p><div class="codehead">Dart example</div><pre><code>import &#x27;dart:io&#x27;;
+
+void main() {
+  while (true) {
+    print(&#x27;1. Say hello&#x27;);
+    print(&#x27;2. Exit&#x27;);
+    stdout.write(&#x27;Choice: &#x27;);
+
+    String choice = stdin.readLineSync() ?? &#x27;&#x27;;
+
+    if (choice == &#x27;1&#x27;) {
+      print(&#x27;Hello!&#x27;);
+    } else if (choice == &#x27;2&#x27;) {
+      print(&#x27;Goodbye!&#x27;);
+      break;
+    } else {
+      print(&#x27;Invalid option.&#x27;);
+    }
+  }
+}</code></pre><div class="outhead">Expected output</div><pre class="output">1. Say hello
+2. Exit
+Choice: 1
+Hello!
+1. Say hello
+2. Exit
+Choice: 2
+Goodbye!</pre><div class="explain"><strong>Key idea:</strong> The loop repeats until <code>break</code>. Invalid choices should display a message instead of terminating the program unexpectedly.</div></section>
+<section class="topic"><h2>15. Checking dates with DateTime</h2><p>A date string can look correct but represent an impossible calendar date. Split the text into year, month, and day, then compare the resulting <code>DateTime</code> components to the originals.</p><div class="codehead">Dart example</div><pre><code>void main() {
+  String input = &#x27;2026-02-30&#x27;;
+  List&lt;String&gt; parts = input.split(&#x27;-&#x27;);
+
+  int year = int.parse(parts[0]);
+  int month = int.parse(parts[1]);
+  int day = int.parse(parts[2]);
+
+  DateTime date = DateTime(year, month, day);
+
+  if (date.year == year &amp;&amp;
+      date.month == month &amp;&amp;
+      date.day == day) {
+    print(&#x27;Valid date&#x27;);
+  } else {
+    print(&#x27;Invalid date&#x27;);
+  }
+}</code></pre><div class="outhead">Expected output</div><pre class="output">Invalid date</pre><div class="explain"><strong>Key idea:</strong> <code>DateTime</code> normalizes out-of-range components, so checking the fields afterward catches dates such as February 30. Before splitting, verify the YYYY-MM-DD format to avoid errors on malformed input.</div></section>
+<section class="topic"><h2>16. Checking the format with RegExp</h2><p>A regular expression can check whether text follows a pattern. It does not by itself prove that a calendar date exists.</p><div class="codehead">Dart example</div><pre><code>void main() {
+  RegExp pattern = RegExp(r&#x27;^\d{4}-\d{2}-\d{2}$&#x27;);
+
+  print(pattern.hasMatch(&#x27;2026-10-30&#x27;));
+  print(pattern.hasMatch(&#x27;10/30/2026&#x27;));
+  print(pattern.hasMatch(&#x27;2026-02-30&#x27;));
+}</code></pre><div class="outhead">Expected output</div><pre class="output">true
+false
+true</pre><div class="explain"><strong>Key idea:</strong> Use both format validation and <code>DateTime</code> validation. The <code>r</code> before the string creates a raw string, making backslashes easier to write.</div></section>
+<section class="topic"><h2>17. Organizing responsibilities across classes</h2><p>Classes should have clear jobs. One class may describe a domain object; another may store and manage a collection of objects. Do not create child classes unless they represent a meaningful is-a relationship.</p><div class="codehead">Dart example</div><pre><code>class Product {
+  String name;
+  double price;
+
+  Product(this.name, this.price);
+}
+
+class ShoppingCart {
+  List&lt;Product&gt; products = [];
+
+  void addProduct(Product product) {
+    products.add(product);
+  }
+
+  void showProducts() {
+    for (Product product in products) {
+      print(&#x27;${product.name}: \$${product.price}&#x27;);
+    }
+  }
+}
+
+void main() {
+  ShoppingCart cart = ShoppingCart();
+  cart.addProduct(Product(&#x27;Pen&#x27;, 2.5));
+  cart.showProducts();
+}</code></pre><div class="outhead">Expected output</div><pre class="output">Pen: $2.5</pre><div class="explain"><strong>Key idea:</strong> <code>ShoppingCart</code> contains <code>Product</code> objects; it does not extend <code>Product</code>. This is composition, a useful alternative to unnecessary inheritance.</div></section>
+<section class="topic"><h2>18. Running and testing a Dart console file</h2><p>Save a Dart program with the <code>.dart</code> extension. Open the terminal in the folder containing that file, then run the command below. Test normal input, repeated input, and invalid input.</p><div class="codehead">Dart example</div><pre><code>dart --version
+
+dart run example.dart</code></pre><div class="explain"><strong>Key idea:</strong> Use <code>dir *.dart</code> in Windows PowerShell to confirm the filename. When a filename has spaces, enclose it in quotation marks. Console data stored only in memory is lost when the program ends.</div></section><div class="footer">Reference tutorial • All code examples are independent unless noted • Designed for Dart console programming, not Flutter UI.</div></main></body></html>
