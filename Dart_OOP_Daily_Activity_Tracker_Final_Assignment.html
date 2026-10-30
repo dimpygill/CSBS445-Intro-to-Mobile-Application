@@ -1,0 +1,348 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>My Daily Activity Tracker — Dart OOP Assignment</title><style>*{box-sizing:border-box}body{margin:0;background:#f5f8fc;color:#243047;font:16px/1.6 system-ui,-apple-system,Segoe UI,Arial,sans-serif}.wrap{max-width:1050px;margin:auto;padding:38px 22px 80px}.hero{background:linear-gradient(110deg,#e8f1ff,#f4f9ff);border:1px solid #d9e5f7;padding:35px;border-radius:22px}h1{font-size:2.25rem;line-height:1.15;margin:8px 0}h2{font-size:1.4rem;margin:0 0 14px}h3{font-size:1.1rem;margin:0}.eyebrow{color:#295f9c;font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:.8rem}.stats{display:flex;gap:12px;flex-wrap:wrap;margin:20px 0}.stat{background:white;border:1px solid #d9e5f7;border-radius:12px;padding:10px 18px}.stat strong{font-size:1.35rem;display:block;color:#174a88}section{background:white;border:1px solid #e0e7ef;border-radius:16px;padding:26px;margin-top:22px;box-shadow:0 4px 15px #1e3a5b08}.case{border:1px solid #dce6f1;border-radius:14px;padding:20px;margin:16px 0;break-inside:avoid}.tag{font-size:.78rem;background:#e8f1ff;color:#205487;border-radius:99px;padding:4px 10px;font-weight:700}.cols{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:12px}.label{font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;color:#5d6d82;font-weight:700;margin:0 0 6px}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f6f8fb;border:1px solid #e3e9f0;border-radius:10px;padding:15px;font:13px/1.55 Consolas,Monaco,monospace;margin:0}pre.expected{background:#eef8f2;border-color:#d4eadc}code{background:#edf2f7;padding:2px 5px;border-radius:4px}table{width:100%;border-collapse:collapse}th,td{padding:11px;border-bottom:1px solid #e3e9f0;text-align:left}th{background:#f2f6fb}ul{padding-left:22px}.note{background:#fff9e9;border-left:4px solid #d4a333;padding:12px 16px;border-radius:6px}.foot{font-size:.9rem;color:#607085}@media(max-width:750px){.cols{grid-template-columns:1fr}.wrap{padding:16px}h1{font-size:1.8rem}}@media print{body{background:white}.wrap{max-width:none}section,.hero{box-shadow:none}.case{break-inside:avoid}}</style></head><body><main class="wrap"><header class="hero"><div class="eyebrow">Dart • Console Programming • OOP</div><h1>My Daily Activity Tracker</h1><p>Build a console-based program that records activities by date, combines repeated activity minutes, and displays daily history.</p><div class="stats"><div class="stat"><strong>35</strong>Total points</div><div class="stat"><strong>14</strong>Test cases</div><div class="stat"><strong>2.5</strong>Points per test</div><div class="stat"><strong>.dart</strong>Only submission</div></div></header><section><h2>Assignment requirements</h2><p>Develop this program in <strong>Dart console</strong> (not Flutter). The minimum requirements are a meaningful, limited use of <strong>inheritance</strong>, readable code, and basic documentation/comments. You may also use method overriding, polymorphism, constructors, Lists, Maps, and other relevant Dart features where they help. Do not add unnecessary inheritance layers.</p><p>Allow the user to add one of three activities, enter a valid calendar date in <code>YYYY-MM-DD</code> format, and enter a positive whole number of minutes. For the same activity on the same date, <strong>add the minutes and show the activity only once</strong> in history. Keep different dates separate. Reject invalid inputs without crashing.</p><p class="note"><strong>Console display requirement:</strong> Show the activity description directly in the selection menu (for example, <code>1. Practice Dart: Review Inheritance</code>). The following test transcripts specify the expected interface. You can use a different internal implementation, but the program must produce equivalent console behavior.</p><div class="cols"><div><p class="label">Main menu</p><pre>===== MY DAILY TASKS =====
+1. Add an Activity
+2. View Dates and Activity History
+3. Exit
+Choose an option: </pre></div><div><p class="label">Activity menu</p><pre>===== SELECT AN ACTIVITY =====
+1. Practice Dart: Review Inheritance
+2. Morning Yoga: Practice yoga.
+3. Read a Book: Read one chapter.
+0. Cancel
+Activity number: </pre></div></div></section><section><h2>How the tests are presented</h2><p>Each case shows <strong>Console interaction / test input</strong> on the left and <strong>Required output to verify</strong> on the right. Inputs appear after the exact console prompts. The right-hand text is supplied by the instructor; students do <strong>not</strong> need to write expected results or submit a test report.</p><p>Run each test in a <strong>fresh program session</strong> unless a case explicitly shows multiple actions in one session. Empty history is expected at the beginning of each new session. The application stores data in memory only; file/database persistence is not required.</p></section><section><h2>14 graded test scenarios</h2><p>Each test is worth <strong>2.5 points</strong>. For multi-action tests, perform the complete sequence in the order shown. Blank lines in examples are for readability.</p><article class="case"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><h3>Test 01 — Add one valid activity</h3><span class="tag">2.5 pts</span></div><div class="cols"><div><p class="label">Console interaction / test input</p><pre>===== MY DAILY TASKS =====
+1. Add an Activity
+2. View Dates and Activity History
+3. Exit
+Choose an option: 1
+
+===== SELECT AN ACTIVITY =====
+1. Practice Dart: Review Inheritance
+2. Morning Yoga: Practice yoga.
+3. Read a Book: Read one chapter.
+0. Cancel
+Activity number: 1
+Practice Dart: Review inheritance.
+Selected Activity: Practice Dart
+Enter date (YYYY-MM-DD): 2026-10-30
+Minutes spent: 15
+Activity saved successfully!</pre></div><div><p class="label">Required output to verify</p><pre class="expected">Activity saved successfully!</pre></div></div></article><article class="case"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><h3>Test 02 — Same activity twice on one date</h3><span class="tag">2.5 pts</span></div><div class="cols"><div><p class="label">Console interaction / test input</p><pre>===== MY DAILY TASKS =====
+1. Add an Activity
+2. View Dates and Activity History
+3. Exit
+Choose an option: 1
+
+===== SELECT AN ACTIVITY =====
+1. Practice Dart: Review Inheritance
+2. Morning Yoga: Practice yoga.
+3. Read a Book: Read one chapter.
+0. Cancel
+Activity number: 1
+Practice Dart: Review inheritance.
+Selected Activity: Practice Dart
+Enter date (YYYY-MM-DD): 2026-10-30
+Minutes spent: 5
+Activity saved successfully!
+
+===== MY DAILY TASKS =====
+1. Add an Activity
+2. View Dates and Activity History
+3. Exit
+Choose an option: 1
+
+===== SELECT AN ACTIVITY =====
+1. Practice Dart: Review Inheritance
+2. Morning Yoga: Practice yoga.
+3. Read a Book: Read one chapter.
+0. Cancel
+Activity number: 1
+Practice Dart: Review inheritance.
+Selected Activity: Practice Dart
+Enter date (YYYY-MM-DD): 2026-10-30
+Minutes spent: 10
+Activity saved successfully!
+
+===== MY DAILY TASKS =====
+1. Add an Activity
+2. View Dates and Activity History
+3. Exit
+Choose an option: 2
+
+Dates with recorded activities:
+1. 2026-10-30
+Select a date number (0 to cancel): 1
+Activities for 2026-10-30:
+Practice Dart: 15 minutes
+--------------------------
+Total Time: 15 minutes</pre></div><div><p class="label">Required output to verify</p><pre class="expected">Practice Dart: 15 minutes
+--------------------------
+Total Time: 15 minutes</pre></div></div></article><article class="case"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><h3>Test 03 — Three different activities on one date</h3><span class="tag">2.5 pts</span></div><div class="cols"><div><p class="label">Console interaction / test input</p><pre>===== MY DAILY TASKS =====
+1. Add an Activity
+2. View Dates and Activity History
+3. Exit
+Choose an option: 1
+
+===== SELECT AN ACTIVITY =====
+1. Practice Dart: Review Inheritance
+2. Morning Yoga: Practice yoga.
+3. Read a Book: Read one chapter.
+0. Cancel
+Activity number: 1
+Practice Dart: Review inheritance.
+Selected Activity: Practice Dart
+Enter date (YYYY-MM-DD): 2026-10-30
+Minutes spent: 10
+Activity saved successfully!
+
+===== MY DAILY TASKS =====
+1. Add an Activity
+2. View Dates and Activity History
+3. Exit
+Choose an option: 1
+
+===== SELECT AN ACTIVITY =====
+1. Practice Dart: Review Inheritance
+2. Morning Yoga: Practice yoga.
+3. Read a Book: Read one chapter.
+0. Cancel
+Activity number: 2
+Morning Yoga: Practice yoga.
+Selected Activity: Morning Yoga
+Enter date (YYYY-MM-DD): 2026-10-30
+Minutes spent: 20
+Activity saved successfully!
+
+===== MY DAILY TASKS =====
+1. Add an Activity
+2. View Dates and Activity History
+3. Exit
+Choose an option: 1
+
+===== SELECT AN ACTIVITY =====
+1. Practice Dart: Review Inheritance
+2. Morning Yoga: Practice yoga.
+3. Read a Book: Read one chapter.
+0. Cancel
+Activity number: 3
+Read a Book: Read one chapter.
+Selected Activity: Read a Book
+Enter date (YYYY-MM-DD): 2026-10-30
+Minutes spent: 30
+Activity saved successfully!
+
+===== MY DAILY TASKS =====
+1. Add an Activity
+2. View Dates and Activity History
+3. Exit
+Choose an option: 2
+
+Dates with recorded activities:
+1. 2026-10-30
+Select a date number (0 to cancel): 1
+Activities for 2026-10-30:
+Practice Dart: 10 minutes
+Morning Yoga: 20 minutes
+Read a Book: 30 minutes
+--------------------------
+Total Time: 60 minutes</pre></div><div><p class="label">Required output to verify</p><pre class="expected">Practice Dart: 10 minutes
+Morning Yoga: 20 minutes
+Read a Book: 30 minutes
+--------------------------
+Total Time: 60 minutes</pre></div></div></article><article class="case"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><h3>Test 04 — Same activity on two dates</h3><span class="tag">2.5 pts</span></div><div class="cols"><div><p class="label">Console interaction / test input</p><pre>===== MY DAILY TASKS =====
+1. Add an Activity
+2. View Dates and Activity History
+3. Exit
+Choose an option: 1
+
+===== SELECT AN ACTIVITY =====
+1. Practice Dart: Review Inheritance
+2. Morning Yoga: Practice yoga.
+3. Read a Book: Read one chapter.
+0. Cancel
+Activity number: 1
+Practice Dart: Review inheritance.
+Selected Activity: Practice Dart
+Enter date (YYYY-MM-DD): 2026-10-30
+Minutes spent: 5
+Activity saved successfully!
+
+===== MY DAILY TASKS =====
+1. Add an Activity
+2. View Dates and Activity History
+3. Exit
+Choose an option: 1
+
+===== SELECT AN ACTIVITY =====
+1. Practice Dart: Review Inheritance
+2. Morning Yoga: Practice yoga.
+3. Read a Book: Read one chapter.
+0. Cancel
+Activity number: 1
+Practice Dart: Review inheritance.
+Selected Activity: Practice Dart
+Enter date (YYYY-MM-DD): 2026-10-31
+Minutes spent: 8
+Activity saved successfully!
+
+===== MY DAILY TASKS =====
+1. Add an Activity
+2. View Dates and Activity History
+3. Exit
+Choose an option: 2
+
+Dates with recorded activities:
+1. 2026-10-30
+2. 2026-10-31
+Select a date number (0 to cancel): 2
+Activities for 2026-10-31:
+Practice Dart: 8 minutes
+--------------------------
+Total Time: 8 minutes</pre></div><div><p class="label">Required output to verify</p><pre class="expected">Activities for 2026-10-31:
+Practice Dart: 8 minutes
+--------------------------
+Total Time: 8 minutes</pre></div></div></article><article class="case"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><h3>Test 05 — Invalid activity number</h3><span class="tag">2.5 pts</span></div><div class="cols"><div><p class="label">Console interaction / test input</p><pre>===== MY DAILY TASKS =====
+1. Add an Activity
+2. View Dates and Activity History
+3. Exit
+Choose an option: 1
+
+===== SELECT AN ACTIVITY =====
+1. Practice Dart: Review Inheritance
+2. Morning Yoga: Practice yoga.
+3. Read a Book: Read one chapter.
+0. Cancel
+Activity number: 9
+Invalid activity number.</pre></div><div><p class="label">Required output to verify</p><pre class="expected">Invalid activity number.</pre></div></div></article><article class="case"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><h3>Test 06 — Negative minutes</h3><span class="tag">2.5 pts</span></div><div class="cols"><div><p class="label">Console interaction / test input</p><pre>===== MY DAILY TASKS =====
+1. Add an Activity
+2. View Dates and Activity History
+3. Exit
+Choose an option: 1
+
+===== SELECT AN ACTIVITY =====
+1. Practice Dart: Review Inheritance
+2. Morning Yoga: Practice yoga.
+3. Read a Book: Read one chapter.
+0. Cancel
+Activity number: 1
+Practice Dart: Review inheritance.
+Selected Activity: Practice Dart
+Enter date (YYYY-MM-DD): 2026-10-30
+Minutes spent: -5
+Please enter valid minutes.</pre></div><div><p class="label">Required output to verify</p><pre class="expected">Please enter valid minutes.</pre></div></div></article><article class="case"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><h3>Test 07 — Non-numeric minutes</h3><span class="tag">2.5 pts</span></div><div class="cols"><div><p class="label">Console interaction / test input</p><pre>===== MY DAILY TASKS =====
+1. Add an Activity
+2. View Dates and Activity History
+3. Exit
+Choose an option: 1
+
+===== SELECT AN ACTIVITY =====
+1. Practice Dart: Review Inheritance
+2. Morning Yoga: Practice yoga.
+3. Read a Book: Read one chapter.
+0. Cancel
+Activity number: 1
+Practice Dart: Review inheritance.
+Selected Activity: Practice Dart
+Enter date (YYYY-MM-DD): 2026-10-30
+Minutes spent: abc
+Please enter valid minutes.</pre></div><div><p class="label">Required output to verify</p><pre class="expected">Please enter valid minutes.</pre></div></div></article><article class="case"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><h3>Test 08 — Zero minutes</h3><span class="tag">2.5 pts</span></div><div class="cols"><div><p class="label">Console interaction / test input</p><pre>===== MY DAILY TASKS =====
+1. Add an Activity
+2. View Dates and Activity History
+3. Exit
+Choose an option: 1
+
+===== SELECT AN ACTIVITY =====
+1. Practice Dart: Review Inheritance
+2. Morning Yoga: Practice yoga.
+3. Read a Book: Read one chapter.
+0. Cancel
+Activity number: 1
+Practice Dart: Review inheritance.
+Selected Activity: Practice Dart
+Enter date (YYYY-MM-DD): 2026-10-30
+Minutes spent: 0
+Please enter valid minutes.</pre></div><div><p class="label">Required output to verify</p><pre class="expected">Please enter valid minutes.</pre></div></div></article><article class="case"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><h3>Test 09 — Invalid date format</h3><span class="tag">2.5 pts</span></div><div class="cols"><div><p class="label">Console interaction / test input</p><pre>===== MY DAILY TASKS =====
+1. Add an Activity
+2. View Dates and Activity History
+3. Exit
+Choose an option: 1
+
+===== SELECT AN ACTIVITY =====
+1. Practice Dart: Review Inheritance
+2. Morning Yoga: Practice yoga.
+3. Read a Book: Read one chapter.
+0. Cancel
+Activity number: 1
+Practice Dart: Review inheritance.
+Selected Activity: Practice Dart
+Enter date (YYYY-MM-DD): 10/30/2026
+
+Invalid date format.</pre></div><div><p class="label">Required output to verify</p><pre class="expected">Invalid date format.</pre></div></div></article><article class="case"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><h3>Test 10 — Invalid calendar date</h3><span class="tag">2.5 pts</span></div><div class="cols"><div><p class="label">Console interaction / test input</p><pre>===== MY DAILY TASKS =====
+1. Add an Activity
+2. View Dates and Activity History
+3. Exit
+Choose an option: 1
+
+===== SELECT AN ACTIVITY =====
+1. Practice Dart: Review Inheritance
+2. Morning Yoga: Practice yoga.
+3. Read a Book: Read one chapter.
+0. Cancel
+Activity number: 1
+Practice Dart: Review inheritance.
+Selected Activity: Practice Dart
+Enter date (YYYY-MM-DD): 2026-02-30
+
+Invalid date.</pre></div><div><p class="label">Required output to verify</p><pre class="expected">Invalid date.</pre></div></div></article><article class="case"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><h3>Test 11 — History with no entries</h3><span class="tag">2.5 pts</span></div><div class="cols"><div><p class="label">Console interaction / test input</p><pre>===== MY DAILY TASKS =====
+1. Add an Activity
+2. View Dates and Activity History
+3. Exit
+Choose an option: 2
+No activities recorded yet.</pre></div><div><p class="label">Required output to verify</p><pre class="expected">No activities recorded yet.</pre></div></div></article><article class="case"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><h3>Test 12 — Cancel activity selection</h3><span class="tag">2.5 pts</span></div><div class="cols"><div><p class="label">Console interaction / test input</p><pre>===== MY DAILY TASKS =====
+1. Add an Activity
+2. View Dates and Activity History
+3. Exit
+Choose an option: 1
+
+===== SELECT AN ACTIVITY =====
+1. Practice Dart: Review Inheritance
+2. Morning Yoga: Practice yoga.
+3. Read a Book: Read one chapter.
+0. Cancel
+Activity number: 0
+
+===== MY DAILY TASKS =====
+1. Add an Activity
+2. View Dates and Activity History
+3. Exit
+Choose an option: </pre></div><div><p class="label">Required output to verify</p><pre class="expected">Returns to the main menu without saving an activity.</pre></div></div></article><article class="case"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><h3>Test 13 — Invalid date selection</h3><span class="tag">2.5 pts</span></div><div class="cols"><div><p class="label">Console interaction / test input</p><pre>===== MY DAILY TASKS =====
+1. Add an Activity
+2. View Dates and Activity History
+3. Exit
+Choose an option: 1
+
+===== SELECT AN ACTIVITY =====
+1. Practice Dart: Review Inheritance
+2. Morning Yoga: Practice yoga.
+3. Read a Book: Read one chapter.
+0. Cancel
+Activity number: 2
+Morning Yoga: Practice yoga.
+Selected Activity: Morning Yoga
+Enter date (YYYY-MM-DD): 2026-10-30
+Minutes spent: 10
+Activity saved successfully!
+
+===== MY DAILY TASKS =====
+1. Add an Activity
+2. View Dates and Activity History
+3. Exit
+Choose an option: 2
+
+Dates with recorded activities:
+1. 2026-10-30
+Select a date number (0 to cancel): 5
+Invalid date selection.</pre></div><div><p class="label">Required output to verify</p><pre class="expected">Invalid date selection.</pre></div></div></article><article class="case"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><h3>Test 14 — Exit program</h3><span class="tag">2.5 pts</span></div><div class="cols"><div><p class="label">Console interaction / test input</p><pre>===== MY DAILY TASKS =====
+1. Add an Activity
+2. View Dates and Activity History
+3. Exit
+Choose an option: 3
+Goodbye!</pre></div><div><p class="label">Required output to verify</p><pre class="expected">Goodbye!</pre></div></div></article></section><section><h2>Grading rubric</h2><table><thead><tr><th>Criterion</th><th>Points</th></tr></thead><tbody><tr><td>14 functional test cases × 2.5 points</td><td>35</td></tr><tr><th>Total</th><th>35</th></tr></tbody></table><p>Each test earns 2.5 points when its required behavior is demonstrated. The instructor will run and inspect the submitted Dart source file. Inheritance, readability, and basic documentation are minimum implementation expectations, not separate additional point categories.</p></section><section><h2>Submission</h2><p><strong>Upload only your Dart source file (<code>.dart</code>).</strong> Do not upload screenshots, expected-output worksheets, a test report, or a Word document. Ensure the program runs in a standard Dart console environment. The instructor will grade by executing the test scenarios and reviewing the code for minimum requirements.</p><p><strong>Future extension:</strong> A later course week may connect the Dart logic to Flutter. Flutter is not part of this assignment.</p></section>
+
+</main></body></html>
