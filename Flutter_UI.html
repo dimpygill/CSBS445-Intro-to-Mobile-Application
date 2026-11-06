@@ -1,0 +1,384 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Flutter UI — Build a Student Profile Screen</title><style>body{font:17px/1.65 system-ui,Arial;background:#f8fafc;color:#17243b;max-width:980px;margin:auto;padding:30px}h1,h2{color:#174a79}section{background:white;border:1px solid #dce5ed;border-radius:14px;padding:24px;margin:22px 0}pre{background:#edf4fa;padding:18px;overflow:auto;border-radius:9px;font:15px/1.55 Consolas,monospace}code{background:#edf4fa;padding:2px 5px}table{border-collapse:collapse;width:100%}td,th{border:1px solid #cdd9e5;padding:10px;text-align:left}.tree{background:#f0f8f2;border-left:5px solid #26844e} .screen{border:2px solid #adb9c6;border-radius:15px;max-width:320px;margin:15px auto;overflow:hidden;background:#fff;text-align:center}.bar{background:#ffdc45;padding:13px;font-weight:bold}.content{padding:20px}.btn{background:#1769aa;color:white;border-radius:7px;padding:10px;margin:12px auto;display:inline-block} .note{border-left:4px solid #d89921;padding:12px;background:#fff9e8} </style></head><body>
+<h1>Flutter UI: Build a Student Profile Screen</h1><p>Learn to translate a screen idea into a widget tree, then into readable Flutter code. Each step adds only one small idea.</p>
+<section><h2>1. How Flutter creates a UI</h2><p>Flutter builds screens by combining <strong>widgets</strong>. A widget describes a piece of the interface, such as text, a button, spacing, or a layout. Widgets can contain other widgets, creating a <strong>widget tree</strong>.</p><p><strong>MaterialApp</strong> is a Flutter widget that sets up app-wide features for a Material Design interface, such as themes, navigation support, and default styling for Material widgets. It does not make Flutter cross-platform; Flutter itself supports multiple platforms. <div class="note" style="margin:14px 0;padding:16px;border-left:4px solid #2563eb;background:#eff6ff">
+<h3>What does MaterialApp provide?</h3>
+<p>Think of <code>MaterialApp</code> as the outer wrapper that prepares common app-level settings. It does not draw the entire screen by itself. We put a <code>Scaffold</code> inside its <code>home</code> parameter to build the visible page.</p>
+<table><tr><th>Feature</th><th>What it means</th><th>Student Profile example</th></tr>
+<tr><td>Material Design support</td><td>Provides the environment used by Material widgets.</td><td><code>AppBar</code> and <code>ElevatedButton</code> use Material styling.</td></tr>
+<tr><td>Theme</td><td>Lets the app share colors, text styles, and component themes.</td><td>We could set <code>theme: ThemeData(colorSchemeSeed: Colors.blue)</code> to give Material widgets a coordinated theme.</td></tr>
+<tr><td>Home screen</td><td>The <code>home</code> parameter identifies the first screen shown.</td><td><code>home: Scaffold(...)</code> shows our profile screen.</td></tr>
+<tr><td>Navigation support</td><td>Provides app-level navigation infrastructure for moving between screens later.</td><td>Our current one-screen app does not need navigation yet.</td></tr>
+<tr><td>Consistent defaults</td><td>Material widgets can use shared typography, colors, and interaction feedback.</td><td>Buttons and the app bar have a coordinated Material look unless customized.</td></tr>
+</table>
+<p><strong>Important distinction:</strong> Flutter is the cross-platform UI framework. <code>MaterialApp</code> selects Material Design app behavior; it is not what makes the app run on Android and iOS.</p>
+<p><strong>Our code:</strong></p>
+<pre>MaterialApp(
+  home: Scaffold(
+    appBar: AppBar(
+      title: Text('Student Profile'),
+    ),
+    body: Center(
+      child: Text('Welcome!'),
+    ),
+  ),
+)</pre>
+<p><strong>Widget tree:</strong></p>
+<pre class="tree">MaterialApp
+└── home: Scaffold
+    ├── appBar: AppBar
+    │   └── title: Text("Student Profile")
+    └── body: Center
+        └── child: Text("Welcome!")</pre>
+<p>Here, <code>MaterialApp</code>, <code>Scaffold</code>, <code>AppBar</code>, <code>Center</code>, and <code>Text</code> are <strong>widgets</strong>. <code>home</code>, <code>appBar</code>, <code>body</code>, <code>title</code>, and <code>child</code> are <strong>parameters</strong>.</p>
+</div><div class="note" style="margin:16px 0;padding:16px;border-left:4px solid #2563eb;background:#eff6ff">
+<h3>What is <code>home</code> in MaterialApp?</h3>
+<p><strong><code>home</code> is a named parameter of <code>MaterialApp</code>, not a widget.</strong> It tells Flutter which widget to display as the app's initial screen when the application starts.</p>
+<p>In our Student Profile app, we write <code>home: Scaffold(...)</code>. This means: <em>When the app starts, display the screen built using this Scaffold.</em></p>
+<pre>MaterialApp(
+  home: Scaffold(
+    appBar: AppBar(
+      title: Text('Student Profile'),
+    ),
+    body: Center(
+      child: Text('Welcome!'),
+    ),
+  ),
+)</pre>
+<p><strong>Visual widget tree:</strong></p>
+<pre class="tree">MaterialApp                 ← Widget
+└── home: Scaffold          ← home is a parameter; Scaffold is a widget
+    ├── appBar: AppBar
+    │   └── title: Text('Student Profile')
+    └── body: Center
+        └── child: Text('Welcome!')</pre>
+<table><tr><th>Code</th><th>What it is</th><th>Purpose</th></tr>
+<tr><td><code>MaterialApp</code></td><td>Widget</td><td>Configures the app.</td></tr>
+<tr><td><code>home:</code></td><td>Named parameter</td><td>Specifies the first screen widget.</td></tr>
+<tr><td><code>Scaffold</code></td><td>Widget</td><td>Provides the structure of that screen.</td></tr>
+<tr><td><code>appBar:</code></td><td>Named parameter of Scaffold</td><td>Specifies the top bar.</td></tr>
+<tr><td><code>body:</code></td><td>Named parameter of Scaffold</td><td>Specifies the main content.</td></tr></table>
+<p><strong>Remember:</strong> <code>home</code> does not mean the Android Home button, the phone's home screen, or a separate Flutter widget called Home. It simply specifies the initial screen of your Flutter app.</p>
+</div><strong>Scaffold</strong> provides a standard screen layout. <strong>AppBar</strong> is the top bar. <strong>body</strong> is the main screen area.</p><table><tr><th>Code item</th><th>Type</th><th>Meaning</th></tr><tr><td>Scaffold()</td><td>Widget</td><td>Screen structure</td></tr><tr><td>AppBar()</td><td>Widget</td><td>Top bar</td></tr><tr><td>Text()</td><td>Widget</td><td>Displays text</td></tr><tr><td>body:</td><td>Named parameter</td><td>Widget in main screen area</td></tr><tr><td>child:</td><td>Named parameter</td><td>One nested widget</td></tr><tr><td>children:</td><td>Named parameter</td><td>A list of nested widgets</td></tr><tr><td>backgroundColor:</td><td>Named parameter</td><td>Sets a color</td></tr></table><p class="note">The words <code>child</code> and <code>children</code> are parameters, not widgets. <code>Center</code>, <code>Column</code>, and <code>Text</code> are widgets.</p></section>
+<section><h2>2. The problem</h2><p>Create a <strong>Student Profile</strong> screen with a yellow title bar, a centered heading, a student name, a course name, and a button. First design the tree; then write the Dart code.</p><div class="screen"><div class="bar">Student Profile</div><div class="content"><h3>Welcome!</h3><p>Name: Alex</p><p>Course: Flutter UI</p><span class="btn">View Profile</span></div></div></section>
+<section><h2>3. Step 1 — App shell</h2><p><strong>Tree before code:</strong></p><pre class="tree">MaterialApp
+└── Scaffold
+    ├── appBar: AppBar
+    │   └── title: Text("Student Profile")
+    └── body: Center
+        └── child: Text("Welcome!")</pre><p>Every indentation level means a widget nested inside its parent. The <code>appBar</code> and <code>body</code> are two different Scaffold parameters.</p><pre>import 'package:flutter/material.dart';
+
+void main() {
+  runApp(
+    MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.yellow,
+          title: Text('Student Profile'),
+          centerTitle: true,
+        ),
+        body: Center(
+          child: Text('Welcome!'),
+        ),
+      ),
+    ),
+  );
+}</pre><p><strong>Read the closing brackets:</strong> <code>Text</code> closes first, then <code>Center</code>, <code>Scaffold</code>, <code>MaterialApp</code>, and <code>runApp</code>.</p></section>
+<section><h2>4. Step 2 — Display several lines with Column</h2><p>To show more than one item vertically, replace Center's single Text with a <code>Column</code>. A Column takes <code>children: [ ... ]</code>, a list of widgets.</p><pre class="tree">MaterialApp
+└── Scaffold
+    ├── AppBar
+    │   └── Text("Student Profile")
+    └── Center
+        └── Column
+            ├── Text("Welcome!")
+            ├── Text("Name: Alex")
+            └── Text("Course: Flutter UI")</pre><p><strong>Replace only the body:</strong></p><pre>body: Center(
+  child: Column(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      Text('Welcome!'),
+      Text('Name: Alex'),
+      Text('Course: Flutter UI'),
+    ],
+  ),
+),</pre><p><code>mainAxisAlignment</code> positions the Column's items along its vertical axis. Notice: <code>Center</code> has one <code>child</code> (the Column); the Column has three <code>children</code>.</p></section>
+<section><h2>5. Step 3 — Add spacing with SizedBox</h2><p>Before adding code, update the tree. A <code>SizedBox(height: 12)</code> creates a 12-pixel vertical gap.</p><pre class="tree">MaterialApp
+└── Scaffold
+    ├── AppBar → Text("Student Profile")
+    └── Center
+        └── Column
+            ├── Text("Welcome!")
+            ├── SizedBox(height: 12)
+            ├── Text("Name: Alex")
+            ├── SizedBox(height: 12)
+            └── Text("Course: Flutter UI")</pre><pre>children: [
+  Text('Welcome!'),
+  SizedBox(height: 12),
+  Text('Name: Alex'),
+  SizedBox(height: 12),
+  Text('Course: Flutter UI'),
+],</pre></section>
+<section><h2>6. Step 4 — Add an ElevatedButton</h2><p>An <code>ElevatedButton</code> is a clickable widget. It requires <code>onPressed</code> (what happens when tapped) and <code>child</code> (what appears on the button). For now, the button can have an empty action.</p><pre class="tree">MaterialApp
+└── Scaffold
+    ├── AppBar → Text("Student Profile")
+    └── Center
+        └── Column
+            ├── Text("Welcome!")
+            ├── SizedBox
+            ├── Text("Name: Alex")
+            ├── SizedBox
+            ├── Text("Course: Flutter UI")
+            ├── SizedBox
+            └── ElevatedButton
+                └── child: Text("View Profile")</pre><pre>SizedBox(height: 12),
+ElevatedButton(
+  onPressed: () {
+    print('Profile button tapped');
+  },
+  child: Text('View Profile'),
+),</pre><p><code>onPressed</code> is a parameter containing a function. The button is interactive, but we are not changing the screen or introducing state yet.</p></section>
+<section><h2>7. Complete working main.dart</h2><p>Copy this entire code into <code>lib/main.dart</code> and run <code>flutter run</code>. After edits, save and press <code>r</code> in the running terminal for hot reload.</p><pre>import 'package:flutter/material.dart';
+
+void main() {
+  runApp(
+    MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.yellow,
+          title: Text('Student Profile'),
+          centerTitle: true,
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('Welcome!'),
+              SizedBox(height: 12),
+              Text('Name: Alex'),
+              SizedBox(height: 12),
+              Text('Course: Flutter UI'),
+              SizedBox(height: 12),
+              ElevatedButton(
+                onPressed: () {
+                  print('Profile button tapped');
+                },
+                child: Text('View Profile'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ),
+  );
+}</pre></section>
+
+<section id="widget-gallery"><h2>8. Visual gallery — Basic Flutter widgets</h2>
+<p>Each example shows <strong>what the widget does</strong>, an illustration of its appearance, and the <strong>Dart code</strong> to produce it. These are small snippets: insert them into an appropriate <code>body</code> or <code>children</code> list in the complete app above. Some interactive widgets require a callback; the examples use simple callbacks without introducing state management.</p>
+<style>
+.widget-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}.widget-card{border:1px solid #d5e2ef;border-radius:12px;padding:16px;background:#fff}.widget-card h3{margin:0 0 5px;color:#174a79}.widget-card p{margin:5px 0 12px}.widget-card pre{font-size:12px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere;margin:10px 0 0}.widget-preview{background:#f1f5f9;border:1px solid #e2e8f0;border-radius:9px;min-height:110px;padding:12px;display:flex;align-items:center;justify-content:center;box-sizing:border-box}.widget-preview button{background:#2563eb;color:#fff;border:0;border-radius:7px;padding:10px 16px;cursor:pointer}.widget-preview input[type=text]{width:90%;box-sizing:border-box;padding:11px;border:1px solid #94a3b8;border-radius:5px;background:white}.widget-preview label{display:flex;align-items:center;gap:8px}.mini-blue{background:#2563eb;color:white;border-radius:7px;padding:12px}.mini-stack{position:relative;width:130px;height:85px;background:#dbeafe;border-radius:7px}.mini-stack span{position:absolute;top:27px;left:25px;background:#fbbf24;padding:10px;border-radius:5px}.widget-card .tag{font-size:12px;color:#475569;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+</style>
+<div class="widget-grid">
+<div class="widget-card"><h3>1. Text()</h3><p>Displays words on the screen.</p><div class="widget-preview"><strong style="font-size:21px">Hello Flutter!</strong></div><div class="tag">Dart code</div><pre>Text('Hello Flutter!',
+  style: TextStyle(fontSize: 21),
+)</pre></div>
+<div class="widget-card"><h3>2. Container()</h3><p>Creates a box that can have color, size, and decoration.</p><div class="widget-preview"><div class="mini-blue">Blue Container</div></div><div class="tag">Dart code</div><pre>Container(
+  padding: EdgeInsets.all(12),
+  color: Colors.blue,
+  child: Text('Blue Container',
+    style: TextStyle(color: Colors.white)),
+)</pre></div>
+<div class="widget-card"><h3>3. Row()</h3><p>Places multiple child widgets side by side, horizontally.</p><div class="widget-preview" style="gap:8px"><span class="mini-blue">A</span><span class="mini-blue">B</span><span class="mini-blue">C</span></div><div class="tag">Dart code</div><pre>Row(
+  mainAxisAlignment: MainAxisAlignment.center,
+  children: [
+    Text('A'), Text('B'), Text('C'),
+  ],
+)</pre></div>
+<div class="widget-card"><h3>4. Column()</h3><p>Places multiple child widgets one below another.</p><div class="widget-preview" style="flex-direction:column;gap:4px"><span>A</span><span>B</span><span>C</span></div><div class="tag">Dart code</div><pre>Column(
+  mainAxisAlignment: MainAxisAlignment.center,
+  children: [
+    Text('A'), Text('B'), Text('C'),
+  ],
+)</pre></div>
+<div class="widget-card"><h3>5. Center()</h3><p>Positions its single child in the middle of available space.</p><div class="widget-preview"><span style="background:#d1fae5;padding:12px;border-radius:5px">Centered text</span></div><div class="tag">Dart code</div><pre>Center(
+  child: Text('Centered text'),
+)</pre></div>
+<div class="widget-card"><h3>6. Padding()</h3><p>Adds empty space around a child widget.</p><div class="widget-preview"><div style="border:2px dashed #64748b;padding:20px"><span style="background:#fef08a;padding:8px">Hello</span></div></div><div class="tag">Dart code</div><pre>Padding(
+  padding: EdgeInsets.all(20),
+  child: Text('Hello'),
+)</pre></div>
+<div class="widget-card"><h3>7. SizedBox()</h3><p>Creates a fixed gap between widgets or gives a child a size.</p><div class="widget-preview" style="flex-direction:column"><span>Above</span><div style="height:24px;border-left:2px dashed #64748b"></div><span>Below</span></div><div class="tag">Dart code</div><pre>Column(
+  children: [
+    Text('Above'),
+    SizedBox(height: 24),
+    Text('Below'),
+  ],
+)</pre></div>
+<div class="widget-card"><h3>8. Icon()</h3><p>Displays a symbol from Flutter's icon collection.</p><div class="widget-preview"><span style="font-size:50px;color:#dc2626">♥</span></div><div class="tag">Dart code</div><pre>Icon(
+  Icons.favorite,
+  color: Colors.red,
+  size: 48,
+)</pre></div>
+<div class="widget-card"><h3>9. ElevatedButton()</h3><p>Creates a button that responds when tapped.</p><div class="widget-preview"><button type="button" onclick="this.textContent='Clicked!'">Click Me</button></div><div class="tag">Dart code</div><pre>ElevatedButton(
+  onPressed: () {
+    print('Clicked!');
+  },
+  child: Text('Click Me'),
+)</pre></div>
+<div class="widget-card"><h3>10. TextField()</h3><p>Allows the user to type text.</p><div class="widget-preview"><input type="text" placeholder="Enter your name" aria-label="Enter your name"></div><div class="tag">Dart code</div><pre>TextField(
+  decoration: InputDecoration(
+    labelText: 'Enter your name',
+    border: OutlineInputBorder(),
+  ),
+)</pre></div>
+<div class="widget-card"><h3>11. Checkbox()</h3><p>Lets the user select or clear a choice. Its value is controlled by the app.</p><div class="widget-preview"><label><input type="checkbox" checked> I agree</label></div><div class="tag">Dart code</div><pre>Checkbox(
+  value: true,
+  onChanged: (bool? value) {
+    print(value);
+  },
+)</pre><p><small>To retain a changed selection on screen in Flutter, update the value using state (covered later).</small></p></div>
+<div class="widget-card"><h3>12. Switch()</h3><p>Shows an on/off setting. Its value is controlled by the app.</p><div class="widget-preview"><label>Notifications <input type="checkbox" role="switch" checked style="width:22px;height:22px"></label></div><div class="tag">Dart code</div><pre>Switch(
+  value: true,
+  onChanged: (bool value) {
+    print(value);
+  },
+)</pre><p><small>Updating the switch's displayed value in Flutter requires state.</small></p></div>
+<div class="widget-card"><h3>13. Card()</h3><p>Groups related information in a Material-style surface.</p><div class="widget-preview"><div style="background:white;border-radius:10px;padding:14px 25px;box-shadow:0 2px 9px #cbd5e1"><strong>Student Profile</strong><div>Name: Alex</div></div></div><div class="tag">Dart code</div><pre>Card(
+  child: Padding(
+    padding: EdgeInsets.all(16),
+    child: Text('Name: Alex'),
+  ),
+)</pre></div>
+<div class="widget-card"><h3>14. Stack()</h3><p>Overlaps widgets, placing later children above earlier ones.</p><div class="widget-preview"><div class="mini-stack"><span>On top</span></div></div><div class="tag">Dart code</div><pre>Stack(
+  children: [
+    Container(width: 130, height: 85,
+      color: Colors.lightBlue.shade100),
+    Positioned(
+      left: 25, top: 27,
+      child: Text('On top'),
+    ),
+  ],
+)</pre></div>
+<div class="widget-card"><h3>15. AppBar()</h3><p>Displays the page's top title bar.</p><div class="widget-preview" style="padding:0;overflow:hidden;display:block"><div style="background:#ffdc45;padding:16px;text-align:center;font-weight:bold">Student Profile</div><div style="padding:18px;text-align:center;color:#64748b">Page body</div></div><div class="tag">Dart code</div><pre>Scaffold(
+  appBar: AppBar(
+    backgroundColor: Colors.yellow,
+    title: Text('Student Profile'),
+    centerTitle: true,
+  ),
+  body: Center(child: Text('Page body')),
+)</pre></div>
+<div class="widget-card"><h3>16. ListView()</h3><p>Shows items in a vertically scrollable list.</p><div class="widget-preview" style="flex-direction:column;gap:5px"><div style="background:white;width:90%;padding:6px">Student 1</div><div style="background:white;width:90%;padding:6px">Student 2</div><div style="background:white;width:90%;padding:6px">Student 3</div></div><div class="tag">Dart code</div><pre>ListView(
+  children: [
+    ListTile(title: Text('Student 1')),
+    ListTile(title: Text('Student 2')),
+    ListTile(title: Text('Student 3')),
+  ],
+)</pre></div>
+</div>
+<h3>Widget vs. parameter: quick comparison</h3><table><tr><th>Widget</th><th>Important parameter(s)</th><th>Meaning</th></tr><tr><td>Center / Padding / Container</td><td><code>child:</code></td><td>One nested widget</td></tr><tr><td>Row / Column / Stack / ListView</td><td><code>children:</code></td><td>List of nested widgets</td></tr><tr><td>Scaffold</td><td><code>appBar:</code>, <code>body:</code></td><td>Different regions of the screen</td></tr><tr><td>ElevatedButton</td><td><code>onPressed:</code>, <code>child:</code></td><td>Action and button content</td></tr><tr><td>TextField</td><td><code>decoration:</code></td><td>Input decoration</td></tr></table>
+<p class="note"><strong>Try it:</strong> In the complete Student Profile code, add an <code>Icon(Icons.school)</code> as the first child of the Column, a <code>SizedBox(height: 12)</code> below it, and a <code>Card(child: Text('Student ID: 101'))</code> after the student name. Predict the widget tree before running the app.</p>
+</section>
+<section><h2>9. Quick widget reference</h2><table><tr><th>Widget</th><th>Purpose</th><th>Key parameter</th></tr><tr><td>MaterialApp</td><td>App wrapper</td><td>home</td></tr><tr><td>Scaffold</td><td>Page structure</td><td>appBar, body</td></tr><tr><td>AppBar</td><td>Top bar</td><td>title</td></tr><tr><td>Text</td><td>Words on screen</td><td>Text('...')</td></tr><tr><td>Center</td><td>Centers one widget</td><td>child</td></tr><tr><td>Column</td><td>Vertical layout</td><td>children</td></tr><tr><td>Row</td><td>Horizontal layout</td><td>children</td></tr><tr><td>SizedBox</td><td>Fixed spacing</td><td>height, width</td></tr><tr><td>Padding</td><td>Space around child</td><td>padding, child</td></tr><tr><td>ElevatedButton</td><td>Button</td><td>onPressed, child</td></tr></table></section>
+<section><h2>10. Practice: Tree first, code second</h2>
+<p>Try each exercise yourself first. Then select <strong>Show solution</strong> to reveal the updated widget tree and Dart code. These solutions are independent modifications to the complete app in Section 7 unless otherwise stated.</p>
+<h3>Exercise A — Change student information</h3><p>Change the student name to Maya and course to Mobile UI. Which Text widgets need editing?</p>
+<details><summary>Show solution — Exercise A</summary><p>Only two Text widgets change; the widget hierarchy stays the same.</p><pre class="tree">Column
+├── Text("Welcome!")
+├── SizedBox
+├── Text("Name: Maya")  ← changed
+├── SizedBox
+├── Text("Course: Mobile UI")  ← changed
+├── SizedBox
+└── ElevatedButton → Text("View Profile")</pre><pre>Text('Name: Maya'),
+SizedBox(height: 12),
+Text('Course: Mobile UI'),</pre></details>
+<h3>Exercise B — Add student ID</h3><p>Add <code>Text('Student ID: 101')</code> directly below the name. Draw the new tree before writing code.</p>
+<details><summary>Show solution — Exercise B</summary><pre class="tree">Column
+├── Text("Welcome!")
+├── SizedBox
+├── Text("Name: Alex")
+├── SizedBox
+├── Text("Student ID: 101")  ← new
+├── SizedBox
+├── Text("Course: Flutter UI")
+├── SizedBox
+└── ElevatedButton → Text("View Profile")</pre><p>Inside the Column's <code>children: [ ]</code>, place the new line between the name and course:</p><pre>Text('Name: Alex'),
+SizedBox(height: 12),
+Text('Student ID: 101'),
+SizedBox(height: 12),
+Text('Course: Flutter UI'),</pre><p>The new Text is a sibling of the other Column children.</p></details>
+<h3>Exercise C — Add a school icon</h3><p>Add an <code>Icon(Icons.school)</code> above Welcome. Draw the tree, then update the Column.</p>
+<details><summary>Show solution — Exercise C</summary><pre class="tree">Column
+├── Icon(Icons.school)  ← new first child
+├── SizedBox(height: 12)
+├── Text("Welcome!")
+├── SizedBox
+├── Text("Name: Alex")
+├── SizedBox
+├── Text("Course: Flutter UI")
+├── SizedBox
+└── ElevatedButton → Text("View Profile")</pre><p>At the beginning of the Column's <code>children</code> list:</p><pre>children: [
+  Icon(Icons.school, size: 40, color: Colors.blue),
+  SizedBox(height: 12),
+  Text('Welcome!'),
+  // Keep the remaining children here.
+],</pre><p><code>Icon</code> is a widget; <code>size</code> and <code>color</code> are parameters.</p></details>
+<h3>Exercise D — Compare Row and Column</h3><p>Temporarily replace the Column with a Row. Predict what happens, then test it using Hot Reload.</p>
+<details><summary>Show solution — Exercise D</summary><pre class="tree">Center
+└── Row  ← replaces Column
+    ├── Text("Welcome!")
+    ├── SizedBox(height: 12)
+    ├── Text("Name: Alex")
+    ├── SizedBox(height: 12)
+    ├── Text("Course: Flutter UI")
+    ├── SizedBox(height: 12)
+    └── ElevatedButton → Text("View Profile")</pre><p>Change the layout widget:</p><pre>body: Center(
+  child: Row(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      Text('Welcome!'),
+      SizedBox(height: 12),
+      Text('Name: Alex'),
+      SizedBox(height: 12),
+      Text('Course: Flutter UI'),
+      SizedBox(height: 12),
+      ElevatedButton(
+        onPressed: () { print('Profile button tapped'); },
+        child: Text('View Profile'),
+      ),
+    ],
+  ),
+),</pre><p><strong>Expected result:</strong> Row attempts to arrange everything horizontally. The long text may overflow on a narrow phone screen. Also, <code>SizedBox(height: 12)</code> does not create horizontal spacing in a Row; use <code>SizedBox(width: 12)</code> for horizontal gaps. Restore Column afterward.</p></details>
+<h3>Exercise E — Add Padding</h3><p>Wrap the existing Column in <code>Padding</code> with 16 pixels on every side. Draw the new parent-child relationship.</p>
+<details><summary>Show solution — Exercise E</summary><pre class="tree">Scaffold
+└── body: Center
+    └── child: Padding  ← new parent
+        └── child: Column
+            ├── Text("Welcome!")
+            ├── SizedBox
+            ├── Text("Name: Alex")
+            ├── SizedBox
+            ├── Text("Course: Flutter UI")
+            ├── SizedBox
+            └── ElevatedButton → Text("View Profile")</pre><p>Replace the existing body with:</p><pre>body: Center(
+  child: Padding(
+    padding: EdgeInsets.all(16),
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text('Welcome!'),
+        SizedBox(height: 12),
+        Text('Name: Alex'),
+        SizedBox(height: 12),
+        Text('Course: Flutter UI'),
+        SizedBox(height: 12),
+        ElevatedButton(
+          onPressed: () {
+            print('Profile button tapped');
+          },
+          child: Text('View Profile'),
+        ),
+      ],
+    ),
+  ),
+),</pre><p><code>Padding</code> has one <code>child</code>: the Column. The Column still has several <code>children</code>.</p></details>
+
+</section></body></html>
