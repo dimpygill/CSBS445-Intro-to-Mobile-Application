@@ -1,0 +1,68 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Flutter Assignment — My Student Dashboard</title><style>:root{color-scheme:light}*{box-sizing:border-box}body{margin:0;background:#f7f9fc;color:#203047;font:16px/1.6 system-ui,-apple-system,Segoe UI,Arial,sans-serif}main{max-width:980px;margin:0 auto;padding:28px 20px 60px}h1{color:#123d69;font-size:2rem;margin:0 0 8px}h2{color:#174b77;font-size:1.35rem;margin:0 0 12px}h3{color:#24537a;font-size:1.08rem;margin:16px 0 7px}.lead{color:#53657b;margin:0 0 16px}.meta{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0 24px}.meta span{border:1px solid #cbd9e7;border-radius:100px;padding:5px 12px;background:white;font-size:14px}section{background:white;border:1px solid #dae4ee;border-radius:14px;padding:22px;margin:18px 0;box-shadow:0 2px 6px #18304a08}ul,ol{padding-left:24px}li{margin:7px 0}code{font:0.93em Consolas,monospace;background:#eaf1f8;padding:2px 5px;border-radius:4px}pre{background:#edf4fb;padding:14px;border-radius:9px;overflow:auto;font:14px/1.5 Consolas,monospace;white-space:pre}pre code{padding:0;background:transparent}.note{background:#f0f7ff;border-left:4px solid #4a8fd0;padding:11px 15px;border-radius:5px;margin:13px 0}.hint{background:#fffaf0;border-left:4px solid #d49a27;padding:10px 14px;border-radius:5px;margin:12px 0}details{border:1px solid #d6e1ed;border-radius:8px;padding:10px 14px;margin:10px 0}summary{cursor:pointer;font-weight:650;color:#205b8c}.mock-wrap{display:flex;gap:30px;align-items:flex-start;flex-wrap:wrap}.phone{background:white;border:5px solid #465569;border-radius:26px;overflow:hidden;width:330px;max-width:100%;margin:8px auto;box-shadow:0 8px 22px #253b5720}.bar{background:#ffdf4e;text-align:center;padding:15px 6px;font-weight:700;color:#20252e}.screen{padding:24px 18px 30px;text-align:center}.avatar{height:70px;width:70px;background:#dceafa;border-radius:50%;margin:0 auto 9px;display:grid;place-items:center;color:#2667a9;font-size:38px}.name{font-weight:700;font-size:20px}.sub{font-size:14px;color:#566478}.schedule{font-size:19px;font-weight:700;margin:22px 0 12px}.classcard{border-radius:8px;padding:12px;margin:10px 0;display:flex;justify-content:space-between;gap:8px;font-size:13px;text-align:left}.blue{background:#dceaff}.green{background:#def5e1}.orange{background:#ffecd5}.fakebtn{display:inline-block;background:#236eb4;color:white;border-radius:22px;padding:9px 18px;margin-top:15px;font-size:14px}.callouts{flex:1;min-width:260px}.callouts table{border-collapse:collapse;width:100%;font-size:14px}.callouts td,.callouts th{border:1px solid #d4e0ec;padding:9px;text-align:left;vertical-align:top}.callouts th{background:#eaf2fa}.check{list-style:none;padding-left:0}.check li:before{content:'☐';margin-right:10px;color:#286a9f}footer{font-size:13px;color:#627184;margin-top:20px}@media print{body{background:white}main{max-width:none}section{break-inside:avoid;box-shadow:none}details{break-inside:avoid}}</style></head><body><main><h1>Flutter UI Assignment: My Student Dashboard</h1><p class="lead">Build a simple, single-screen Flutter app that displays a student profile and a three-class schedule. Use the basic layout widgets introduced in the Flutter UI tutorial.</p>
+<section><h2>1. Goal</h2><p>Practice combining Flutter widgets into a complete user interface (UI). The challenge is to arrange information clearly using <code>Column</code>, <code>Row</code>, <code>Container</code>, and spacing widgets. You do not need to build a database, navigate to another screen, or collect user input.</p><p><strong>What you will create:</strong> A yellow title bar, a profile icon and student information, a heading, three colored class schedule cards, and a button.</p></section>
+<section><h2>2. Target screen layout</h2><p>Use the example below as a visual guide. Your own name (or a fictional name), class names, times, and colors may differ, but the main sections should be present.</p><div class="mock-wrap"><div class="phone" role="img" aria-label="Student Dashboard mock phone screen with yellow app bar, student profile, three colored class schedule rows and blue button"><div class="bar">My Student Dashboard</div><div class="screen"><div class="avatar">♙</div><div class="name">Alex Johnson</div><div class="sub">Computer Science Student</div><div class="schedule">My Class Schedule</div><div class="classcard blue"><strong>Monday</strong><span>Flutter — 10 AM</span></div><div class="classcard green"><strong>Wednesday</strong><span>Database — 11 AM</span></div><div class="classcard orange"><strong>Friday</strong><span>AI — 9 AM</span></div><div class="fakebtn">View Schedule</div></div></div><div class="callouts"><h3>How to read this layout</h3><table><tr><th>Visible part</th><th>Flutter widget(s)</th></tr><tr><td>Yellow title bar</td><td><code>AppBar</code> with <code>Text</code></td></tr><tr><td>Profile symbol</td><td><code>Icon</code></td></tr><tr><td>Student name and subtitle</td><td><code>Text</code> widgets</td></tr><tr><td>Items arranged top-to-bottom</td><td><code>Column</code></td></tr><tr><td>Each colored schedule card</td><td><code>Container</code></td></tr><tr><td>Day on left, course/time on right</td><td><code>Row</code></td></tr><tr><td>Gaps between elements</td><td><code>SizedBox</code></td></tr><tr><td>Button at the bottom</td><td><code>ElevatedButton</code></td></tr></table><div class="note"><strong>Visual note:</strong> This is an illustration of the intended layout, not a screenshot from a running emulator. The exact font and button shape may vary with your Flutter theme.</div></div></div></section>
+<section><h2>3. Required features</h2><ol><li><strong>App bar:</strong> Display <em>My Student Dashboard</em> in a yellow <code>AppBar</code>, with its title centered.</li><li><strong>Profile:</strong> Show a person icon, a student name, and a short subtitle (for example, <em>Computer Science Student</em>).</li><li><strong>Schedule heading:</strong> Display <em>My Class Schedule</em>.</li><li><strong>Three class cards:</strong> Each card must display a day and a course/time. Use three separate <code>Container</code> widgets with different background colors.</li><li><strong>Horizontal arrangement:</strong> Inside each schedule card, use a <code>Row</code> so the day appears on the left and the course/time on the right.</li><li><strong>Spacing:</strong> Use <code>SizedBox</code> between major sections, and <code>padding</code> inside the colored cards.</li><li><strong>Button:</strong> Include an <code>ElevatedButton</code> labeled <em>View Schedule</em>. When clicked, it should print <code>Schedule button clicked</code> in the debug console. It does not need to open another screen.</li><li><strong>Personalization:</strong> Choose your own profile text and class details. Fictional information is acceptable.</li></ol></section>
+<section><h2>4. Build it step by step</h2><h3>Step 1 — Create or open a Flutter project</h3><p>Open your Flutter project in VS Code. Open <code>lib/main.dart</code>. Make sure the Material library is imported, and start with <code>main()</code>, <code>runApp()</code>, <code>MaterialApp()</code>, and <code>Scaffold()</code>.</p><details><summary>Hint: basic app structure</summary><pre><code>import 'package:flutter/material.dart';
+
+void main() {
+  runApp(
+    MaterialApp(
+      home: Scaffold(
+        // Add appBar and body here.
+      ),
+    ),
+  );
+}</code></pre></details><h3>Step 2 — Add the title bar</h3><p>Inside <code>Scaffold</code>, use <code>appBar:</code> and add an <code>AppBar</code> with the title and yellow background.</p><details><summary>Hint: AppBar parameters</summary><pre><code>appBar: AppBar(
+  backgroundColor: Colors.yellow,
+  title: Text('My Student Dashboard'),
+  centerTitle: true,
+),</code></pre></details><h3>Step 3 — Add the profile</h3><p>In <code>body:</code>, use a <code>Center</code> containing a <code>Column</code>. Add a person <code>Icon</code> followed by two <code>Text</code> widgets.</p><details><summary>Hint: one child versus multiple children</summary><pre><code>body: Center(
+  child: Column(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      Icon(Icons.person, size: 60, color: Colors.blue),
+      Text('Alex Johnson'),
+      Text('Computer Science Student'),
+      // Add the schedule below.
+    ],
+  ),
+),</code></pre><p><code>Center</code> has one <code>child</code>: the <code>Column</code>. The <code>Column</code> has multiple <code>children</code>.</p></details><h3>Step 4 — Build the first schedule card</h3><p>After the schedule heading, create a colored <code>Container</code>. Its child should be a <code>Row</code> with two <code>Text</code> widgets.</p><details><summary>Hint: one schedule card</summary><pre><code>Container(
+  color: Colors.blue[100],
+  padding: EdgeInsets.all(12),
+  child: Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      Text('Monday'),
+      Text('Flutter - 10 AM'),
+    ],
+  ),
+),</code></pre><p><code>spaceBetween</code> places the first item toward the left and the second toward the right of the available row.</p></details><h3>Step 5 — Add two more schedule cards</h3><p>Repeat the same card structure for Wednesday and Friday. Change the day, course/time, and background color. Put a <code>SizedBox(height: 10)</code> between cards.</p><div class="hint"><strong>Hint:</strong> You do not need loops or lists of data for this assignment. Three separately written <code>Container</code> widgets are fine.</div><h3>Step 6 — Add the button</h3><p>Place a <code>SizedBox</code> and an <code>ElevatedButton</code> after the last schedule card.</p><details><summary>Hint: button code</summary><pre><code>ElevatedButton(
+  onPressed: () {
+    print('Schedule button clicked');
+  },
+  child: Text('View Schedule'),
+),</code></pre><p>The message appears in the debug console/terminal, not on the app screen.</p></details><h3>Step 7 — Run and test</h3><p>Save <code>main.dart</code>, run your Flutter project on the emulator, and verify the title, profile, three cards, and button. If the app is already running from <code>flutter run</code>, save the file and press <code>r</code> in that terminal for hot reload.</p><div class="hint"><strong>Hint if you see overflow:</strong> Check unnecessary large gaps or long text. You may wrap the main <code>Column</code> in <code>SingleChildScrollView</code> if needed for a small screen. This is optional.</div></section>
+<section><h2>5. Widget tree planning guide</h2><p>Use this simplified tree to plan the screen before writing all the code. The indentation shows which widgets are inside others.</p><pre><code>MaterialApp
+└── Scaffold
+    ├── appBar: AppBar
+    │   └── title: Text
+    └── body: Center
+        └── child: Column
+            ├── Icon (profile)
+            ├── Text (name)
+            ├── Text (subtitle)
+            ├── SizedBox
+            ├── Text (schedule heading)
+            ├── SizedBox
+            ├── Container (Monday)
+            │   └── Row
+            │       ├── Text (day)
+            │       └── Text (course/time)
+            ├── SizedBox
+            ├── Container (Wednesday) → Row → 2 Text widgets
+            ├── SizedBox
+            ├── Container (Friday) → Row → 2 Text widgets
+            ├── SizedBox
+            └── ElevatedButton → Text (label)</code></pre></section>
+
+<section><h2>6. Submission instructions</h2><p>Submit the following to the Canvas assignment by <strong>Thursday, November 12, 2026, at 11:59 PM</strong>:</p><ol><li><strong>Your Dart file:</strong> <code>main.dart</code> from your Flutter project's <code>lib</code> folder.</li><li><strong>A screenshot:</strong> Show the running app on your emulator with the profile and all three schedule cards visible. If your screen requires scrolling, submit additional screenshots as needed.</li></ol><p><strong>Before uploading:</strong> Make sure the screenshot matches the code you submit. Do not submit only a screenshot; the Dart file is required.</p></section></main></body></html>
