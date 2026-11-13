@@ -1,0 +1,548 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Flutter Rows, Columns & Core Widgets — Interactive Tutorial</title><style>
+:root{--ink:#152238;--muted:#54677f;--blue:#165dc8;--line:#dbe4ef;--bg:#f5f8fc;--surface:#fff}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 system-ui,-apple-system,Segoe UI,Arial,sans-serif}header{background:linear-gradient(120deg,#102e57,#1759a5);color:white;padding:38px max(20px,calc((100vw - 1180px)/2))}header h1{font-size:clamp(26px,4vw,40px);margin:0 0 8px}header p{max-width:850px;margin:0;color:#e0ebff}main{max-width:1180px;margin:auto;padding:22px 18px 80px}nav{display:flex;flex-wrap:wrap;gap:8px;position:sticky;top:0;z-index:5;background:#f5f8fcf2;padding:12px 0;border-bottom:1px solid var(--line)}nav a{background:white;border:1px solid var(--line);border-radius:20px;padding:6px 12px;color:#184b86;text-decoration:none;font-weight:650;font-size:13px}h2{font-size:24px;margin:36px 0 12px}p{margin:9px 0 13px}.intro,.example,.question,.lab{background:white;border:1px solid var(--line);border-radius:14px;padding:22px;margin:18px 0;box-shadow:0 2px 9px #16335a08}.intro code,.lab code{background:#eef4fc;padding:2px 5px;border-radius:4px}.intro pre{background:#14243c;color:#eaf4ff;overflow:auto;padding:18px;border-radius:10px}.intro pre code{background:transparent;color:inherit;padding:0;border-radius:0}.example-head{display:flex;align-items:center;gap:12px}.number{font-weight:800;font-size:21px;color:var(--blue);background:#e8f1ff;border-radius:9px;padding:7px 10px}.eyebrow{font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:750;color:#5378a6}.example h3{margin:0;font-size:21px}.twocol{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(280px,.8fr);gap:18px}.code-pane,.result-pane{min-width:0;border:1px solid var(--line);border-radius:10px;overflow:hidden}.pane-title{padding:9px 12px;background:#edf3fa;border-bottom:1px solid var(--line);font-size:12px;font-weight:750;display:flex;justify-content:space-between;align-items:center;gap:8px}.copy,.check,.action{cursor:pointer;background:#155dc0;color:white;border:0;border-radius:7px;padding:7px 12px;font-weight:650}.copy{font-size:12px}.code-pane pre{margin:0;padding:16px;overflow:auto;max-height:470px;background:#12233a;color:#d9ecff;font:12px/1.65 Consolas,Monaco,monospace;tab-size:2}.sim-label{color:#667b91;font-weight:500}.phone{background:#fffafa;border:5px solid #29384a;border-radius:28px;width:min(100% - 24px,330px);height:340px;margin:16px auto;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 10px 24px #12243c22}.status{height:25px;padding:4px 14px;font-size:10px;color:#192434;display:flex;justify-content:space-between}.appbar{padding:12px 13px;background:#e6e8fa;font-size:15px;font-weight:650;min-height:47px}.body{flex:1;min-height:0;padding:0;position:relative;overflow:hidden}.home-indicator{height:4px;width:90px;background:#364254;border-radius:10px;margin:6px auto 8px}.txt{white-space:nowrap}.stack{display:flex;flex-direction:column;width:100%;height:100%;align-items:stretch}.stack .txt{display:block}.stack.vcenter{justify-content:center}.stack.vend{justify-content:flex-end}.stack.vbetween{justify-content:space-between}.stack.vevenly{justify-content:space-evenly}.stack.hend{align-items:flex-end}.stack.gap10{gap:10px}.stack.compact{height:auto}.line{display:flex;flex-direction:row;width:100%;height:100%;align-items:flex-start}.line.gap20{gap:20px}.line.gap10{gap:10px}.line.gap12{gap:12px;align-items:center}.line.hcenter{justify-content:center}.line.hright{justify-content:flex-end}.line.hbetween{justify-content:space-between}.line.haround{justify-content:space-around}.line.hevenly{justify-content:space-evenly}.line.aligncenter{align-items:center}.line.alignend{align-items:flex-end}.vcenter{height:100%;display:flex;align-items:center;justify-content:center}.rect{display:flex;align-items:center;justify-content:center;flex-shrink:0;min-height:35px;color:#101f31}.red{background:#f99}.green{background:#88d6a1}.blue{background:#91bfff}.orange{background:#ffcb7a}.yellow{background:#fff0a0}.card-demo{padding:20px;background:white;border-radius:12px;box-shadow:0 4px 12px #1113;line-height:1.8}.tile{display:flex;align-items:center;gap:14px;padding:14px;width:100%}.tile div{flex:1}.tile small{display:block;color:#63748b}.wrap{display:flex;flex-wrap:wrap;gap:10px;padding:12px}.chip{background:#e7e9f0;padding:5px 10px;border-radius:20px}.note{padding:0 15px 14px;color:#485e78;font-size:13px}.option{display:flex;gap:8px;align-items:flex-start;margin:7px 0;padding:9px;border:1px solid #dce6f0;border-radius:8px;cursor:pointer}.option:hover{background:#f1f6fd}.feedback{margin-top:10px;font-weight:650}.feedback.good{color:#166534}.feedback.bad{color:#a72a29}.solution{margin-top:12px;border-top:1px solid var(--line);padding-top:10px}.solution summary{cursor:pointer;color:#155dc0;font-weight:750}.question h3{margin:0}.question p{font-weight:600}.solution p{font-weight:400}.lab{background:#eff6ff}.lab select{padding:8px;border:1px solid #b8cde6;border-radius:7px;margin:5px}.lab-preview{height:140px;background:white;border:1px dashed #9cb7d8;border-radius:9px;margin:12px 0;padding:10px}.lab-preview .line{align-items:center}.lab-preview .txt{background:#d9e8ff;border:1px solid #aec8ee;padding:5px}.lab-preview .stack{align-items:center}.lab-preview .stack .txt{background:#d9e8ff;border:1px solid #aec8ee;padding:3px 12px}.small{color:#60748a;font-size:13px}.footer{font-size:13px;color:#61748c;margin-top:30px}button:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #e5a42d;outline-offset:2px}@media(max-width:800px){.twocol{grid-template-columns:1fr}.phone{height:320px}.example,.intro,.question{padding:15px}nav{position:static}}@media print{nav,.copy,.check,.lab{display:none}.example{break-inside:avoid}.twocol{grid-template-columns:1fr 1fr}.code-pane pre{max-height:none;white-space:pre-wrap;font-size:9px}.phone{height:250px}}
+</style></head><body><header><h1>Flutter Rows, Columns & Core Widgets</h1><p>A step-by-step interactive tutorial with complete Dart programs, visual output previews, guided experiments, and formative questions with detailed solutions. No custom classes, extends, or @override required.</p></header><main><nav><a href="#start">Start</a><a href="#lab">Alignment playground</a><a href="#examples">Programs</a><a href="#quiz">Quiz & solutions</a><a href="#practice">Practice tasks</a><a href="#references">References</a></nav><section class="intro" id="start"><h2>1. Start with the Flutter boilerplate</h2><p>Every program below is <strong>complete and independently runnable</strong>. Copy one program at a time into a Dart file inside your Flutter project’s <code>lib</code> folder. Run it from the project root using <code>flutter run -t lib/filename.dart</code>.</p><pre><code>import 'package:flutter/material.dart';
+
+void main() {
+  runApp(
+    MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: Text('Example')),
+        body: Row(
+          children: [Text('First'), Text('Second')],
+        ),
+      ),
+    ),
+  );
+}</code></pre><p><strong>import</strong> makes Flutter Material widgets available. <strong>main()</strong> is the Dart entry point. <strong>runApp()</strong> starts the widget tree. <strong>MaterialApp</strong> supplies Material application infrastructure. <strong>Scaffold</strong> provides the basic page layout. <strong>AppBar</strong> shows the top bar. <strong>body</strong> contains the main screen content. <strong>Row</strong> and <strong>Column</strong> arrange their <strong>children</strong>.</p><p><strong>Class vs constructor:</strong> Row, Column, Card, Padding and Text are Flutter widget classes, not Dart keywords. <code>Row(...)</code> is a constructor call creating a widget configuration. <code>child</code> takes one widget; <code>children</code> takes a list of widgets.</p><p><strong>Axis rule:</strong> In a <strong>Row</strong>, main = horizontal and cross = vertical. In a <strong>Column</strong>, main = vertical and cross = horizontal. Alignment values such as start and end depend on directionality where applicable.</p><p class="small">The previews below are illustrative HTML renderings of expected layout, not live Flutter execution or exact device screenshots. Material colors, font metrics and shadows may vary by device/theme. All example programs use the same simple boilerplate.</p></section><section class="lab" id="lab"><h2>2. Interactive alignment playground</h2><p>Choose a layout and an alignment. The preview updates immediately; copy the displayed property into any program.</p><label>Layout <select id="layoutChoice"><option>Row</option><option>Column</option></select></label><label>Main-axis alignment <select id="mainChoice"><option>start</option><option>center</option><option>end</option><option>spaceBetween</option><option>spaceAround</option><option>spaceEvenly</option></select></label><div class="lab-preview" id="labPreview"><div class="line"><span class="txt">First</span><span class="txt">Second</span><span class="txt">Third</span></div></div><code id="labCode">mainAxisAlignment: MainAxisAlignment.start</code><p class="small">For a Row, changes are horizontal; for a Column, changes are vertical. These samples assume a left-to-right interface.</p></section><section id="examples"><h2>3. Complete programs and their visual results</h2><p>Work through these programs in order. Each program is self-contained and has a corresponding visual preview. Change one property at a time in your emulator and compare.</p><article class="example" data-section="Foundations" id="example-1"><div class="example-head"><span class="number">01</span><div><span class="eyebrow">Foundations</span><h3>First Column</h3></div></div><p>Column places children vertically.</p><div class="twocol"><div class="code-pane"><div class="pane-title">Complete runnable Dart program <button class="copy" data-copy="code-0">Copy code</button></div><pre id="code-0"><code>import &#x27;package:flutter/material.dart&#x27;;
+
+void main() {
+  runApp(
+    MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: Text(&#x27;First Column&#x27;)),
+        body: Column(children: [Text(&#x27;First&#x27;), Text(&#x27;Second&#x27;), Text(&#x27;Third&#x27;)]),
+      ),
+    ),
+  );
+}</code></pre></div><div class="result-pane"><div class="pane-title">Expected visual result <span class="sim-label">Illustrative preview</span></div><div class="phone"><div class="status">9:41 <span>●●● ▰</span></div><div class="appbar">First Column</div><div class="body"><div class="stack "><span class="txt">First</span><span class="txt">Second</span><span class="txt">Third</span></div></div><div class="home-indicator"></div></div><p class="note"><strong>Observe:</strong> Default mainAxisAlignment is start; children appear at the top.</p></div></div></article>
+<article class="example" data-section="Foundations" id="example-2"><div class="example-head"><span class="number">02</span><div><span class="eyebrow">Foundations</span><h3>First Row</h3></div></div><p>Row places children horizontally.</p><div class="twocol"><div class="code-pane"><div class="pane-title">Complete runnable Dart program <button class="copy" data-copy="code-1">Copy code</button></div><pre id="code-1"><code>import &#x27;package:flutter/material.dart&#x27;;
+
+void main() {
+  runApp(
+    MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: Text(&#x27;First Row&#x27;)),
+        body: Row(children: [Text(&#x27;First&#x27;), Text(&#x27;Second&#x27;), Text(&#x27;Third&#x27;)]),
+      ),
+    ),
+  );
+}</code></pre></div><div class="result-pane"><div class="pane-title">Expected visual result <span class="sim-label">Illustrative preview</span></div><div class="phone"><div class="status">9:41 <span>●●● ▰</span></div><div class="appbar">First Row</div><div class="body"><div class="line "><span class="txt">First</span><span class="txt">Second</span><span class="txt">Third</span></div></div><div class="home-indicator"></div></div><p class="note"><strong>Observe:</strong> Without spacing, the text can look like FirstSecondThird.</p></div></div></article>
+<article class="example" data-section="Foundations" id="example-3"><div class="example-head"><span class="number">03</span><div><span class="eyebrow">Foundations</span><h3>Row with spacing</h3></div></div><p>spacing adds a uniform gap between neighboring children.</p><div class="twocol"><div class="code-pane"><div class="pane-title">Complete runnable Dart program <button class="copy" data-copy="code-2">Copy code</button></div><pre id="code-2"><code>import &#x27;package:flutter/material.dart&#x27;;
+
+void main() {
+  runApp(
+    MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: Text(&#x27;Row with spacing&#x27;)),
+        body: Row(spacing: 20, children: [Text(&#x27;First&#x27;), Text(&#x27;Second&#x27;), Text(&#x27;Third&#x27;)]),
+      ),
+    ),
+  );
+}</code></pre></div><div class="result-pane"><div class="pane-title">Expected visual result <span class="sim-label">Illustrative preview</span></div><div class="phone"><div class="status">9:41 <span>●●● ▰</span></div><div class="appbar">Row with spacing</div><div class="body"><div class="line gap20"><span class="txt">First</span><span class="txt">Second</span><span class="txt">Third</span></div></div><div class="home-indicator"></div></div><p class="note"><strong>Observe:</strong> spacing is measured in logical pixels; available in recent Flutter versions.</p></div></div></article>
+<article class="example" data-section="Columns" id="example-4"><div class="example-head"><span class="number">04</span><div><span class="eyebrow">Columns</span><h3>Column with SizedBox gaps</h3></div></div><p>SizedBox adds blank vertical space.</p><div class="twocol"><div class="code-pane"><div class="pane-title">Complete runnable Dart program <button class="copy" data-copy="code-3">Copy code</button></div><pre id="code-3"><code>import &#x27;package:flutter/material.dart&#x27;;
+
+void main() {
+  runApp(
+    MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: Text(&#x27;Column with SizedBox gaps&#x27;)),
+        body: Column(children: [Text(&#x27;First Name: Alex&#x27;), SizedBox(height: 20), Text(&#x27;Last Name: Smith&#x27;), SizedBox(height: 20), Text(&#x27;Course: Flutter&#x27;)]),
+      ),
+    ),
+  );
+}</code></pre></div><div class="result-pane"><div class="pane-title">Expected visual result <span class="sim-label">Illustrative preview</span></div><div class="phone"><div class="status">9:41 <span>●●● ▰</span></div><div class="appbar">Column with SizedBox gaps</div><div class="body"><div class="stack "><span class="txt">First Name: Alex</span><div style="height:20px"></div><span class="txt">Last Name: Smith</span><div style="height:20px"></div><span class="txt">Course: Flutter</span></div></div><div class="home-indicator"></div></div><p class="note"><strong>Observe:</strong> SizedBox itself is invisible. To inspect a gap, temporarily replace it with a colored Container.</p></div></div></article>
+<article class="example" data-section="Columns" id="example-5"><div class="example-head"><span class="number">05</span><div><span class="eyebrow">Columns</span><h3>Column centered vertically</h3></div></div><p>mainAxisAlignment controls vertical placement for a Column.</p><div class="twocol"><div class="code-pane"><div class="pane-title">Complete runnable Dart program <button class="copy" data-copy="code-4">Copy code</button></div><pre id="code-4"><code>import &#x27;package:flutter/material.dart&#x27;;
+
+void main() {
+  runApp(
+    MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: Text(&#x27;Column centered vertically&#x27;)),
+        body: Column(mainAxisAlignment: MainAxisAlignment.center, children: [Text(&#x27;First&#x27;), Text(&#x27;Second&#x27;), Text(&#x27;Third&#x27;)]),
+      ),
+    ),
+  );
+}</code></pre></div><div class="result-pane"><div class="pane-title">Expected visual result <span class="sim-label">Illustrative preview</span></div><div class="phone"><div class="status">9:41 <span>●●● ▰</span></div><div class="appbar">Column centered vertically</div><div class="body"><div class="stack vcenter"><span class="txt">First</span><span class="txt">Second</span><span class="txt">Third</span></div></div><div class="home-indicator"></div></div><p class="note"><strong>Observe:</strong> The Column receives the available body height; its children are grouped in the center.</p></div></div></article>
+<article class="example" data-section="Columns" id="example-6"><div class="example-head"><span class="number">06</span><div><span class="eyebrow">Columns</span><h3>Column at bottom</h3></div></div><p>end places children at the bottom of the Column.</p><div class="twocol"><div class="code-pane"><div class="pane-title">Complete runnable Dart program <button class="copy" data-copy="code-5">Copy code</button></div><pre id="code-5"><code>import &#x27;package:flutter/material.dart&#x27;;
+
+void main() {
+  runApp(
+    MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: Text(&#x27;Column at bottom&#x27;)),
+        body: Column(mainAxisAlignment: MainAxisAlignment.end, children: [Text(&#x27;First&#x27;), Text(&#x27;Second&#x27;), Text(&#x27;Third&#x27;)]),
+      ),
+    ),
+  );
+}</code></pre></div><div class="result-pane"><div class="pane-title">Expected visual result <span class="sim-label">Illustrative preview</span></div><div class="phone"><div class="status">9:41 <span>●●● ▰</span></div><div class="appbar">Column at bottom</div><div class="body"><div class="stack vend"><span class="txt">First</span><span class="txt">Second</span><span class="txt">Third</span></div></div><div class="home-indicator"></div></div></div></div></article>
+<article class="example" data-section="Columns" id="example-7"><div class="example-head"><span class="number">07</span><div><span class="eyebrow">Columns</span><h3>Column spaceBetween</h3></div></div><p>Places first and last children at opposite ends and distributes remaining space between them.</p><div class="twocol"><div class="code-pane"><div class="pane-title">Complete runnable Dart program <button class="copy" data-copy="code-6">Copy code</button></div><pre id="code-6"><code>import &#x27;package:flutter/material.dart&#x27;;
+
+void main() {
+  runApp(
+    MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: Text(&#x27;Column spaceBetween&#x27;)),
+        body: Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text(&#x27;First&#x27;), Text(&#x27;Second&#x27;), Text(&#x27;Third&#x27;)]),
+      ),
+    ),
+  );
+}</code></pre></div><div class="result-pane"><div class="pane-title">Expected visual result <span class="sim-label">Illustrative preview</span></div><div class="phone"><div class="status">9:41 <span>●●● ▰</span></div><div class="appbar">Column spaceBetween</div><div class="body"><div class="stack vbetween"><span class="txt">First</span><span class="txt">Second</span><span class="txt">Third</span></div></div><div class="home-indicator"></div></div></div></div></article>
+<article class="example" data-section="Columns" id="example-8"><div class="example-head"><span class="number">08</span><div><span class="eyebrow">Columns</span><h3>Column spaceEvenly</h3></div></div><p>Adds equal free space before, between and after children.</p><div class="twocol"><div class="code-pane"><div class="pane-title">Complete runnable Dart program <button class="copy" data-copy="code-7">Copy code</button></div><pre id="code-7"><code>import &#x27;package:flutter/material.dart&#x27;;
+
+void main() {
+  runApp(
+    MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: Text(&#x27;Column spaceEvenly&#x27;)),
+        body: Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [Text(&#x27;First&#x27;), Text(&#x27;Second&#x27;), Text(&#x27;Third&#x27;)]),
+      ),
+    ),
+  );
+}</code></pre></div><div class="result-pane"><div class="pane-title">Expected visual result <span class="sim-label">Illustrative preview</span></div><div class="phone"><div class="status">9:41 <span>●●● ▰</span></div><div class="appbar">Column spaceEvenly</div><div class="body"><div class="stack vevenly"><span class="txt">First</span><span class="txt">Second</span><span class="txt">Third</span></div></div><div class="home-indicator"></div></div></div></div></article>
+<article class="example" data-section="Columns" id="example-9"><div class="example-head"><span class="number">09</span><div><span class="eyebrow">Columns</span><h3>Column horizontal alignment</h3></div></div><p>crossAxisAlignment controls horizontal placement of children in a Column.</p><div class="twocol"><div class="code-pane"><div class="pane-title">Complete runnable Dart program <button class="copy" data-copy="code-8">Copy code</button></div><pre id="code-8"><code>import &#x27;package:flutter/material.dart&#x27;;
+
+void main() {
+  runApp(
+    MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: Text(&#x27;Column horizontal alignment&#x27;)),
+        body: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [Text(&#x27;First&#x27;), Text(&#x27;Second longer&#x27;), Text(&#x27;Third&#x27;)]),
+      ),
+    ),
+  );
+}</code></pre></div><div class="result-pane"><div class="pane-title">Expected visual result <span class="sim-label">Illustrative preview</span></div><div class="phone"><div class="status">9:41 <span>●●● ▰</span></div><div class="appbar">Column horizontal alignment</div><div class="body"><div class="stack hend"><span class="txt">First</span><span class="txt">Second longer</span><span class="txt">Third</span></div></div><div class="home-indicator"></div></div><p class="note"><strong>Observe:</strong> Column defaults to using the width its parent allows, so end alignment appears at the right side in a left-to-right layout.</p></div></div></article>
+<article class="example" data-section="Columns" id="example-10"><div class="example-head"><span class="number">10</span><div><span class="eyebrow">Columns</span><h3>Column minimum height</h3></div></div><p>mainAxisSize.min makes the Column fit its children; Center centers the compact Column.</p><div class="twocol"><div class="code-pane"><div class="pane-title">Complete runnable Dart program <button class="copy" data-copy="code-9">Copy code</button></div><pre id="code-9"><code>import &#x27;package:flutter/material.dart&#x27;;
+
+void main() {
+  runApp(
+    MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: Text(&#x27;Column minimum height&#x27;)),
+        body: Center(child: Column(mainAxisSize: MainAxisSize.min, children: [Text(&#x27;First&#x27;), Text(&#x27;Second&#x27;), Text(&#x27;Third&#x27;)])),
+      ),
+    ),
+  );
+}</code></pre></div><div class="result-pane"><div class="pane-title">Expected visual result <span class="sim-label">Illustrative preview</span></div><div class="phone"><div class="status">9:41 <span>●●● ▰</span></div><div class="appbar">Column minimum height</div><div class="body"><div class="vcenter"><div class="stack compact"><span class="txt">First</span><span class="txt">Second</span><span class="txt">Third</span></div></div></div><div class="home-indicator"></div></div><p class="note"><strong>Observe:</strong> Compare with MainAxisSize.max. Center controls the position of the Column; mainAxisSize controls its height.</p></div></div></article>
+<article class="example" data-section="Columns" id="example-11"><div class="example-head"><span class="number">11</span><div><span class="eyebrow">Columns</span><h3>Column verticalDirection.up</h3></div></div><p>Reverses the direction in which children are laid out.</p><div class="twocol"><div class="code-pane"><div class="pane-title">Complete runnable Dart program <button class="copy" data-copy="code-10">Copy code</button></div><pre id="code-10"><code>import &#x27;package:flutter/material.dart&#x27;;
+
+void main() {
+  runApp(
+    MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: Text(&#x27;Column verticalDirection.up&#x27;)),
+        body: Column(verticalDirection: VerticalDirection.up, children: [Text(&#x27;First&#x27;), Text(&#x27;Second&#x27;), Text(&#x27;Third&#x27;)]),
+      ),
+    ),
+  );
+}</code></pre></div><div class="result-pane"><div class="pane-title">Expected visual result <span class="sim-label">Illustrative preview</span></div><div class="phone"><div class="status">9:41 <span>●●● ▰</span></div><div class="appbar">Column verticalDirection.up</div><div class="body"><div class="stack vend"><span class="txt">Third</span><span class="txt">Second</span><span class="txt">First</span></div></div><div class="home-indicator"></div></div><p class="note"><strong>Observe:</strong> The first child (&#x27;First&#x27;) appears at the bottom. This changes layout direction, not the children list itself.</p></div></div></article>
+<article class="example" data-section="Columns" id="example-12"><div class="example-head"><span class="number">12</span><div><span class="eyebrow">Columns</span><h3>Column with colored boxes</h3></div></div><p>Different child widths make horizontal alignment easy to see.</p><div class="twocol"><div class="code-pane"><div class="pane-title">Complete runnable Dart program <button class="copy" data-copy="code-11">Copy code</button></div><pre id="code-11"><code>import &#x27;package:flutter/material.dart&#x27;;
+
+void main() {
+  runApp(
+    MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: Text(&#x27;Column with colored boxes&#x27;)),
+        body: Column(crossAxisAlignment: CrossAxisAlignment.start, spacing: 10, children: [Container(width: 120, height: 50, color: Colors.red, child: Center(child: Text(&#x27;Student 1&#x27;))), Container(width: 180, height: 50, color: Colors.green, child: Center(child: Text(&#x27;Student 2&#x27;))), Container(width: 240, height: 50, color: Colors.blue, child: Center(child: Text(&#x27;Student 3&#x27;)))]),
+      ),
+    ),
+  );
+}</code></pre></div><div class="result-pane"><div class="pane-title">Expected visual result <span class="sim-label">Illustrative preview</span></div><div class="phone"><div class="status">9:41 <span>●●● ▰</span></div><div class="appbar">Column with colored boxes</div><div class="body"><div class="stack gap10"><div class="rect red" style="width:120px">Student 1</div><div class="rect green" style="width:180px">Student 2</div><div class="rect blue" style="width:240px">Student 3</div></div></div><div class="home-indicator"></div></div><p class="note"><strong>Observe:</strong> Try crossAxisAlignment.end and center. Avoid fixed widths larger than the device.</p></div></div></article>
+<article class="example" data-section="Rows" id="example-13"><div class="example-head"><span class="number">13</span><div><span class="eyebrow">Rows</span><h3>Row mainAxisAlignment.start</h3></div></div><p>Start of horizontal axis (default).</p><div class="twocol"><div class="code-pane"><div class="pane-title">Complete runnable Dart program <button class="copy" data-copy="code-12">Copy code</button></div><pre id="code-12"><code>import &#x27;package:flutter/material.dart&#x27;;
+
+void main() {
+  runApp(
+    MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: Text(&#x27;Row mainAxisAlignment.start&#x27;)),
+        body: Row(mainAxisAlignment: MainAxisAlignment.start, children: [Text(&#x27;First&#x27;), Text(&#x27;Second&#x27;), Text(&#x27;Third&#x27;)]),
+      ),
+    ),
+  );
+}</code></pre></div><div class="result-pane"><div class="pane-title">Expected visual result <span class="sim-label">Illustrative preview</span></div><div class="phone"><div class="status">9:41 <span>●●● ▰</span></div><div class="appbar">Row mainAxisAlignment.start</div><div class="body"><div class="line hstart"><span class="txt">First</span><span class="txt">Second</span><span class="txt">Third</span></div></div><div class="home-indicator"></div></div><p class="note"><strong>Observe:</strong> Horizontal alignment does not move the Row vertically.</p></div></div></article>
+<article class="example" data-section="Rows" id="example-14"><div class="example-head"><span class="number">14</span><div><span class="eyebrow">Rows</span><h3>Row mainAxisAlignment.center</h3></div></div><p>Centers the group horizontally.</p><div class="twocol"><div class="code-pane"><div class="pane-title">Complete runnable Dart program <button class="copy" data-copy="code-13">Copy code</button></div><pre id="code-13"><code>import &#x27;package:flutter/material.dart&#x27;;
+
+void main() {
+  runApp(
+    MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: Text(&#x27;Row mainAxisAlignment.center&#x27;)),
+        body: Row(mainAxisAlignment: MainAxisAlignment.center, children: [Text(&#x27;First&#x27;), Text(&#x27;Second&#x27;), Text(&#x27;Third&#x27;)]),
+      ),
+    ),
+  );
+}</code></pre></div><div class="result-pane"><div class="pane-title">Expected visual result <span class="sim-label">Illustrative preview</span></div><div class="phone"><div class="status">9:41 <span>●●● ▰</span></div><div class="appbar">Row mainAxisAlignment.center</div><div class="body"><div class="line hcenter"><span class="txt">First</span><span class="txt">Second</span><span class="txt">Third</span></div></div><div class="home-indicator"></div></div><p class="note"><strong>Observe:</strong> Horizontal alignment does not move the Row vertically.</p></div></div></article>
+<article class="example" data-section="Rows" id="example-15"><div class="example-head"><span class="number">15</span><div><span class="eyebrow">Rows</span><h3>Row mainAxisAlignment.end</h3></div></div><p>Moves the group to the right in left-to-right layouts.</p><div class="twocol"><div class="code-pane"><div class="pane-title">Complete runnable Dart program <button class="copy" data-copy="code-14">Copy code</button></div><pre id="code-14"><code>import &#x27;package:flutter/material.dart&#x27;;
+
+void main() {
+  runApp(
+    MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: Text(&#x27;Row mainAxisAlignment.end&#x27;)),
+        body: Row(mainAxisAlignment: MainAxisAlignment.end, children: [Text(&#x27;First&#x27;), Text(&#x27;Second&#x27;), Text(&#x27;Third&#x27;)]),
+      ),
+    ),
+  );
+}</code></pre></div><div class="result-pane"><div class="pane-title">Expected visual result <span class="sim-label">Illustrative preview</span></div><div class="phone"><div class="status">9:41 <span>●●● ▰</span></div><div class="appbar">Row mainAxisAlignment.end</div><div class="body"><div class="line hright"><span class="txt">First</span><span class="txt">Second</span><span class="txt">Third</span></div></div><div class="home-indicator"></div></div><p class="note"><strong>Observe:</strong> Horizontal alignment does not move the Row vertically.</p></div></div></article>
+<article class="example" data-section="Rows" id="example-16"><div class="example-head"><span class="number">16</span><div><span class="eyebrow">Rows</span><h3>Row mainAxisAlignment.spaceBetween</h3></div></div><p>Distributes free space only between children.</p><div class="twocol"><div class="code-pane"><div class="pane-title">Complete runnable Dart program <button class="copy" data-copy="code-15">Copy code</button></div><pre id="code-15"><code>import &#x27;package:flutter/material.dart&#x27;;
+
+void main() {
+  runApp(
+    MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: Text(&#x27;Row mainAxisAlignment.spaceBetween&#x27;)),
+        body: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text(&#x27;First&#x27;), Text(&#x27;Second&#x27;), Text(&#x27;Third&#x27;)]),
+      ),
+    ),
+  );
+}</code></pre></div><div class="result-pane"><div class="pane-title">Expected visual result <span class="sim-label">Illustrative preview</span></div><div class="phone"><div class="status">9:41 <span>●●● ▰</span></div><div class="appbar">Row mainAxisAlignment.spaceBetween</div><div class="body"><div class="line hbetween"><span class="txt">First</span><span class="txt">Second</span><span class="txt">Third</span></div></div><div class="home-indicator"></div></div><p class="note"><strong>Observe:</strong> Horizontal alignment does not move the Row vertically.</p></div></div></article>
+<article class="example" data-section="Rows" id="example-17"><div class="example-head"><span class="number">17</span><div><span class="eyebrow">Rows</span><h3>Row mainAxisAlignment.spaceAround</h3></div></div><p>Each child receives equal surrounding space.</p><div class="twocol"><div class="code-pane"><div class="pane-title">Complete runnable Dart program <button class="copy" data-copy="code-16">Copy code</button></div><pre id="code-16"><code>import &#x27;package:flutter/material.dart&#x27;;
+
+void main() {
+  runApp(
+    MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: Text(&#x27;Row mainAxisAlignment.spaceAround&#x27;)),
+        body: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [Text(&#x27;First&#x27;), Text(&#x27;Second&#x27;), Text(&#x27;Third&#x27;)]),
+      ),
+    ),
+  );
+}</code></pre></div><div class="result-pane"><div class="pane-title">Expected visual result <span class="sim-label">Illustrative preview</span></div><div class="phone"><div class="status">9:41 <span>●●● ▰</span></div><div class="appbar">Row mainAxisAlignment.spaceAround</div><div class="body"><div class="line haround"><span class="txt">First</span><span class="txt">Second</span><span class="txt">Third</span></div></div><div class="home-indicator"></div></div><p class="note"><strong>Observe:</strong> Horizontal alignment does not move the Row vertically.</p></div></div></article>
+<article class="example" data-section="Rows" id="example-18"><div class="example-head"><span class="number">18</span><div><span class="eyebrow">Rows</span><h3>Row mainAxisAlignment.spaceEvenly</h3></div></div><p>Equal gaps at ends and between children.</p><div class="twocol"><div class="code-pane"><div class="pane-title">Complete runnable Dart program <button class="copy" data-copy="code-17">Copy code</button></div><pre id="code-17"><code>import &#x27;package:flutter/material.dart&#x27;;
+
+void main() {
+  runApp(
+    MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: Text(&#x27;Row mainAxisAlignment.spaceEvenly&#x27;)),
+        body: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [Text(&#x27;First&#x27;), Text(&#x27;Second&#x27;), Text(&#x27;Third&#x27;)]),
+      ),
+    ),
+  );
+}</code></pre></div><div class="result-pane"><div class="pane-title">Expected visual result <span class="sim-label">Illustrative preview</span></div><div class="phone"><div class="status">9:41 <span>●●● ▰</span></div><div class="appbar">Row mainAxisAlignment.spaceEvenly</div><div class="body"><div class="line hevenly"><span class="txt">First</span><span class="txt">Second</span><span class="txt">Third</span></div></div><div class="home-indicator"></div></div><p class="note"><strong>Observe:</strong> Horizontal alignment does not move the Row vertically.</p></div></div></article>
+<article class="example" data-section="Rows" id="example-19"><div class="example-head"><span class="number">19</span><div><span class="eyebrow">Rows</span><h3>Row vertical alignment: center</h3></div></div><p>crossAxisAlignment controls vertical positioning of children in a Row.</p><div class="twocol"><div class="code-pane"><div class="pane-title">Complete runnable Dart program <button class="copy" data-copy="code-18">Copy code</button></div><pre id="code-18"><code>import &#x27;package:flutter/material.dart&#x27;;
+
+void main() {
+  runApp(
+    MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: Text(&#x27;Row vertical alignment: center&#x27;)),
+        body: SizedBox(height: 180, child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [Container(width: 70, height: 40, color: Colors.red), Container(width: 70, height: 90, color: Colors.green), Container(width: 70, height: 60, color: Colors.blue)])),
+      ),
+    ),
+  );
+}</code></pre></div><div class="result-pane"><div class="pane-title">Expected visual result <span class="sim-label">Illustrative preview</span></div><div class="phone"><div class="status">9:41 <span>●●● ▰</span></div><div class="appbar">Row vertical alignment: center</div><div class="body"><div class="line aligncenter"><div class="rect red" style="width:70px;height:40px"></div><div class="rect green" style="width:70px;height:90px"></div><div class="rect blue" style="width:70px;height:60px"></div></div></div><div class="home-indicator"></div></div><p class="note"><strong>Observe:</strong> The SizedBox provides a visible height within which center alignment can act.</p></div></div></article>
+<article class="example" data-section="Rows" id="example-20"><div class="example-head"><span class="number">20</span><div><span class="eyebrow">Rows</span><h3>Row vertical alignment: end</h3></div></div><p>Aligns bottoms of children within the available Row height.</p><div class="twocol"><div class="code-pane"><div class="pane-title">Complete runnable Dart program <button class="copy" data-copy="code-19">Copy code</button></div><pre id="code-19"><code>import &#x27;package:flutter/material.dart&#x27;;
+
+void main() {
+  runApp(
+    MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: Text(&#x27;Row vertical alignment: end&#x27;)),
+        body: SizedBox(height: 180, child: Row(crossAxisAlignment: CrossAxisAlignment.end, children: [Container(width: 70, height: 40, color: Colors.red), Container(width: 70, height: 90, color: Colors.green), Container(width: 70, height: 60, color: Colors.blue)])),
+      ),
+    ),
+  );
+}</code></pre></div><div class="result-pane"><div class="pane-title">Expected visual result <span class="sim-label">Illustrative preview</span></div><div class="phone"><div class="status">9:41 <span>●●● ▰</span></div><div class="appbar">Row vertical alignment: end</div><div class="body"><div class="line alignend"><div class="rect red" style="width:70px;height:40px"></div><div class="rect green" style="width:70px;height:90px"></div><div class="rect blue" style="width:70px;height:60px"></div></div></div><div class="home-indicator"></div></div></div></div></article>
+<article class="example" data-section="Rows" id="example-21"><div class="example-head"><span class="number">21</span><div><span class="eyebrow">Rows</span><h3>Row mainAxisSize.min</h3></div></div><p>A compact Row uses only as much horizontal space as its children need.</p><div class="twocol"><div class="code-pane"><div class="pane-title">Complete runnable Dart program <button class="copy" data-copy="code-20">Copy code</button></div><pre id="code-20"><code>import &#x27;package:flutter/material.dart&#x27;;
+
+void main() {
+  runApp(
+    MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: Text(&#x27;Row mainAxisSize.min&#x27;)),
+        body: Center(child: Row(mainAxisSize: MainAxisSize.min, spacing: 10, children: [Text(&#x27;First&#x27;), Text(&#x27;Second&#x27;), Text(&#x27;Third&#x27;)])),
+      ),
+    ),
+  );
+}</code></pre></div><div class="result-pane"><div class="pane-title">Expected visual result <span class="sim-label">Illustrative preview</span></div><div class="phone"><div class="status">9:41 <span>●●● ▰</span></div><div class="appbar">Row mainAxisSize.min</div><div class="body"><div class="line hcenter gap10"><span class="txt">First</span><span class="txt">Second</span><span class="txt">Third</span></div></div><div class="home-indicator"></div></div><p class="note"><strong>Observe:</strong> Compare with MainAxisSize.max (the default). Center positions the compact Row.</p></div></div></article>
+<article class="example" data-section="Rows" id="example-22"><div class="example-head"><span class="number">22</span><div><span class="eyebrow">Rows</span><h3>Row with left/right padding</h3></div></div><p>Padding keeps children away from the screen edges.</p><div class="twocol"><div class="code-pane"><div class="pane-title">Complete runnable Dart program <button class="copy" data-copy="code-21">Copy code</button></div><pre id="code-21"><code>import &#x27;package:flutter/material.dart&#x27;;
+
+void main() {
+  runApp(
+    MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: Text(&#x27;Row with left/right padding&#x27;)),
+        body: Padding(padding: EdgeInsets.symmetric(horizontal: 20), child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text(&#x27;Left&#x27;), Text(&#x27;Center&#x27;), Text(&#x27;Right&#x27;)])),
+      ),
+    ),
+  );
+}</code></pre></div><div class="result-pane"><div class="pane-title">Expected visual result <span class="sim-label">Illustrative preview</span></div><div class="phone"><div class="status">9:41 <span>●●● ▰</span></div><div class="appbar">Row with left/right padding</div><div class="body"><div style="padding:0 20px"><div class="line hbetween"><span class="txt">Left</span><span class="txt">Center</span><span class="txt">Right</span></div></div></div><div class="home-indicator"></div></div><p class="note"><strong>Observe:</strong> Padding surrounds the Row. spaceBetween positions children within the reduced width.</p></div></div></article>
+<article class="example" data-section="Rows" id="example-23"><div class="example-head"><span class="number">23</span><div><span class="eyebrow">Rows</span><h3>Row with Expanded</h3></div></div><p>Expanded takes a share of the Row’s remaining horizontal space.</p><div class="twocol"><div class="code-pane"><div class="pane-title">Complete runnable Dart program <button class="copy" data-copy="code-22">Copy code</button></div><pre id="code-22"><code>import &#x27;package:flutter/material.dart&#x27;;
+
+void main() {
+  runApp(
+    MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: Text(&#x27;Row with Expanded&#x27;)),
+        body: Row(children: [Container(width: 65, height: 60, color: Colors.red), Expanded(child: Container(height: 60, color: Colors.green, child: Center(child: Text(&#x27;Expanded&#x27;)))), Container(width: 65, height: 60, color: Colors.blue)]),
+      ),
+    ),
+  );
+}</code></pre></div><div class="result-pane"><div class="pane-title">Expected visual result <span class="sim-label">Illustrative preview</span></div><div class="phone"><div class="status">9:41 <span>●●● ▰</span></div><div class="appbar">Row with Expanded</div><div class="body"><div class="line "><div class="rect red" style="width:65px;height:60px"></div><div class="rect green" style="flex:1;height:60px">Expanded</div><div class="rect blue" style="width:65px;height:60px"></div></div></div><div class="home-indicator"></div></div><p class="note"><strong>Observe:</strong> Expanded only works as a descendant of a Flex widget (Row, Column or Flex) along the relevant axis.</p></div></div></article>
+<article class="example" data-section="Rows" id="example-24"><div class="example-head"><span class="number">24</span><div><span class="eyebrow">Rows</span><h3>Row with two Expanded children</h3></div></div><p>flex values divide remaining space proportionally.</p><div class="twocol"><div class="code-pane"><div class="pane-title">Complete runnable Dart program <button class="copy" data-copy="code-23">Copy code</button></div><pre id="code-23"><code>import &#x27;package:flutter/material.dart&#x27;;
+
+void main() {
+  runApp(
+    MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: Text(&#x27;Row with two Expanded children&#x27;)),
+        body: Row(children: [Expanded(flex: 1, child: Container(height: 60, color: Colors.orange, child: Center(child: Text(&#x27;1 part&#x27;)))), Expanded(flex: 2, child: Container(height: 60, color: Colors.blue, child: Center(child: Text(&#x27;2 parts&#x27;))))]),
+      ),
+    ),
+  );
+}</code></pre></div><div class="result-pane"><div class="pane-title">Expected visual result <span class="sim-label">Illustrative preview</span></div><div class="phone"><div class="status">9:41 <span>●●● ▰</span></div><div class="appbar">Row with two Expanded children</div><div class="body"><div class="line "><div class="rect orange" style="flex:1;height:60px">1 part</div><div class="rect blue" style="flex:2;height:60px">2 parts</div></div></div><div class="home-indicator"></div></div><p class="note"><strong>Observe:</strong> A flex of 2 receives twice the allocated width of flex 1 (excluding any fixed-size children).</p></div></div></article>
+<article class="example" data-section="Rows" id="example-25"><div class="example-head"><span class="number">25</span><div><span class="eyebrow">Rows</span><h3>Row with Flexible</h3></div></div><p>Flexible(fit: FlexFit.loose) allows a child to use up to its allocated width without requiring it to fill that width.</p><div class="twocol"><div class="code-pane"><div class="pane-title">Complete runnable Dart program <button class="copy" data-copy="code-24">Copy code</button></div><pre id="code-24"><code>import &#x27;package:flutter/material.dart&#x27;;
+
+void main() {
+  runApp(
+    MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: Text(&#x27;Row with Flexible&#x27;)),
+        body: Row(children: [Flexible(child: Container(color: Colors.amber, padding: EdgeInsets.all(12), child: Text(&#x27;Short&#x27;))), Text(&#x27;Next&#x27;)]),
+      ),
+    ),
+  );
+}</code></pre></div><div class="result-pane"><div class="pane-title">Expected visual result <span class="sim-label">Illustrative preview</span></div><div class="phone"><div class="status">9:41 <span>●●● ▰</span></div><div class="appbar">Row with Flexible</div><div class="body"><div class="line "><div class="rect orange" style="padding:12px">Short</div><span class="txt">Next</span></div></div><div class="home-indicator"></div></div><p class="note"><strong>Observe:</strong> Expanded is equivalent to Flexible with a tight fit; Flexible defaults to a loose fit.</p></div></div></article>
+<article class="example" data-section="Rows" id="example-26"><div class="example-head"><span class="number">26</span><div><span class="eyebrow">Rows</span><h3>Row with icons and text</h3></div></div><p>A Row can combine different widget types.</p><div class="twocol"><div class="code-pane"><div class="pane-title">Complete runnable Dart program <button class="copy" data-copy="code-25">Copy code</button></div><pre id="code-25"><code>import &#x27;package:flutter/material.dart&#x27;;
+
+void main() {
+  runApp(
+    MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: Text(&#x27;Row with icons and text&#x27;)),
+        body: Row(spacing: 12, children: [Icon(Icons.person, color: Colors.blue), Text(&#x27;Alex&#x27;), Icon(Icons.school, color: Colors.green), Text(&#x27;Flutter&#x27;)]),
+      ),
+    ),
+  );
+}</code></pre></div><div class="result-pane"><div class="pane-title">Expected visual result <span class="sim-label">Illustrative preview</span></div><div class="phone"><div class="status">9:41 <span>●●● ▰</span></div><div class="appbar">Row with icons and text</div><div class="body"><div class="line gap12"><span style="color:#2563eb;font-size:25px">●</span><span class="txt">Alex</span><span style="color:#16803b;font-size:25px">◆</span><span class="txt">Flutter</span></div></div><div class="home-indicator"></div></div><p class="note"><strong>Observe:</strong> Preview uses simple symbols to represent icons; the actual emulator shows Material icons.</p></div></div></article>
+<article class="example" data-section="Rows" id="example-27"><div class="example-head"><span class="number">27</span><div><span class="eyebrow">Rows</span><h3>Row inside Column</h3></div></div><p>Combine Row and Column to build a simple profile layout.</p><div class="twocol"><div class="code-pane"><div class="pane-title">Complete runnable Dart program <button class="copy" data-copy="code-26">Copy code</button></div><pre id="code-26"><code>import &#x27;package:flutter/material.dart&#x27;;
+
+void main() {
+  runApp(
+    MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: Text(&#x27;Row inside Column&#x27;)),
+        body: Padding(padding: EdgeInsets.all(20), child: Column(mainAxisSize: MainAxisSize.min, children: [Row(spacing: 12, children: [Icon(Icons.person), Text(&#x27;Name: Alex&#x27;)]), SizedBox(height: 16), Row(spacing: 12, children: [Icon(Icons.school), Text(&#x27;Course: Flutter&#x27;)])])),
+      ),
+    ),
+  );
+}</code></pre></div><div class="result-pane"><div class="pane-title">Expected visual result <span class="sim-label">Illustrative preview</span></div><div class="phone"><div class="status">9:41 <span>●●● ▰</span></div><div class="appbar">Row inside Column</div><div class="body"><div class="stack "><div class="line gap12">◉<span class="txt">Name: Alex</span></div><div style="height:16px"></div><div class="line gap12">◆<span class="txt">Course: Flutter</span></div></div></div><div class="home-indicator"></div></div><p class="note"><strong>Observe:</strong> Rows form horizontal lines; the outer Column stacks those lines vertically.</p></div></div></article>
+<article class="example" data-section="Rows" id="example-28"><div class="example-head"><span class="number">28</span><div><span class="eyebrow">Rows</span><h3>Row overflow and Wrap</h3></div></div><p>A Row does not automatically wrap long content. Wrap can flow children onto additional lines.</p><div class="twocol"><div class="code-pane"><div class="pane-title">Complete runnable Dart program <button class="copy" data-copy="code-27">Copy code</button></div><pre id="code-27"><code>import &#x27;package:flutter/material.dart&#x27;;
+
+void main() {
+  runApp(
+    MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: Text(&#x27;Row overflow and Wrap&#x27;)),
+        body: Padding(padding: EdgeInsets.all(12), child: Wrap(spacing: 10, runSpacing: 10, children: [Chip(label: Text(&#x27;Flutter&#x27;)), Chip(label: Text(&#x27;Dart&#x27;)), Chip(label: Text(&#x27;Android&#x27;)), Chip(label: Text(&#x27;iOS&#x27;)), Chip(label: Text(&#x27;Widgets&#x27;)), Chip(label: Text(&#x27;Layouts&#x27;))])),
+      ),
+    ),
+  );
+}</code></pre></div><div class="result-pane"><div class="pane-title">Expected visual result <span class="sim-label">Illustrative preview</span></div><div class="phone"><div class="status">9:41 <span>●●● ▰</span></div><div class="appbar">Row overflow and Wrap</div><div class="body"><div class="wrap"><span class="chip">Flutter</span><span class="chip">Dart</span><span class="chip">Android</span><span class="chip">iOS</span><span class="chip">Widgets</span><span class="chip">Layouts</span></div></div><div class="home-indicator"></div></div><p class="note"><strong>Observe:</strong> This example uses Wrap instead of Row intentionally to prevent horizontal overflow.</p></div></div></article>
+<article class="example" data-section="Other widgets" id="example-29"><div class="example-head"><span class="number">29</span><div><span class="eyebrow">Other widgets</span><h3>Card and Padding</h3></div></div><p>Card provides a Material surface; Padding adds space inside it.</p><div class="twocol"><div class="code-pane"><div class="pane-title">Complete runnable Dart program <button class="copy" data-copy="code-28">Copy code</button></div><pre id="code-28"><code>import &#x27;package:flutter/material.dart&#x27;;
+
+void main() {
+  runApp(
+    MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: Text(&#x27;Card and Padding&#x27;)),
+        body: Center(child: Card(elevation: 5, child: Padding(padding: EdgeInsets.all(20), child: Text(&#x27;Hello World!&#x27;)))),
+      ),
+    ),
+  );
+}</code></pre></div><div class="result-pane"><div class="pane-title">Expected visual result <span class="sim-label">Illustrative preview</span></div><div class="phone"><div class="status">9:41 <span>●●● ▰</span></div><div class="appbar">Card and Padding</div><div class="body"><div class="vcenter"><div class="card-demo">Hello World!</div></div></div><div class="home-indicator"></div></div><p class="note"><strong>Observe:</strong> Card is a predefined Flutter widget class, not a Dart keyword.</p></div></div></article>
+<article class="example" data-section="Other widgets" id="example-30"><div class="example-head"><span class="number">30</span><div><span class="eyebrow">Other widgets</span><h3>Container</h3></div></div><p>Container can control color, size and padding.</p><div class="twocol"><div class="code-pane"><div class="pane-title">Complete runnable Dart program <button class="copy" data-copy="code-29">Copy code</button></div><pre id="code-29"><code>import &#x27;package:flutter/material.dart&#x27;;
+
+void main() {
+  runApp(
+    MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: Text(&#x27;Container&#x27;)),
+        body: Center(child: Container(color: Colors.blue, padding: EdgeInsets.all(20), child: Text(&#x27;Hello World!&#x27;))),
+      ),
+    ),
+  );
+}</code></pre></div><div class="result-pane"><div class="pane-title">Expected visual result <span class="sim-label">Illustrative preview</span></div><div class="phone"><div class="status">9:41 <span>●●● ▰</span></div><div class="appbar">Container</div><div class="body"><div class="vcenter"><div class="rect blue" style="padding:20px">Hello World!</div></div></div><div class="home-indicator"></div></div></div></div></article>
+<article class="example" data-section="Other widgets" id="example-31"><div class="example-head"><span class="number">31</span><div><span class="eyebrow">Other widgets</span><h3>SizedBox</h3></div></div><p>SizedBox can impose a fixed width and height.</p><div class="twocol"><div class="code-pane"><div class="pane-title">Complete runnable Dart program <button class="copy" data-copy="code-30">Copy code</button></div><pre id="code-30"><code>import &#x27;package:flutter/material.dart&#x27;;
+
+void main() {
+  runApp(
+    MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: Text(&#x27;SizedBox&#x27;)),
+        body: Center(child: SizedBox(width: 200, height: 100, child: ColoredBox(color: Colors.yellow, child: Center(child: Text(&#x27;Hello World!&#x27;))))),
+      ),
+    ),
+  );
+}</code></pre></div><div class="result-pane"><div class="pane-title">Expected visual result <span class="sim-label">Illustrative preview</span></div><div class="phone"><div class="status">9:41 <span>●●● ▰</span></div><div class="appbar">SizedBox</div><div class="body"><div class="vcenter"><div class="rect yellow" style="width:200px;height:100px">Hello World!</div></div></div><div class="home-indicator"></div></div></div></div></article>
+<article class="example" data-section="Other widgets" id="example-32"><div class="example-head"><span class="number">32</span><div><span class="eyebrow">Other widgets</span><h3>DecoratedBox</h3></div></div><p>DecoratedBox paints a decoration behind its child.</p><div class="twocol"><div class="code-pane"><div class="pane-title">Complete runnable Dart program <button class="copy" data-copy="code-31">Copy code</button></div><pre id="code-31"><code>import &#x27;package:flutter/material.dart&#x27;;
+
+void main() {
+  runApp(
+    MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: Text(&#x27;DecoratedBox&#x27;)),
+        body: Center(child: DecoratedBox(decoration: BoxDecoration(color: Colors.green, borderRadius: BorderRadius.circular(10)), child: Padding(padding: EdgeInsets.all(20), child: Text(&#x27;Hello World!&#x27;)))),
+      ),
+    ),
+  );
+}</code></pre></div><div class="result-pane"><div class="pane-title">Expected visual result <span class="sim-label">Illustrative preview</span></div><div class="phone"><div class="status">9:41 <span>●●● ▰</span></div><div class="appbar">DecoratedBox</div><div class="body"><div class="vcenter"><div class="rect green" style="padding:20px;border-radius:10px">Hello World!</div></div></div><div class="home-indicator"></div></div></div></div></article>
+<article class="example" data-section="Other widgets" id="example-33"><div class="example-head"><span class="number">33</span><div><span class="eyebrow">Other widgets</span><h3>ListTile</h3></div></div><p>ListTile provides a conventional leading/title/subtitle/trailing arrangement.</p><div class="twocol"><div class="code-pane"><div class="pane-title">Complete runnable Dart program <button class="copy" data-copy="code-32">Copy code</button></div><pre id="code-32"><code>import &#x27;package:flutter/material.dart&#x27;;
+
+void main() {
+  runApp(
+    MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: Text(&#x27;ListTile&#x27;)),
+        body: Center(child: ListTile(leading: Icon(Icons.person), title: Text(&#x27;Alex&#x27;), subtitle: Text(&#x27;Flutter Student&#x27;), trailing: Icon(Icons.arrow_forward))),
+      ),
+    ),
+  );
+}</code></pre></div><div class="result-pane"><div class="pane-title">Expected visual result <span class="sim-label">Illustrative preview</span></div><div class="phone"><div class="status">9:41 <span>●●● ▰</span></div><div class="appbar">ListTile</div><div class="body"><div class="vcenter"><div class="tile"><span>◉</span><div><strong>Alex</strong><small>Flutter Student</small></div><span>→</span></div></div></div><div class="home-indicator"></div></div></div></div></article>
+<article class="example" data-section="Other widgets" id="example-34"><div class="example-head"><span class="number">34</span><div><span class="eyebrow">Other widgets</span><h3>Align inside Column</h3></div></div><p>Align positions its child within its own available width.</p><div class="twocol"><div class="code-pane"><div class="pane-title">Complete runnable Dart program <button class="copy" data-copy="code-33">Copy code</button></div><pre id="code-33"><code>import &#x27;package:flutter/material.dart&#x27;;
+
+void main() {
+  runApp(
+    MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: Text(&#x27;Align inside Column&#x27;)),
+        body: Column(children: [Align(alignment: Alignment.centerLeft, child: Text(&#x27;Left&#x27;)), Align(alignment: Alignment.center, child: Text(&#x27;Center&#x27;)), Align(alignment: Alignment.centerRight, child: Text(&#x27;Right&#x27;))]),
+      ),
+    ),
+  );
+}</code></pre></div><div class="result-pane"><div class="pane-title">Expected visual result <span class="sim-label">Illustrative preview</span></div><div class="phone"><div class="status">9:41 <span>●●● ▰</span></div><div class="appbar">Align inside Column</div><div class="body"><div class="stack "><div class="line hstart"><span class="txt">Left</span></div><div class="line hcenter"><span class="txt">Center</span></div><div class="line hright"><span class="txt">Right</span></div></div></div><div class="home-indicator"></div></div></div></div></article>
+<article class="example" data-section="Other widgets" id="example-35"><div class="example-head"><span class="number">35</span><div><span class="eyebrow">Other widgets</span><h3>Padding around Align Column</h3></div></div><p>Padding around Column gives left and right margins.</p><div class="twocol"><div class="code-pane"><div class="pane-title">Complete runnable Dart program <button class="copy" data-copy="code-34">Copy code</button></div><pre id="code-34"><code>import &#x27;package:flutter/material.dart&#x27;;
+
+void main() {
+  runApp(
+    MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: Text(&#x27;Padding around Align Column&#x27;)),
+        body: Padding(padding: EdgeInsets.symmetric(horizontal: 20), child: Column(children: [Align(alignment: Alignment.centerLeft, child: Text(&#x27;Left&#x27;)), Align(alignment: Alignment.center, child: Text(&#x27;Center&#x27;)), Align(alignment: Alignment.centerRight, child: Text(&#x27;Right&#x27;))])),
+      ),
+    ),
+  );
+}</code></pre></div><div class="result-pane"><div class="pane-title">Expected visual result <span class="sim-label">Illustrative preview</span></div><div class="phone"><div class="status">9:41 <span>●●● ▰</span></div><div class="appbar">Padding around Align Column</div><div class="body"><div style="padding:0 20px"><div class="stack "><div class="line hstart"><span class="txt">Left</span></div><div class="line hcenter"><span class="txt">Center</span></div><div class="line hright"><span class="txt">Right</span></div></div></div></div><div class="home-indicator"></div></div></div></div></article>
+<article class="example" data-section="Other widgets" id="example-36"><div class="example-head"><span class="number">36</span><div><span class="eyebrow">Other widgets</span><h3>Student Information Card</h3></div></div><p>Card, Padding and Column work together to group information.</p><div class="twocol"><div class="code-pane"><div class="pane-title">Complete runnable Dart program <button class="copy" data-copy="code-35">Copy code</button></div><pre id="code-35"><code>import &#x27;package:flutter/material.dart&#x27;;
+
+void main() {
+  runApp(
+    MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: Text(&#x27;Student Information Card&#x27;)),
+        body: Center(child: Card(child: Padding(padding: EdgeInsets.all(20), child: Column(mainAxisSize: MainAxisSize.min, children: [Text(&#x27;Name: Alex&#x27;), Text(&#x27;Course: Flutter&#x27;), Text(&#x27;Grade: A&#x27;)])))),
+      ),
+    ),
+  );
+}</code></pre></div><div class="result-pane"><div class="pane-title">Expected visual result <span class="sim-label">Illustrative preview</span></div><div class="phone"><div class="status">9:41 <span>●●● ▰</span></div><div class="appbar">Student Information Card</div><div class="body"><div class="vcenter"><div class="card-demo">Name: Alex<br>Course: Flutter<br>Grade: A</div></div></div><div class="home-indicator"></div></div><p class="note"><strong>Observe:</strong> No custom Student class is required for this version.</p></div></div></article><div class="lab" style="margin-top:24px"><h3>Combining widgets: three guided examples</h3><p>Start with a single profile icon, then nest a Column inside a Row, and finally put the combination inside a Card. These examples prepare you for the in-class practice assignment.</p></div><article class="example" data-section="Combining widgets" id="example-37"><div class="example-head"><span class="number">37</span><div><span class="eyebrow">Combining widgets</span><h3>A simple profile Icon in a Row</h3></div></div><p>Icon is a Flutter widget. Place Icon(Icons.person) next to Text inside Row. SizedBox adds space between them.</p><div class="twocol"><div class="code-pane"><div class="pane-title">Complete runnable Dart program <button class="copy" data-copy="code-36">Copy code</button></div><pre id="code-36"><code>import &#x27;package:flutter/material.dart&#x27;;
+
+void main() {
+  runApp(
+    MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: Text(&#x27;Profile Icon&#x27;)),
+        body: Padding(
+          padding: EdgeInsets.all(20),
+          child: Row(
+            children: [
+              Icon(Icons.person, size: 40, color: Colors.blue),
+              SizedBox(width: 12),
+              Text(&#x27;Alex Johnson&#x27;),
+            ],
+          ),
+        ),
+      ),
+    ),
+  );
+}</code></pre></div><div class="result-pane"><div class="pane-title">Expected visual result <span class="sim-label">Illustrative preview</span></div><div class="phone"><div class="status">9:41 <span>●●● ▰</span></div><div class="appbar">A simple profile Icon in a Row</div><div class="body"><div style="display:flex;align-items:center;gap:12px;padding:20px"><span style="font-size:38px;color:#1976d2">👤</span><span>Alex Johnson</span></div></div><div class="home-indicator"></div></div><p class="note"><strong>Observe:</strong> The icon and name appear side by side. The SizedBox creates a 12-pixel horizontal gap.</p></div></div></article><article class="example" data-section="Combining widgets" id="example-38"><div class="example-head"><span class="number">38</span><div><span class="eyebrow">Combining widgets</span><h3>Combining Row and Column</h3></div></div><p>Use a Row to place an icon beside a Column containing two lines of text. This is a common profile-header layout.</p><div class="twocol"><div class="code-pane"><div class="pane-title">Complete runnable Dart program <button class="copy" data-copy="code-37">Copy code</button></div><pre id="code-37"><code>import &#x27;package:flutter/material.dart&#x27;;
+
+void main() {
+  runApp(
+    MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: Text(&#x27;Nested Row and Column&#x27;)),
+        body: Padding(
+          padding: EdgeInsets.all(20),
+          child: Row(
+            children: [
+              Icon(Icons.person, size: 48, color: Colors.blue),
+              SizedBox(width: 16),
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(&#x27;Alex Johnson&#x27;),
+                  Text(&#x27;Computer Science&#x27;),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    ),
+  );
+}</code></pre></div><div class="result-pane"><div class="pane-title">Expected visual result <span class="sim-label">Illustrative preview</span></div><div class="phone"><div class="status">9:41 <span>●●● ▰</span></div><div class="appbar">Combining Row and Column</div><div class="body"><div style="display:flex;align-items:center;gap:16px;padding:20px"><span style="font-size:40px;color:#1976d2">👤</span><div>Alex Johnson<br><span style="color:#64748b">Computer Science</span></div></div></div><div class="home-indicator"></div></div><p class="note"><strong>Observe:</strong> The outer Row positions the icon beside the text. The inner Column stacks the name and major vertically.</p></div></div></article><article class="example" data-section="Combining widgets" id="example-39"><div class="example-head"><span class="number">39</span><div><span class="eyebrow">Combining widgets</span><h3>Combining Card, Padding, Row, and Column</h3></div></div><p>Build a small student information card. Notice how widgets can be nested without creating a custom widget class.</p><div class="twocol"><div class="code-pane"><div class="pane-title">Complete runnable Dart program <button class="copy" data-copy="code-38">Copy code</button></div><pre id="code-38"><code>import &#x27;package:flutter/material.dart&#x27;;
+
+void main() {
+  runApp(
+    MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: Text(&#x27;Student Card&#x27;)),
+        body: Padding(
+          padding: EdgeInsets.all(20),
+          child: Card(
+            elevation: 4,
+            child: Padding(
+              padding: EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  Icon(Icons.person, size: 45, color: Colors.blue),
+                  SizedBox(width: 15),
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(&#x27;Name: Alex&#x27;),
+                      SizedBox(height: 8),
+                      Text(&#x27;Course: Flutter&#x27;),
+                      SizedBox(height: 8),
+                      Text(&#x27;Grade: A&#x27;),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+}</code></pre></div><div class="result-pane"><div class="pane-title">Expected visual result <span class="sim-label">Illustrative preview</span></div><div class="phone"><div class="status">9:41 <span>●●● ▰</span></div><div class="appbar">Combining Card, Padding, Row, and Column</div><div class="body"><div style="margin:18px 10px;padding:16px;background:white;border-radius:12px;box-shadow:0 3px 10px #0002;display:flex;align-items:center;gap:15px"><span style="font-size:40px;color:#1976d2">👤</span><div>Name: Alex<br>Course: Flutter<br>Grade: A</div></div></div><div class="home-indicator"></div></div><p class="note"><strong>Observe:</strong> The Card creates the visual surface, Padding adds interior space, Row places the icon and details side by side, and Column stacks the details.</p></div></div></article></section><section id="quiz"><h2>4. Formative quiz — try, check, learn</h2><p>Select an answer, then choose <strong>Check answer</strong> for immediate feedback. Each question also includes a detailed solution; try answering before opening it. You can change your answer and try again.</p><p id="score" class="small">0 questions checked.</p><div class="question" data-key="1" id="q0"><h3>Question 1</h3><p>In a Row, which property controls horizontal positioning of its children?</p><div class="options"><label class="option"><input type="radio" name="q0" value="0"><span>A. crossAxisAlignment</span></label><label class="option"><input type="radio" name="q0" value="1"><span>B. mainAxisAlignment</span></label><label class="option"><input type="radio" name="q0" value="2"><span>C. verticalDirection</span></label><label class="option"><input type="radio" name="q0" value="3"><span>D. textDirection</span></label></div><button class="check" onclick="checkAnswer(0)">Check answer</button><div class="feedback" id="fb0" aria-live="polite"></div><details class="solution"><summary>Detailed solution</summary><p><strong>Correct answer: B. mainAxisAlignment</strong></p><p>The main axis of Row is horizontal, so mainAxisAlignment controls positioning along it. crossAxisAlignment affects vertical alignment.</p><p><strong>Why the other choices are not correct:</strong> A: crossAxisAlignment is not the requested property or behavior. | C: verticalDirection is not the requested property or behavior. | D: textDirection is not the requested property or behavior.</p></details></div>
+<div class="question" data-key="2" id="q1"><h3>Question 2</h3><p>In a Column, which property controls horizontal positioning of children?</p><div class="options"><label class="option"><input type="radio" name="q1" value="0"><span>A. mainAxisSize</span></label><label class="option"><input type="radio" name="q1" value="1"><span>B. mainAxisAlignment</span></label><label class="option"><input type="radio" name="q1" value="2"><span>C. crossAxisAlignment</span></label><label class="option"><input type="radio" name="q1" value="3"><span>D. verticalDirection</span></label></div><button class="check" onclick="checkAnswer(1)">Check answer</button><div class="feedback" id="fb1" aria-live="polite"></div><details class="solution"><summary>Detailed solution</summary><p><strong>Correct answer: C. crossAxisAlignment</strong></p><p>The cross axis of Column is horizontal. crossAxisAlignment.start/center/end position children across that axis.</p><p><strong>Why the other choices are not correct:</strong> A: mainAxisSize is not the requested property or behavior. | B: mainAxisAlignment is not the requested property or behavior. | D: verticalDirection is not the requested property or behavior.</p></details></div>
+<div class="question" data-key="2" id="q2"><h3>Question 3</h3><p>What is the default mainAxisAlignment for a Row?</p><div class="options"><label class="option"><input type="radio" name="q2" value="0"><span>A. center</span></label><label class="option"><input type="radio" name="q2" value="1"><span>B. spaceEvenly</span></label><label class="option"><input type="radio" name="q2" value="2"><span>C. start</span></label><label class="option"><input type="radio" name="q2" value="3"><span>D. end</span></label></div><button class="check" onclick="checkAnswer(2)">Check answer</button><div class="feedback" id="fb2" aria-live="polite"></div><details class="solution"><summary>Detailed solution</summary><p><strong>Correct answer: C. start</strong></p><p>MainAxisAlignment.start is the default. In a left-to-right interface it places children toward the left.</p><p><strong>Why the other choices are not correct:</strong> A: center is not the requested property or behavior. | B: spaceEvenly is not the requested property or behavior. | D: end is not the requested property or behavior.</p></details></div>
+<div class="question" data-key="0" id="q3"><h3>Question 4</h3><p>Which widget adds an invisible 20-pixel vertical gap between two Column children?</p><div class="options"><label class="option"><input type="radio" name="q3" value="0"><span>A. SizedBox(height: 20)</span></label><label class="option"><input type="radio" name="q3" value="1"><span>B. Text(height: 20)</span></label><label class="option"><input type="radio" name="q3" value="2"><span>C. Row(height: 20)</span></label><label class="option"><input type="radio" name="q3" value="3"><span>D. Card(height: 20)</span></label></div><button class="check" onclick="checkAnswer(3)">Check answer</button><div class="feedback" id="fb3" aria-live="polite"></div><details class="solution"><summary>Detailed solution</summary><p><strong>Correct answer: A. SizedBox(height: 20)</strong></p><p>SizedBox(height: 20) reserves 20 logical pixels vertically. Text, Row and Card do not have those constructors/parameters.</p><p><strong>Why the other choices are not correct:</strong> B: Text(height: 20) is not the requested property or behavior. | C: Row(height: 20) is not the requested property or behavior. | D: Card(height: 20) is not the requested property or behavior.</p></details></div>
+<div class="question" data-key="1" id="q4"><h3>Question 5</h3><p>What does Row(spacing: 20, ...) do?</p><div class="options"><label class="option"><input type="radio" name="q4" value="0"><span>A. Adds 20 pixels at the top</span></label><label class="option"><input type="radio" name="q4" value="1"><span>B. Adds 20 pixels between neighboring children</span></label><label class="option"><input type="radio" name="q4" value="2"><span>C. Centers all children</span></label><label class="option"><input type="radio" name="q4" value="3"><span>D. Adds 20 pixels only to the left</span></label></div><button class="check" onclick="checkAnswer(4)">Check answer</button><div class="feedback" id="fb4" aria-live="polite"></div><details class="solution"><summary>Detailed solution</summary><p><strong>Correct answer: B. Adds 20 pixels between neighboring children</strong></p><p>Row.spacing inserts a uniform gap between adjacent children; it does not add outer padding or change alignment.</p><p><strong>Why the other choices are not correct:</strong> A: Adds 20 pixels at the top is not the requested property or behavior. | C: Centers all children is not the requested property or behavior. | D: Adds 20 pixels only to the left is not the requested property or behavior.</p></details></div>
+<div class="question" data-key="2" id="q5"><h3>Question 6</h3><p>Which alignment leaves no extra space at the ends and distributes free space between Row children?</p><div class="options"><label class="option"><input type="radio" name="q5" value="0"><span>A. spaceAround</span></label><label class="option"><input type="radio" name="q5" value="1"><span>B. spaceEvenly</span></label><label class="option"><input type="radio" name="q5" value="2"><span>C. spaceBetween</span></label><label class="option"><input type="radio" name="q5" value="3"><span>D. center</span></label></div><button class="check" onclick="checkAnswer(5)">Check answer</button><div class="feedback" id="fb5" aria-live="polite"></div><details class="solution"><summary>Detailed solution</summary><p><strong>Correct answer: C. spaceBetween</strong></p><p>spaceBetween distributes available free space between the children, with the first and last at the ends.</p><p><strong>Why the other choices are not correct:</strong> A: spaceAround is not the requested property or behavior. | B: spaceEvenly is not the requested property or behavior. | D: center is not the requested property or behavior.</p></details></div>
+<div class="question" data-key="0" id="q6"><h3>Question 7</h3><p>What is the main effect of MainAxisSize.min on a Row?</p><div class="options"><label class="option"><input type="radio" name="q6" value="0"><span>A. Uses only the width needed by children when constraints permit</span></label><label class="option"><input type="radio" name="q6" value="1"><span>B. Forces Row to full screen width</span></label><label class="option"><input type="radio" name="q6" value="2"><span>C. Makes children wrap</span></label><label class="option"><input type="radio" name="q6" value="3"><span>D. Changes the text direction</span></label></div><button class="check" onclick="checkAnswer(6)">Check answer</button><div class="feedback" id="fb6" aria-live="polite"></div><details class="solution"><summary>Detailed solution</summary><p><strong>Correct answer: A. Uses only the width needed by children when constraints permit</strong></p><p>MainAxisSize.min asks the Row to occupy the minimum width allowed by its constraints and children; it does not wrap content.</p><p><strong>Why the other choices are not correct:</strong> B: Forces Row to full screen width is not the requested property or behavior. | C: Makes children wrap is not the requested property or behavior. | D: Changes the text direction is not the requested property or behavior.</p></details></div>
+<div class="question" data-key="1" id="q7"><h3>Question 8</h3><p>In Row, what does Expanded usually do?</p><div class="options"><label class="option"><input type="radio" name="q7" value="0"><span>A. Moves child to bottom</span></label><label class="option"><input type="radio" name="q7" value="1"><span>B. Uses allocated remaining horizontal space</span></label><label class="option"><input type="radio" name="q7" value="2"><span>C. Creates a Card surface</span></label><label class="option"><input type="radio" name="q7" value="3"><span>D. Adds fixed 20-pixel padding</span></label></div><button class="check" onclick="checkAnswer(7)">Check answer</button><div class="feedback" id="fb7" aria-live="polite"></div><details class="solution"><summary>Detailed solution</summary><p><strong>Correct answer: B. Uses allocated remaining horizontal space</strong></p><p>Expanded uses the flex algorithm to make its child fill its allocated space along Row’s horizontal main axis.</p><p><strong>Why the other choices are not correct:</strong> A: Moves child to bottom is not the requested property or behavior. | C: Creates a Card surface is not the requested property or behavior. | D: Adds fixed 20-pixel padding is not the requested property or behavior.</p></details></div>
+<div class="question" data-key="2" id="q8"><h3>Question 9</h3><p>Two Expanded children have flex values 1 and 2. How is their allocated space divided?</p><div class="options"><label class="option"><input type="radio" name="q8" value="0"><span>A. 1:1</span></label><label class="option"><input type="radio" name="q8" value="1"><span>B. 2:1</span></label><label class="option"><input type="radio" name="q8" value="2"><span>C. 1:2</span></label><label class="option"><input type="radio" name="q8" value="3"><span>D. 3:2</span></label></div><button class="check" onclick="checkAnswer(8)">Check answer</button><div class="feedback" id="fb8" aria-live="polite"></div><details class="solution"><summary>Detailed solution</summary><p><strong>Correct answer: C. 1:2</strong></p><p>The flex ratio is 1:2. The second child receives twice the flex-allocated width of the first.</p><p><strong>Why the other choices are not correct:</strong> A: 1:1 is not the requested property or behavior. | B: 2:1 is not the requested property or behavior. | D: 3:2 is not the requested property or behavior.</p></details></div>
+<div class="question" data-key="2" id="q9"><h3>Question 10</h3><p>What is the main difference between Row and Wrap when children are too wide?</p><div class="options"><label class="option"><input type="radio" name="q9" value="0"><span>A. Row wraps; Wrap clips</span></label><label class="option"><input type="radio" name="q9" value="1"><span>B. Both wrap automatically</span></label><label class="option"><input type="radio" name="q9" value="2"><span>C. Wrap can move children to another run; Row does not</span></label><label class="option"><input type="radio" name="q9" value="3"><span>D. Row always scrolls</span></label></div><button class="check" onclick="checkAnswer(9)">Check answer</button><div class="feedback" id="fb9" aria-live="polite"></div><details class="solution"><summary>Detailed solution</summary><p><strong>Correct answer: C. Wrap can move children to another run; Row does not</strong></p><p>Wrap creates additional runs as needed; Row normally overflows rather than wrapping or scrolling.</p><p><strong>Why the other choices are not correct:</strong> A: Row wraps; Wrap clips is not the requested property or behavior. | B: Both wrap automatically is not the requested property or behavior. | D: Row always scrolls is not the requested property or behavior.</p></details></div>
+<div class="question" data-key="1" id="q10"><h3>Question 11</h3><p>What does EdgeInsets.symmetric(horizontal: 20) mean?</p><div class="options"><label class="option"><input type="radio" name="q10" value="0"><span>A. 20 top and bottom</span></label><label class="option"><input type="radio" name="q10" value="1"><span>B. 20 left and right</span></label><label class="option"><input type="radio" name="q10" value="2"><span>C. 20 on all sides</span></label><label class="option"><input type="radio" name="q10" value="3"><span>D. 20 between every child</span></label></div><button class="check" onclick="checkAnswer(10)">Check answer</button><div class="feedback" id="fb10" aria-live="polite"></div><details class="solution"><summary>Detailed solution</summary><p><strong>Correct answer: B. 20 left and right</strong></p><p>horizontal sets both left and right insets to 20 logical pixels. vertical would affect top and bottom.</p><p><strong>Why the other choices are not correct:</strong> A: 20 top and bottom is not the requested property or behavior. | C: 20 on all sides is not the requested property or behavior. | D: 20 between every child is not the requested property or behavior.</p></details></div>
+<div class="question" data-key="1" id="q11"><h3>Question 12</h3><p>Is Card a Dart keyword?</p><div class="options"><label class="option"><input type="radio" name="q11" value="0"><span>A. Yes, like class</span></label><label class="option"><input type="radio" name="q11" value="1"><span>B. No, it is a Flutter widget class</span></label><label class="option"><input type="radio" name="q11" value="2"><span>C. Yes, like return</span></label><label class="option"><input type="radio" name="q11" value="3"><span>D. No, it is a variable</span></label></div><button class="check" onclick="checkAnswer(11)">Check answer</button><div class="feedback" id="fb11" aria-live="polite"></div><details class="solution"><summary>Detailed solution</summary><p><strong>Correct answer: B. No, it is a Flutter widget class</strong></p><p>Card is a class from Flutter’s material library. Card(...) invokes its constructor; it is not a language keyword.</p><p><strong>Why the other choices are not correct:</strong> A: Yes, like class is not the requested property or behavior. | C: Yes, like return is not the requested property or behavior. | D: No, it is a variable is not the requested property or behavior.</p></details></div>
+<div class="question" data-key="1" id="q12"><h3>Question 13</h3><p>Why might a Column use SingleChildScrollView?</p><div class="options"><label class="option"><input type="radio" name="q12" value="0"><span>A. To change its direction</span></label><label class="option"><input type="radio" name="q12" value="1"><span>B. To make content scroll when it exceeds the viewport</span></label><label class="option"><input type="radio" name="q12" value="2"><span>C. To add a shadow</span></label><label class="option"><input type="radio" name="q12" value="3"><span>D. To center children horizontally</span></label></div><button class="check" onclick="checkAnswer(12)">Check answer</button><div class="feedback" id="fb12" aria-live="polite"></div><details class="solution"><summary>Detailed solution</summary><p><strong>Correct answer: B. To make content scroll when it exceeds the viewport</strong></p><p>SingleChildScrollView enables scrolling for content larger than the viewport. It does not change Column alignment.</p><p><strong>Why the other choices are not correct:</strong> A: To change its direction is not the requested property or behavior. | C: To add a shadow is not the requested property or behavior. | D: To center children horizontally is not the requested property or behavior.</p></details></div>
+<div class="question" data-key="2" id="q13"><h3>Question 14</h3><p>In Row, which property controls the vertical alignment of children?</p><div class="options"><label class="option"><input type="radio" name="q13" value="0"><span>A. mainAxisAlignment</span></label><label class="option"><input type="radio" name="q13" value="1"><span>B. spacing</span></label><label class="option"><input type="radio" name="q13" value="2"><span>C. crossAxisAlignment</span></label><label class="option"><input type="radio" name="q13" value="3"><span>D. mainAxisSize</span></label></div><button class="check" onclick="checkAnswer(13)">Check answer</button><div class="feedback" id="fb13" aria-live="polite"></div><details class="solution"><summary>Detailed solution</summary><p><strong>Correct answer: C. crossAxisAlignment</strong></p><p>Row’s cross axis is vertical, so crossAxisAlignment controls vertical placement.</p><p><strong>Why the other choices are not correct:</strong> A: mainAxisAlignment is not the requested property or behavior. | B: spacing is not the requested property or behavior. | D: mainAxisSize is not the requested property or behavior.</p></details></div>
+<div class="question" data-key="1" id="q14"><h3>Question 15</h3><p>What does Padding do inside a Card?</p><div class="options"><label class="option"><input type="radio" name="q14" value="0"><span>A. Changes Card to a Row</span></label><label class="option"><input type="radio" name="q14" value="1"><span>B. Adds space between the Card edge and its child</span></label><label class="option"><input type="radio" name="q14" value="2"><span>C. Makes Card scroll</span></label><label class="option"><input type="radio" name="q14" value="3"><span>D. Makes the child immutable</span></label></div><button class="check" onclick="checkAnswer(14)">Check answer</button><div class="feedback" id="fb14" aria-live="polite"></div><details class="solution"><summary>Detailed solution</summary><p><strong>Correct answer: B. Adds space between the Card edge and its child</strong></p><p>Padding adds insets around its child, creating space inside the Card when nested as Card(child: Padding(...)).</p><p><strong>Why the other choices are not correct:</strong> A: Changes Card to a Row is not the requested property or behavior. | C: Makes Card scroll is not the requested property or behavior. | D: Makes the child immutable is not the requested property or behavior.</p></details></div></section><section class="lab" id="practice"><h2>5. Hands-on practice</h2><div class="lab" id="inclass-assignment"><h3>In-class practice assignment — Student Profile Dashboard (1 point)</h3><p>Use the examples above to create <strong>one Flutter screen</strong> showing a sample student profile. Use only the widgets and techniques introduced in this tutorial; no custom widget classes are required.</p><ol><li>Add an AppBar titled <strong>Student Profile</strong>.</li><li>Use a <strong>Row</strong> containing a profile <strong>Icon</strong> and a nested <strong>Column</strong> showing a sample name and major.</li><li>Add a <strong>Card</strong> showing at least three academic details (for example, student ID, semester, and GPA).</li><li>Show three course names in a horizontal <strong>Row</strong>. Use <strong>Padding</strong>, <strong>SizedBox</strong>, or <strong>spacing</strong> to make the layout readable.</li><li>Run the application and capture a screenshot of the completed screen.</li></ol><p><strong>Submit exactly two files:</strong> <code>student_profile.dart</code> (your complete source code) and <code>student_profile.png</code> (screenshot of the running UI).</p><p><strong>Points: 1</strong> — awarded for submitting both the Dart file and a screenshot demonstrating the completed in-class work. The layout does not need to match any sample pixel-for-pixel; sample data and colors may differ.</p><details><summary>Hints (without giving away the complete solution)</summary><p>Begin with <code>MaterialApp → Scaffold → Padding → Column</code>. Put a <code>Row</code> inside the Column for the profile header. Inside that Row, use <code>Icon</code> and another <code>Column</code> for the text. Add a <code>Card</code> and another <code>Row</code> for the remaining sections. Use <code>SingleChildScrollView</code> around the main Column if the content does not fit vertically.</p></details></div><h3>Additional optional practice exercises</h3><ol><li><strong>Student profile:</strong> Use a Column containing three Rows: name, course, and grade. Each Row must contain an Icon and a Text widget. Add 16 logical pixels of vertical spacing.</li><li><strong>Alignment investigation:</strong> Run the same Row with start, center, end, spaceBetween, spaceAround, and spaceEvenly. Explain what changes and what remains unchanged.</li><li><strong>Size investigation:</strong> Compare mainAxisSize.min and max for a Row inside Center. Explain why the Row's own width can change.</li><li><strong>Flex challenge:</strong> Make two colored boxes using Expanded(flex: 1) and Expanded(flex: 2). Explain their relative widths.</li><li><strong>Overflow challenge:</strong> Display six Chip widgets in a Row on a narrow device; then replace Row with Wrap. Explain the difference.</li></ol><details><summary><strong>Suggested solutions and reasoning</strong></summary><p><strong>1:</strong> Use Column(children: [Row(children: [Icon(Icons.person), Text('Name: Alex')]), SizedBox(height: 16), Row(children: [Icon(Icons.school), Text('Course: Flutter')]), SizedBox(height: 16), Row(children: [Icon(Icons.grade), Text('Grade: A')])]). The Column stacks three Rows; each Row aligns its icon and text horizontally.</p><p><strong>2:</strong> start groups at the beginning, center groups in the middle, end groups at the far edge; spaceBetween distributes gaps between children, spaceAround leaves half-sized edge gaps relative to internal gaps, and spaceEvenly makes all free gaps equal. The child order does not change.</p><p><strong>3:</strong> min requests only the width needed for the children, subject to parent constraints; max uses maximum available width. Center places the resulting Row in the center.</p><p><strong>4:</strong> Two Expanded widgets with flex 1 and 2 receive one-third and two-thirds of the flex-allocated space, respectively, when there are no other fixed-width children or gaps.</p><p><strong>5:</strong> A Row lays out children in one horizontal run and can overflow. Wrap creates new runs when there is insufficient width. Neither widget is automatically scrollable.</p></details></section><section id="references"><h2>6. Official Flutter references</h2><p><a href="https://api.flutter.dev/flutter/widgets/Row-class.html" target="_blank" rel="noopener">Row</a> · <a href="https://api.flutter.dev/flutter/widgets/Column-class.html" target="_blank" rel="noopener">Column</a> · <a href="https://api.flutter.dev/flutter/widgets/Expanded-class.html" target="_blank" rel="noopener">Expanded</a> · <a href="https://api.flutter.dev/flutter/widgets/Flexible-class.html" target="_blank" rel="noopener">Flexible</a> · <a href="https://api.flutter.dev/flutter/widgets/Wrap-class.html" target="_blank" rel="noopener">Wrap</a> · <a href="https://api.flutter.dev/flutter/material/Card-class.html" target="_blank" rel="noopener">Card</a> · <a href="https://api.flutter.dev/flutter/widgets/Padding-class.html" target="_blank" rel="noopener">Padding</a></p><p class="footer"></p></section></main><script>
+const checked={};function checkAnswer(i){const q=document.getElementById('q'+i),selected=q.querySelector('input:checked'),fb=document.getElementById('fb'+i);if(!selected){fb.textContent='Select an answer first.';fb.className='feedback bad';return;}const good=Number(selected.value)===Number(q.dataset.key);checked[i]=good;fb.textContent=good?'Correct. Open Detailed solution for the explanation.':'Not quite. Try another option, then review the detailed solution.';fb.className='feedback '+(good?'good':'bad');const count=Object.keys(checked).length,correct=Object.values(checked).filter(Boolean).length;document.getElementById('score').textContent=`${count} of 15 questions checked; ${correct} currently correct.`}
+document.querySelectorAll('[data-copy]').forEach(btn=>btn.addEventListener('click',async()=>{const code=document.getElementById(btn.dataset.copy).textContent;try{await navigator.clipboard.writeText(code);btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy code',1400)}catch(e){const s=window.getSelection(),r=document.createRange();r.selectNodeContents(document.getElementById(btn.dataset.copy));s.removeAllRanges();s.addRange(r);btn.textContent='Select text to copy';}}));
+const mapping={start:'flex-start',center:'center',end:'flex-end',spaceBetween:'space-between',spaceAround:'space-around',spaceEvenly:'space-evenly'};function updateLab(){const layout=document.getElementById('layoutChoice').value,align=document.getElementById('mainChoice').value,preview=document.getElementById('labPreview');preview.innerHTML='<div class="'+(layout==='Row'?'line':'stack')+'"><span class="txt">First</span><span class="txt">Second</span><span class="txt">Third</span></div>';const el=preview.firstElementChild;el.style.justifyContent=mapping[align];if(layout==='Column')el.style.alignItems='center';document.getElementById('labCode').textContent='mainAxisAlignment: MainAxisAlignment.'+align}document.getElementById('layoutChoice').addEventListener('change',updateLab);document.getElementById('mainChoice').addEventListener('change',updateLab);updateLab();
+</script></body></html>
