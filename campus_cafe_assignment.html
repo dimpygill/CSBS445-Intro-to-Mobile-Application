@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Assignment: Campus Café – Multi-Page Flutter App</title>
+<style>
+:root{--ink:#1f2937;--muted:#4b5563;--line:#e5e7eb;--brown:#6d4c41;--bpale:#efebe9;--blue:#1d4ed8;--pale:#eff6ff;--green:#15803d;--gpale:#f0fdf4;--orange:#c2410c;--opale:#fff7ed;--purple:#6d28d9}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:#fff;color:var(--ink);font:17px/1.6 Arial,Helvetica,sans-serif}
+main{max-width:1000px;margin:auto;padding:24px 18px 60px}
+h1{font-size:30px;line-height:1.2;margin:0 0 6px}h2{font-size:23px;margin:4px 0 10px}h3{font-size:19px;margin:20px 0 6px}
+p{margin:8px 0}.sub{color:var(--muted)}
+code{font-family:Consolas,Menlo,monospace;background:#f1f5f9;padding:1px 5px;border-radius:4px;font-size:.92em}
+.panel{border:1px solid var(--line);border-radius:16px;padding:20px;margin:18px 0}
+.hero{background:linear-gradient(135deg,#efebe9,#fff);border:1px solid #d7ccc8;border-radius:16px;padding:22px;display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+.hero .logo{font-size:64px}
+.facts{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+.facts span{background:#fff;border:1px solid #d7ccc8;border-radius:20px;padding:4px 12px;font-size:15px}
+.toc{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.toc a{text-decoration:none;color:var(--brown);background:var(--bpale);border-radius:20px;padding:6px 14px;font-size:15px;font-weight:bold}
+.toc a:hover,.toc a:focus{background:var(--brown);color:#fff}
+.note{background:var(--gpale);border-left:5px solid var(--green);padding:12px 15px;border-radius:8px;margin:12px 0}
+.warn{background:var(--opale);border-left:5px solid var(--orange);padding:12px 15px;border-radius:8px;margin:12px 0}
+.info{background:var(--pale);border-left:5px solid var(--blue);padding:12px 15px;border-radius:8px;margin:12px 0}
+table{border-collapse:collapse;width:100%;font-size:15px;margin:10px 0}td,th{border:1px solid var(--line);padding:9px;text-align:left;vertical-align:top}th{background:#f8fafc}
+/* nav map */
+.map{display:grid;grid-template-columns:auto auto auto auto auto;gap:10px;align-items:center;justify-content:center;margin:16px 0}
+.node{border:3px solid var(--brown);background:var(--bpale);border-radius:12px;padding:10px 16px;text-align:center;font-weight:bold;min-width:120px}
+.node small{display:block;font-weight:normal;color:var(--muted);font-size:13px}
+.edge{text-align:center;color:var(--brown);font-weight:bold;font-size:14px}
+.edge b{display:block;font-size:22px}
+/* phone mockups */
+.phones{display:flex;flex-wrap:wrap;gap:22px;justify-content:center;margin:14px 0}
+.phonewrap{text-align:center}
+.phonewrap .cap{font-weight:bold;margin-top:8px}
+.phone{width:230px;height:460px;border:8px solid #1f2937;border-radius:30px;overflow:hidden;background:#fffbfe;display:flex;flex-direction:column;box-shadow:0 6px 18px #0002;text-align:left}
+.ab{background:#f3e9e4;padding:12px 14px;font:bold 16px Arial;display:flex;gap:10px;align-items:center;color:#2b1d17}
+.pb{flex:1;padding:14px;display:flex;flex-direction:column;gap:8px;overflow:hidden;font-size:13px}
+.center{align-items:center;justify-content:center;text-align:center}
+.btnm{border-radius:18px;padding:8px 16px;font:bold 12px Arial;display:inline-flex;gap:6px;align-items:center}
+.btnm.el{background:#f7efeb;color:#6d4c41;box-shadow:0 1px 3px #0004}
+.btnm.ou{border:1px solid #8d6e63;color:#6d4c41}
+.tile{background:#fff;border-radius:10px;box-shadow:0 1px 3px #0003;padding:9px 10px;display:flex;align-items:center;gap:10px}
+.tile .ic{font-size:20px}.tile .tx{flex:1}.tile .tx b{display:block;font-size:13px}.tile .tx small{color:#6b7280}
+.tile .ch{color:#9ca3af}
+.bigic{background:#d7ccc8;border-radius:18px;width:110px;height:110px;display:grid;place-items:center;font-size:56px;margin:6px auto}
+.price{color:#15803d;font-weight:bold;font-size:17px}
+.inforow{display:flex;gap:12px;align-items:flex-start;padding:7px 0}
+.inforow .ic{font-size:18px;width:22px}
+.hl{outline:3px dashed #f59e0b;outline-offset:3px;border-radius:6px}
+/* widget tree */
+.box{border:2px solid;border-radius:10px;padding:7px 10px;margin:7px 0;font-size:14px}
+.box>.lbl{font-weight:bold;font-family:Consolas,Menlo,monospace}
+.box>.lbl small{font-family:Arial;font-weight:normal;color:var(--muted)}
+.b1{border-color:#2563eb;background:#eff6ff}.b2{border-color:#7c3aed;background:#f5f3ff}.b3{border-color:#0891b2;background:#ecfeff}.b4{border-color:#16a34a;background:#f0fdf4}.b5{border-color:#ea580c;background:#fff7ed}.b6{border-color:#6d4c41;background:#efebe9}
+.twocol{display:grid;grid-template-columns:250px 1fr;gap:22px;align-items:start}
+/* tabs */
+.tabs{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px;border-bottom:3px solid var(--brown)}
+.tab{border:0;background:var(--bpale);color:var(--brown);font:bold 15px Arial;padding:10px 16px;border-radius:10px 10px 0 0;cursor:pointer}
+.tab[aria-selected=true]{background:var(--brown);color:#fff}
+.tab:focus-visible{outline:3px solid #93c5fd}
+.tabpanel{padding:16px 2px}
+/* widget cards */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:14px;margin:12px 0}
+.card{border:1px solid var(--line);border-radius:12px;padding:14px;background:#fcfcfd}
+.card h4{margin:0 0 4px;font:bold 17px Consolas,Menlo,monospace;color:var(--brown)}
+.card .demo{background:#fffbfe;border:1px dashed #d7ccc8;border-radius:8px;padding:10px;margin:8px 0;font-size:13px}
+/* code */
+.codewrap{position:relative;margin:10px 0}
+pre{background:#101827;color:#e5edf9;padding:16px;border-radius:10px;overflow:auto;font:14px/1.55 Consolas,Menlo,monospace;margin:0}
+pre .c{color:#94a3b8}pre .todo{color:#fbbf24;font-weight:bold}pre mark{background:#facc1540;color:#fde68a}
+.copy{position:absolute;top:8px;right:8px;background:#334155;color:#fff;border:0;border-radius:6px;padding:5px 10px;font-size:13px;cursor:pointer}
+.step{display:flex;gap:12px;align-items:flex-start;margin:12px 0}.num{background:var(--brown);color:#fff;border-radius:50%;width:30px;height:30px;display:grid;place-items:center;font-weight:bold;flex:none}
+details{border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:10px 0;background:#fcfcfd}
+summary{cursor:pointer;font-weight:bold;color:var(--brown)}
+/* checklist */
+.check label{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border-radius:8px;cursor:pointer}
+.check label:hover{background:#f8fafc}
+.check input{width:20px;height:20px;margin-top:3px;accent-color:var(--green);flex:none}
+.check input:checked+span{color:var(--green);text-decoration:line-through}
+.cbar{height:12px;background:#e5e7eb;border-radius:6px;overflow:hidden;margin:6px 0}.cbar div{height:100%;width:0;background:var(--green);transition:width .3s}
+.ftree{border:1px solid var(--line);border-radius:12px;padding:12px;font:15px Consolas,Menlo,monospace;background:#fcfcfd}
+.ffile{margin:5px 0 5px 18px;padding:6px 10px;border-radius:8px;border-left:5px solid var(--brown);background:var(--bpale)}
+.ffile small{display:block;font:13px Arial;color:var(--muted)}
+@media(max-width:760px){.map{grid-template-columns:1fr}.edge b{transform:rotate(90deg)}.twocol{grid-template-columns:1fr}h1{font-size:25px}}
+</style>
+<style>
+.ab{background:#f3edf7;color:#1d1b20}
+.btnm.el{background:#f7f2fa;color:#6750a4}.btnm.fi{background:#6750a4;color:#fff}.btnm.ou{border:1px solid #79747e;color:#6750a4}.btnm.tx{color:#6750a4}
+.pb .t{font-size:14px;color:#1d1b20}
+.newtag{display:inline-block;background:#fff7ed;color:#c2410c;border:1px solid #fdba74;border-radius:10px;padding:1px 8px;font-size:13px;font-weight:bold}
+</style>
+</head>
+<body>
+<main>
+
+<div class="hero">
+ <div class="logo" aria-hidden="true">☕</div>
+ <div style="flex:1;min-width:260px">
+  <h1>Assignment: Build the "Campus Café" App</h1>
+  <p>Build a <b>4-page Flutter app</b> for a campus coffee shop. You will move between pages with <code>Navigator.push()</code> and <code>Navigator.pop()</code>, and each page goes in its own file.</p>
+ </div>
+</div>
+
+<nav class="toc" aria-label="Sections">
+ <a href="#map">App map</a><a href="#mockups">Mockups</a><a href="#new">New widgets</a><a href="#files">Files</a><a href="#build">Build steps</a><a href="#check">Checklist</a><a href="#rubric">Grading</a><a href="#submit">Submit</a>
+</nav>
+
+<section class="panel" id="map">
+<h2>🗺️ App map: how the pages connect</h2>
+<div class="map" role="img" aria-label="Home pushes to Menu. Menu pushes to Today's Special. Home also pushes to About Us.">
+ <div class="node">🏠 Home<small>home_page.dart</small></div>
+ <div class="edge"><b>→</b>push()<br><small>"View Menu"</small></div>
+ <div class="node">📋 Menu<small>menu_page.dart</small></div>
+ <div class="edge"><b>→</b>push()<br><small>"Today's Special"</small></div>
+ <div class="node">⭐ Today's Special<small>special_page.dart</small></div>
+</div>
+<div class="map" style="grid-template-columns:auto auto auto">
+ <div class="node">🏠 Home</div>
+ <div class="edge"><b>→</b>push()<br><small>"About Us"</small></div>
+ <div class="node">ℹ️ About Us<small>about_page.dart</small></div>
+</div>
+<p style="text-align:center">Every page except Home goes back with <b>pop()</b>, using a button or the automatic ← arrow.</p>
+</section>
+
+<section class="panel" id="mockups">
+<h2>📱 Mockups: what your app should look like</h2>
+<p>Your app doesn't have to match exactly, but it must include everything shown. The <span class="hl" style="padding:0 4px">dashed outline</span> marks what the user taps.</p>
+<div class="phones">
+ <div class="phonewrap">
+  <div class="phone" role="img" aria-label="Home page mockup">
+   <div class="ab">Campus Café</div>
+   <div class="pb center" style="gap:6px">
+    <div style="font-size:64px">☕</div>
+    <div class="t">Welcome to Campus Café!</div>
+    <div class="t">Fresh coffee and snacks between classes.</div>
+    <div style="height:22px"></div>
+    <span class="btnm fi hl">📖 View Menu</span>
+    <div style="height:4px"></div>
+    <span class="btnm ou hl">ⓘ About Us</span>
+   </div>
+  </div>
+  <div class="cap">1. Home</div>
+ </div>
+ <div class="phonewrap">
+  <div class="phone" role="img" aria-label="Menu page mockup">
+   <div class="ab">← Menu</div>
+   <div class="pb center" style="gap:6px">
+    <div style="font-size:44px">📋</div>
+    <div class="t">Latte: 4.50</div>
+    <div class="t">Green Tea: 3.00</div>
+    <div class="t">Croissant: 3.25</div>
+    <div class="t">Cookie: 2.00</div>
+    <div style="height:18px"></div>
+    <span class="btnm el hl">⭐ Today's Special</span>
+    <span class="btnm tx hl">Go Back</span>
+   </div>
+  </div>
+  <div class="cap">2. Menu</div>
+ </div>
+ <div class="phonewrap">
+  <div class="phone" role="img" aria-label="Today's Special page mockup">
+   <div class="ab">← Today's Special</div>
+   <div class="pb center" style="gap:6px">
+    <div style="font-size:64px">🧁</div>
+    <div class="t">Blueberry Muffin</div>
+    <div class="t">Price: 2.75</div>
+    <div class="t">Baked fresh every morning!</div>
+    <div style="height:22px"></div>
+    <span class="btnm el hl">← Back to Menu</span>
+   </div>
+  </div>
+  <div class="cap">3. Today's Special</div>
+ </div>
+ <div class="phonewrap">
+  <div class="phone" role="img" aria-label="About Us page mockup">
+   <div class="ab">← About Us</div>
+   <div class="pb center" style="gap:6px">
+    <div style="font-size:44px">ℹ️</div>
+    <div class="t">Open Mon–Fri, 7 AM – 6 PM</div>
+    <div class="t">Student Center, 1st floor</div>
+    <div class="t">Phone: 360-555-0123</div>
+    <div style="height:22px"></div>
+    <span class="btnm ou hl">← Back to Home</span>
+   </div>
+  </div>
+  <div class="cap">4. About Us</div>
+ </div>
+</div>
+<p class="sub" style="text-align:center">You can use your own café name, menu items, prices and details.</p>
+<div class="info"><b>Notice:</b> every page uses the <b>same pattern</b>: <code>Scaffold → Center → Column(mainAxisSize: MainAxisSize.min) → children</code>.</div>
+</section>
+
+<section class="panel" id="new">
+<h2>🆕 Two new widgets</h2>
+<p>You'll use two widgets you may not have seen before. Here's what they do.</p>
+<div class="cards">
+ <div class="card"><h4>Icon</h4>
+  Shows a built-in picture. Flutter has thousands of them in <code>Icons.</code> (type <code>Icons.</code> in VS Code to see the list).
+  <div class="demo" style="text-align:center"><span style="font-size:44px">☕</span><br><small>Icon(Icons.local_cafe, size: 100)</small></div>
+  <pre>Icon(Icons.local_cafe, size: 100)</pre>
+  <p style="font-size:15px"><b>Icons.local_cafe</b> picks which picture to show. <b>size: 100</b> makes it big (the default is 24).</p>
+  <p style="font-size:15px">Icons to try: <code>Icons.local_cafe</code>, <code>Icons.menu_book</code>, <code>Icons.star</code>, <code>Icons.cake</code>, <code>Icons.info</code></p>
+ </div>
+ <div class="card"><h4>SizedBox</h4>
+  An <b>invisible empty box</b>. Put it between widgets in a <code>Column</code> to add space so they don't look squashed.
+  <div class="demo">
+   <div style="display:flex;gap:16px;justify-content:center;align-items:flex-start">
+    <div style="text-align:center"><small><b>Without</b></small><div class="t">Text A</div><div class="t">Text B</div></div>
+    <div style="text-align:center"><small><b>With</b></small><div class="t">Text A</div><div style="height:24px;border:1px dashed #f59e0b;font-size:10px;color:#c2410c;display:grid;place-items:center">SizedBox</div><div class="t">Text B</div></div>
+   </div>
+  </div>
+  <pre>Text('Text A'),
+SizedBox(height: 20),
+Text('Text B'),</pre>
+  <p style="font-size:15px"><b>height: 20</b> is how tall the empty space is. A bigger number gives more space.</p>
+ </div>
+</div>
+</section>
+
+<section class="panel" id="files">
+<h2>📁 Project files</h2>
+<div class="twocol">
+ <div class="ftree" role="img" aria-label="lib folder with five dart files">
+  📁 lib
+  <div class="ffile">main.dart <small>imports home_page</small></div>
+  <div class="ffile">home_page.dart <small>imports menu_page and about_page</small></div>
+  <div class="ffile">menu_page.dart <small>imports special_page</small></div>
+  <div class="ffile">special_page.dart <small>no page imports</small></div>
+  <div class="ffile">about_page.dart <small>no page imports</small></div>
+ </div>
+ <div>
+  <div class="step"><span class="num">1</span><div>Create a project: <code>flutter create campus_cafe</code></div></div>
+  <div class="step"><span class="num">2</span><div>Open the <code>campus_cafe</code> folder in VS Code.</div></div>
+  <div class="step"><span class="num">3</span><div>In <code>lib</code>, create the four page files shown here.</div></div>
+  <div class="step"><span class="num">4</span><div>Choose <b>Chrome</b> as your device so you can test quickly.</div></div>
+  <div class="note"><b>Remember:</b> Home opens <b>two</b> pages, so <code>home_page.dart</code> needs <b>two</b> import lines, one for each page it opens.</div>
+ </div>
+</div>
+</section>
+
+<section class="panel" id="build">
+<h2>🛠️ Build it, page by page</h2>
+<p>Pick a tab. Each one shows the widget tree, what's required, and starter code. Lines marked <code style="color:#b45309">// TODO</code> are for <b>you</b> to complete.</p>
+<div class="tabs" role="tablist" aria-label="Build steps">
+ <button class="tab" role="tab" aria-selected="true" aria-controls="p0" id="t0">0 · main.dart</button>
+ <button class="tab" role="tab" aria-selected="false" aria-controls="p1" id="t1">1 · Home</button>
+ <button class="tab" role="tab" aria-selected="false" aria-controls="p2" id="t2">2 · Menu</button>
+ <button class="tab" role="tab" aria-selected="false" aria-controls="p3" id="t3">3 · Today's Special</button>
+ <button class="tab" role="tab" aria-selected="false" aria-controls="p4" id="t4">4 · About Us</button>
+</div>
+
+<!-- MAIN -->
+<div class="tabpanel" role="tabpanel" id="p0" aria-labelledby="t0">
+<h3>main.dart: start the app</h3>
+<p>This file is complete. Paste it in.</p>
+<div class="codewrap"><button class="copy">Copy</button><pre>import 'package:flutter/material.dart';
+import 'home_page.dart';
+
+void main() {
+  runApp(
+    MaterialApp(
+      home: Builder(
+        builder: (context) => homePage(context),
+      ),
+    ),
+  );
+}</pre></div>
+</div>
+
+<!-- HOME -->
+<div class="tabpanel" role="tabpanel" id="p1" aria-labelledby="t1" hidden>
+<h3>Page 1: Home</h3>
+<div class="twocol">
+ <div class="tree">
+  <div class="box b1"><div class="lbl">Scaffold</div>
+   <div class="box b2"><div class="lbl">appBar: AppBar</div></div>
+   <div class="box b2"><div class="lbl">body: Center</div>
+    <div class="box b3"><div class="lbl">Column <small>(min)</small></div>
+     <div class="box b5"><div class="lbl">Icon ☕ <small>NEW</small></div></div>
+     <div class="box b5"><div class="lbl">Text <small>welcome</small></div></div>
+     <div class="box b5"><div class="lbl">Text <small>tagline</small></div></div>
+     <div class="box b6"><div class="lbl">SizedBox <small>NEW</small></div></div>
+     <div class="box b4"><div class="lbl">FilledButton.icon</div><small>push → Menu</small></div>
+     <div class="box b6"><div class="lbl">SizedBox</div></div>
+     <div class="box b4"><div class="lbl">OutlinedButton.icon</div><small>push → About</small></div>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div>
+  <p><b>Required:</b></p>
+  <ul>
+   <li>A big café <code>Icon</code></li>
+   <li>Two <code>Text</code> lines: a welcome and a tagline</li>
+   <li><code>SizedBox</code> spacing before and between the buttons</li>
+   <li>"View Menu" <code>FilledButton.icon</code> → <b>push</b> the Menu page</li>
+   <li>"About Us" <code>OutlinedButton.icon</code> → <b>push</b> the About page</li>
+  </ul>
+  <p>This page is given almost complete as a <b>worked example</b>. Only the About button's push is left for you.</p>
+ </div>
+</div>
+<div class="codewrap"><button class="copy">Copy</button><pre>import 'package:flutter/material.dart';
+import 'menu_page.dart';
+import 'about_page.dart';
+
+Widget homePage(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(title: Text('Campus Café')),
+    body: Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.local_cafe, size: 100),
+          Text('Welcome to Campus Café!'),
+          Text('Fresh coffee and snacks between classes.'),
+          SizedBox(height: 30),
+          FilledButton.icon(
+            icon: Icon(Icons.menu_book),
+            label: Text('View Menu'),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => menuPage(context),
+                ),
+              );
+            },
+          ),
+          SizedBox(height: 10),
+          OutlinedButton.icon(
+            icon: Icon(Icons.info),
+            label: Text('About Us'),
+            onPressed: () {
+              <span class="todo">// TODO: push the About page (aboutPage)</span>
+              <span class="todo">//       Copy the push above and change menuPage to aboutPage</span>
+            },
+          ),
+        ],
+      ),
+    ),
+  );
+}</pre></div>
+</div>
+
+<!-- MENU -->
+<div class="tabpanel" role="tabpanel" id="p2" aria-labelledby="t2" hidden>
+<h3>Page 2: Menu</h3>
+<div class="twocol">
+ <div class="tree">
+  <div class="box b1"><div class="lbl">Scaffold</div>
+   <div class="box b2"><div class="lbl">appBar: AppBar('Menu')</div></div>
+   <div class="box b2"><div class="lbl">body: Center</div>
+    <div class="box b3"><div class="lbl">Column <small>(min)</small></div>
+     <div class="box b5"><div class="lbl">Icon 📋</div></div>
+     <div class="box b5"><div class="lbl">Text × 4 <small>menu items</small></div></div>
+     <div class="box b6"><div class="lbl">SizedBox</div></div>
+     <div class="box b4"><div class="lbl">ElevatedButton.icon</div><small>push → Special</small></div>
+     <div class="box b4"><div class="lbl">TextButton</div><small>pop → Home</small></div>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div>
+  <p><b>Required:</b></p>
+  <ul>
+   <li>An <code>Icon</code> at the top (e.g. <code>Icons.menu_book</code>)</li>
+   <li><b>At least 4</b> menu items, each as its own <code>Text</code></li>
+   <li>"Today's Special" button → <b>push</b> the Special page</li>
+   <li>"Go Back" <code>TextButton</code> → <b>pop</b></li>
+  </ul>
+  <p>This page opens one page (Today's Special) and goes back to another (Home), so it uses both <b>push</b> and <b>pop</b>.</p>
+ </div>
+</div>
+<div class="codewrap"><button class="copy">Copy</button><pre>import 'package:flutter/material.dart';
+import 'special_page.dart';
+
+Widget menuPage(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(title: Text('Menu')),
+    body: Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.menu_book, size: 60),
+          Text('Latte: 4.50'),
+          Text('Green Tea: 3.00'),
+          <span class="todo">// TODO: add at least 2 more menu items as Text</span>
+          SizedBox(height: 30),
+          ElevatedButton.icon(
+            icon: Icon(Icons.star),
+            label: Text("Today's Special"),
+            onPressed: () {
+              <span class="todo">// TODO: push the Special page (specialPage)</span>
+            },
+          ),
+          TextButton(
+            child: Text('Go Back'),
+            onPressed: () {
+              <span class="todo">// TODO: pop back to Home</span>
+            },
+          ),
+        ],
+      ),
+    ),
+  );
+}</pre></div>
+<div class="warn"><b>Why <code>"Today's Special"</code> uses double quotes:</b> the word <i>Today's</i> has an apostrophe <code>'</code>. With single quotes, Dart would think the text ends there. Double quotes avoid the problem.</div>
+</div>
+
+<!-- SPECIAL -->
+<div class="tabpanel" role="tabpanel" id="p3" aria-labelledby="t3" hidden>
+<h3>Page 3: Today's Special</h3>
+<div class="twocol">
+ <div class="tree">
+  <div class="box b1"><div class="lbl">Scaffold</div>
+   <div class="box b2"><div class="lbl">appBar: AppBar</div></div>
+   <div class="box b2"><div class="lbl">body: Center</div>
+    <div class="box b3"><div class="lbl">Column <small>(min)</small></div>
+     <div class="box b5"><div class="lbl">Icon 🧁</div></div>
+     <div class="box b5"><div class="lbl">Text <small>name</small></div></div>
+     <div class="box b5"><div class="lbl">Text <small>price</small></div></div>
+     <div class="box b5"><div class="lbl">Text <small>description</small></div></div>
+     <div class="box b6"><div class="lbl">SizedBox</div></div>
+     <div class="box b4"><div class="lbl">ElevatedButton</div><small>pop → Menu</small></div>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div>
+  <p><b>Required:</b></p>
+  <ul>
+   <li>AppBar title "Today's Special"</li>
+   <li>A big <code>Icon</code> (e.g. <code>Icons.cake</code>)</li>
+   <li>Three <code>Text</code> lines: name, price, and a short description</li>
+   <li>"Back to Menu" button → <b>pop</b></li>
+  </ul>
+  <p>This is a <b>last page</b>: it doesn't open any other page, so it doesn't import any page files.</p>
+ </div>
+</div>
+<div class="codewrap"><button class="copy">Copy</button><pre>import 'package:flutter/material.dart';
+
+Widget specialPage(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(title: Text("Today's Special")),
+    body: Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.cake, size: 100),
+          <span class="todo">// TODO: Text with the item name</span>
+          <span class="todo">// TODO: Text with the price</span>
+          <span class="todo">// TODO: Text with a short description</span>
+          SizedBox(height: 30),
+          <span class="todo">// TODO: ElevatedButton.icon 'Back to Menu'</span>
+          <span class="todo">//       icon: Icon(Icons.arrow_back)</span>
+          <span class="todo">//       onPressed: pop back to the Menu</span>
+        ],
+      ),
+    ),
+  );
+}</pre></div>
+<details><summary>Hint: what does the button look like?</summary>
+<pre>ElevatedButton.icon(
+  icon: Icon(Icons.arrow_back),
+  label: Text('Back to Menu'),
+  onPressed: () {
+    Navigator.pop(context);
+  },
+),</pre>
+<p>A <code>.icon</code> button uses <code>icon:</code> and <code>label:</code> instead of <code>child:</code>.</p></details>
+</div>
+
+<!-- ABOUT -->
+<div class="tabpanel" role="tabpanel" id="p4" aria-labelledby="t4" hidden>
+<h3>Page 4: About Us</h3>
+<div class="twocol">
+ <div class="tree">
+  <div class="box b1"><div class="lbl">Scaffold</div>
+   <div class="box b2"><div class="lbl">appBar: AppBar('About Us')</div></div>
+   <div class="box b2"><div class="lbl">body: Center</div>
+    <div class="box b3"><div class="lbl">Column <small>(min)</small></div>
+     <div class="box b5"><div class="lbl">Icon ℹ️</div></div>
+     <div class="box b5"><div class="lbl">Text <small>hours</small></div></div>
+     <div class="box b5"><div class="lbl">Text <small>location</small></div></div>
+     <div class="box b5"><div class="lbl">Text <small>phone</small></div></div>
+     <div class="box b6"><div class="lbl">SizedBox</div></div>
+     <div class="box b4"><div class="lbl">OutlinedButton.icon</div><small>pop → Home</small></div>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div>
+  <p><b>Required:</b></p>
+  <ul>
+   <li>An <code>Icon</code> (e.g. <code>Icons.info</code>)</li>
+   <li><b>At least 3</b> <code>Text</code> lines: hours, location, phone</li>
+   <li>"Back to Home" button → <b>pop</b></li>
+  </ul>
+  <p>Now try it <b>on your own</b>: only the outline is given. Use the Special page as your guide, because it has the same structure.</p>
+ </div>
+</div>
+<div class="codewrap"><button class="copy">Copy</button><pre>import 'package:flutter/material.dart';
+
+Widget aboutPage(BuildContext context) {
+  return Scaffold(
+    <span class="todo">// TODO: appBar with the title 'About Us'</span>
+    body: Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          <span class="todo">// TODO: Icon(Icons.info, size: 60)</span>
+          <span class="todo">// TODO: 3 Text lines: hours, location, phone</span>
+          <span class="todo">// TODO: SizedBox(height: 30)</span>
+          <span class="todo">// TODO: OutlinedButton.icon 'Back to Home' that pops</span>
+        ],
+      ),
+    ),
+  );
+}</pre></div>
+</div>
+</section>
+
+<section class="panel" id="check">
+<h2>✅ Self-check before you submit</h2>
+<p class="sub">Tick each box as you test your app. (This list is just for you; it isn't submitted.)</p>
+<div class="cbar" aria-hidden="true"><div id="cfill"></div></div>
+<p id="ctext" style="font-weight:bold;margin:0 0 6px">0 of 10 done</p>
+<div class="check" id="checklist">
+ <label><input type="checkbox"><span>The app runs with no red errors in the Problems panel</span></label>
+ <label><input type="checkbox"><span>I have 5 files in <code>lib</code>: main, home_page, menu_page, special_page, about_page</span></label>
+ <label><input type="checkbox"><span>Home shows a big icon, two lines of text, and two buttons</span></label>
+ <label><input type="checkbox"><span>"View Menu" opens the Menu page</span></label>
+ <label><input type="checkbox"><span>"About Us" opens the About Us page</span></label>
+ <label><input type="checkbox"><span>Menu shows at least 4 items</span></label>
+ <label><input type="checkbox"><span>"Today's Special" opens the Special page, and "Back to Menu" returns to the Menu</span></label>
+ <label><input type="checkbox"><span>"Go Back" on the Menu and "Back to Home" on About return to Home</span></label>
+ <label><input type="checkbox"><span>The ← arrow in the top bar works on every page except Home</span></label>
+ <label><input type="checkbox"><span>I used <code>SizedBox</code> so the buttons aren't squashed against the text</span></label>
+</div>
+</section>
+
+<section class="panel" id="rubric">
+<h2>📊 Grading (10 points)</h2>
+<div class="note" style="font-size:18px"><b>Submit a complete, working solution and you get the full 10 points.</b></div>
+<p>Your solution is complete when it has:</p>
+<table>
+<tr><th>Part</th><th>What "complete" means</th></tr>
+<tr><td><b>All 4 pages</b></td><td>Home, Menu, Today's Special and About Us, with everything shown in the mockups</td></tr>
+<tr><td><b>Working navigation</b></td><td>Every button and the ← arrow move between pages correctly</td></tr>
+<tr><td><b>Project files</b></td><td>5 files in <code>lib</code>, and the app runs with no errors</td></tr>
+<tr><td><b>Submission</b></td><td>Screenshots + zipped <code>lib</code> folder + short reflection (see below)</td></tr>
+</table>
+<p class="sub">Use the self-check list above to make sure you have everything before you submit.</p>
+</section>
+
+<section class="panel" id="submit">
+<h2>📤 What to submit on Canvas</h2>
+<div class="step"><span class="num">1</span><div><b>Four screenshots</b>, one of each page: Home, Menu, Today's Special and About Us.</div></div>
+<div class="step"><span class="num">2</span><div><b>Your code:</b> right-click the <code>lib</code> folder → <b>Compress</b> (Mac) or <b>Send to → Compressed (zipped) folder</b> (Windows), and upload <code>lib.zip</code>.</div></div>
+<div class="step"><span class="num">3</span><div><b>One short reflection</b> (2–3 sentences) in the comment box: what was the hardest part, and how did you solve it?</div></div>
+<div class="warn"><b>Taking screenshots:</b> on Windows press <b>Win + Shift + S</b>; on Mac press <b>Cmd + Shift + 4</b>. If you run in Chrome, make the window narrow so it looks like a phone.</div>
+</section>
+
+</main>
+<script>
+const tabs=[...document.querySelectorAll('.tab')];
+function sel(t){tabs.forEach(x=>{const on=x===t;x.setAttribute('aria-selected',on);x.tabIndex=on?0:-1;document.getElementById(x.getAttribute('aria-controls')).hidden=!on});}
+tabs.forEach((t,i)=>{t.addEventListener('click',()=>sel(t));t.addEventListener('keydown',e=>{let n=null;if(e.key==='ArrowRight')n=tabs[(i+1)%tabs.length];if(e.key==='ArrowLeft')n=tabs[(i-1+tabs.length)%tabs.length];if(n){sel(n);n.focus();}});});
+sel(tabs[0]);
+document.querySelectorAll('.copy').forEach(b=>b.addEventListener('click',async()=>{
+ const pre=b.nextElementSibling;
+ try{await navigator.clipboard.writeText(pre.innerText);b.textContent='Copied!';}
+ catch(e){const r=document.createRange();r.selectNodeContents(pre);const s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent='Selected: press Ctrl+C';}
+ setTimeout(()=>b.textContent='Copy',2500);
+}));
+const boxes=[...document.querySelectorAll('#checklist input')];
+function upd(){const n=boxes.filter(b=>b.checked).length;document.getElementById('cfill').style.width=(n/boxes.length*100)+'%';document.getElementById('ctext').textContent=n+' of '+boxes.length+' done'+(n===boxes.length?' 🎉 Ready to submit!':'');}
+boxes.forEach(b=>b.addEventListener('change',upd));
+</script>
+</body>
+</html>
