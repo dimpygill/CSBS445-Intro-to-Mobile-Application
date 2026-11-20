@@ -1,0 +1,779 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flutter Navigation: Three Simple Pages</title>
+<style>
+:root{--ink:#172033;--muted:#5b6475;--blue:#2563eb;--pale:#eff6ff;--green:#15803d;--line:#d8deea;--orange:#c2410c;--purple:#7c3aed;--red:#b91c1c}
+*{box-sizing:border-box}body{margin:0;background:#f7f9fc;color:var(--ink);font:17px/1.55 Arial,sans-serif}
+main{max-width:1050px;margin:auto;padding:28px 20px 56px}h1{font-size:32px;line-height:1.2;margin:0 0 8px}h2{font-size:23px;margin:4px 0 10px}h3{font-size:19px;margin:20px 0 6px}p{margin:8px 0}.sub{color:var(--muted)}
+.panel{background:white;border:1px solid var(--line);border-radius:16px;padding:20px;margin:18px 0;box-shadow:0 4px 16px #1720330a}
+.flow{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;margin:16px 0}
+.page{border:2px solid var(--blue);background:var(--pale);border-radius:13px;padding:16px;width:220px;text-align:center}
+.page strong{display:block;font-size:20px}.page small{color:var(--muted)}
+.arrow{font-size:26px;color:var(--blue);font-weight:bold}
+button{border:0;background:var(--blue);color:white;padding:11px 17px;border-radius:9px;font-size:16px;cursor:pointer;margin:5px}
+button.secondary{background:#475569}
+.phone{max-width:360px;margin:14px auto;border:8px solid #202938;border-radius:28px;overflow:hidden;background:white;min-height:250px}
+.phonehead{background:#dbeafe;padding:15px;font-weight:bold;display:flex;gap:10px;align-items:center}.phonebody{padding:20px;text-align:center}
+.backarrow{font-size:20px;visibility:hidden}
+.status{font-weight:bold;color:var(--green);min-height:26px}
+code{font-family:Consolas,monospace;background:#eef2f7;padding:2px 5px;border-radius:4px}
+pre{background:#101827;color:#e5edf9;padding:18px;border-radius:12px;overflow:auto;font:14px/1.55 Consolas,monospace}
+pre code{background:none;padding:0}
+.note{background:#f0fdf4;border-left:4px solid #16a34a;padding:12px 15px;border-radius:8px;margin:12px 0}
+.warn{background:#fff7ed;border-left:4px solid #ea580c;padding:12px 15px;border-radius:8px;margin:12px 0}
+.step{display:flex;gap:12px;align-items:flex-start;margin:12px 0}.num{background:#dbeafe;color:#1d4ed8;border-radius:50%;width:30px;height:30px;display:grid;place-items:center;font-weight:bold;flex:none}
+html{scroll-behavior:smooth}
+.toc{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-top:14px}
+.tocgroup{border-radius:12px;padding:12px;border:1px solid var(--line);border-top:5px solid var(--c);background:#fbfcfe}
+.g1{--c:#2563eb;--cp:#eff6ff}.g2{--c:#7c3aed;--cp:#f5f3ff}.g3{--c:#15803d;--cp:#f0fdf4}
+.tochead{font-weight:bold;font-size:15px;color:var(--c);margin:2px 4px 8px}
+.toc a{display:flex;align-items:center;gap:10px;padding:8px;border-radius:8px;color:var(--ink);text-decoration:none;font-size:16px;transition:background .15s,transform .15s}
+.toc a:hover{background:var(--cp);transform:translateX(3px)}
+.toc a span{flex:none;display:grid;place-items:center;min-width:28px;height:28px;padding:0 4px;border-radius:14px;background:var(--cp);color:var(--c);font-weight:bold;font-size:13px}
+.toc a:hover span{background:var(--c);color:white}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin:14px 0}
+.card{border:1px solid var(--line);border-radius:12px;padding:14px;background:#fbfcfe}
+.card b{display:block;font-size:18px;margin-bottom:4px}.card .icon{font-size:26px}
+.card .like{color:var(--muted);font-size:15px;margin-top:6px}
+.demo{display:grid;grid-template-columns:1fr 260px;gap:20px;align-items:start}
+.stackbox{border:2px dashed var(--line);border-radius:12px;padding:12px;min-height:250px;display:flex;flex-direction:column-reverse;gap:8px}
+.stackitem{background:var(--pale);border:2px solid #93c5fd;border-radius:9px;padding:10px;text-align:center;font-weight:bold;transition:all .3s}
+.stackitem.top{background:var(--blue);color:white;border-color:var(--blue)}
+.log{font:14px/1.5 Consolas,monospace;background:#101827;color:#a7f3d0;border-radius:10px;padding:10px;min-height:70px;max-height:140px;overflow:auto;margin-top:10px}
+.chain{display:flex;flex-wrap:wrap;gap:8px;align-items:stretch;justify-content:center;margin:14px 0}
+.link{border:2px solid var(--purple);background:#f5f3ff;border-radius:10px;padding:10px 12px;width:175px;font-size:15px}
+.link code{display:block;font-weight:bold;background:none;padding:0;margin-bottom:4px;color:var(--purple);font-size:15px}
+.chain .arrow{align-self:center;font-size:22px;color:var(--purple)}
+.tree{font-size:15px}
+.box{border:2px solid;border-radius:10px;padding:8px 10px;margin:8px 0}
+.box>.lbl{font-weight:bold;font-family:Consolas,monospace}
+.box>.lbl small{font-family:Arial;font-weight:normal;color:var(--muted)}
+.b1{border-color:#2563eb;background:#eff6ff}.b2{border-color:#7c3aed;background:#f5f3ff}.b3{border-color:#0891b2;background:#ecfeff}.b4{border-color:#16a34a;background:#f0fdf4}.b5{border-color:#ea580c;background:#fff7ed}
+.row{display:flex;gap:8px;flex-wrap:wrap}.row>.box{flex:1;min-width:150px}
+.anat{background:#101827;color:#e5edf9;padding:18px;border-radius:12px;font:15px/1.9 Consolas,monospace;overflow:auto;white-space:pre}
+.tag{border-radius:5px;padding:1px 4px}
+.t1{background:#1d4ed8}.t2{background:#7c3aed}.t3{background:#0e7490}.t4{background:#15803d}.t5{background:#c2410c}
+.badge{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;color:white;font:bold 13px Arial;vertical-align:middle;margin-left:4px}
+.legend .step .num{color:white}
+.legend .n1{background:#1d4ed8}.legend .n2{background:#7c3aed}.legend .n3{background:#0e7490}.legend .n4{background:#15803d}.legend .n5{background:#c2410c}
+.mini{display:flex;flex-direction:column-reverse;gap:4px;width:130px;margin:auto}
+.mini div{background:var(--pale);border:2px solid #93c5fd;border-radius:7px;padding:5px;text-align:center;font-size:14px;font-weight:bold}
+.mini div.top{background:var(--blue);color:white;border-color:var(--blue)}
+.mini div.gone{background:#fee2e2;border:2px dashed var(--red);color:var(--red);text-decoration:line-through}
+.frame{text-align:center}.frame p{font-size:14px;color:var(--muted);margin-top:6px}
+table{border-collapse:collapse;width:100%;font-size:15px}td,th{border:1px solid var(--line);padding:9px;text-align:left;vertical-align:top}th{background:#f1f5f9}
+.bad{color:var(--red);font-weight:bold}.good{color:var(--green);font-weight:bold}
+details{border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:10px 0;background:#fbfcfe}
+summary{cursor:pointer;font-weight:bold}
+.sgrid{display:grid;grid-template-columns:260px 1fr;gap:22px;align-items:start}
+.sphone{border:7px solid #202938;border-radius:24px;overflow:hidden;background:white;display:flex;flex-direction:column;min-height:330px}
+.sbar{background:#ede9fe;border-bottom:3px dashed var(--purple);padding:14px;text-align:center}
+.sbody{flex:1;background:#ecfeff;border:3px dashed #0891b2;margin:10px;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:10px;text-align:center}
+.sbar span,.sbody>span:not(.fakebtn){font:bold 18px Consolas,monospace;display:block}
+.sbar small,.sbody small{color:var(--muted);font-size:14px}
+.sphone.small{width:200px;min-height:230px}.sphone.small .sbar span{font:bold 15px Arial}
+.fakebtn{background:var(--blue);color:white;border-radius:7px;padding:6px 10px;font-size:14px}.fakebtn.grey{background:#475569}
+.btngrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin:14px 0}
+.btncard{border:1px solid var(--line);border-radius:12px;padding:14px;background:#fbfcfe}
+.btncard b{font-size:18px;font-family:Consolas,monospace}.btncard p{font-size:15px}.btncard pre{font-size:13px;padding:12px;margin:8px 0 0}
+.preview{display:flex;align-items:center;justify-content:center;gap:10px;background:#fef7ff;border:1px solid #e7e0ec;border-radius:10px;min-height:90px;margin-bottom:10px}
+.m3{display:inline-block;font:500 14px/1 Arial,sans-serif;letter-spacing:.1px;padding:12px 24px;border-radius:20px;color:#6750a4;user-select:none}
+.m3-elevated{background:#f7f2fa;box-shadow:0 1px 3px #0000004d,0 1px 2px #00000026}
+.m3-filled{background:#6750a4;color:white}
+.m3-outlined{border:1px solid #79747e;padding:11px 23px}
+.m3-text{padding:12px 12px}
+.m3-disabled{background:#1d1b201f;color:#1d1b2061;padding:8px 18px;margin-left:6px}
+.m3-icon{display:grid;place-items:center;width:40px;height:40px;border-radius:50%;font-size:22px;color:#49454f}
+.m3-fab{display:grid;place-items:center;width:56px;height:56px;border-radius:16px;background:#eaddff;color:#21005d;font-size:28px;box-shadow:0 3px 6px #00000033}
+.fablbl{position:absolute;right:10px;bottom:80px;background:white;padding:1px 4px;border-radius:4px;font:11px Consolas,monospace;color:var(--muted)}
+.ftree{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fbfcfe;font:15px Consolas,monospace}
+.fdir{font-weight:bold;margin-bottom:6px}
+.ffile{margin:6px 0 6px 18px;padding:7px 10px;border-radius:8px;border-left:5px solid var(--c);background:var(--cp)}
+.ffile small{display:block;font:13px Arial;color:var(--muted)}
+.f0,.fl0{--c:#475569;--cp:#f1f5f9}.f1,.fl1{--c:#2563eb;--cp:#eff6ff}.f2,.fl2{--c:#7c3aed;--cp:#f5f3ff}.f3,.fl3{--c:#15803d;--cp:#f0fdf4}
+.chain .link.fl0,.chain .link.fl1,.chain .link.fl2,.chain .link.fl3{border-color:var(--c);background:var(--cp)}
+.chain .link[class*=fl] code{color:var(--c)}
+.tabs{display:flex;flex-wrap:wrap;gap:4px;margin-top:10px}
+.tabbtn{margin:0;background:#e2e8f0;color:var(--ink);border-radius:9px 9px 0 0;font:14px Consolas,monospace;padding:9px 14px}
+.tabbtn.active{background:#101827;color:white}
+.tabpane{margin-top:0;border-top-left-radius:0}
+pre mark{background:#facc1533;color:#fde68a;border-radius:3px;padding:0 2px}
+@media(max-width:700px){.sgrid{grid-template-columns:1fr}.sphone.small{width:100%}h1{font-size:26px}.page{width:100%}.arrow{transform:rotate(90deg)}.demo{grid-template-columns:1fr}.link{width:100%}}
+</style>
+</head>
+<body><main>
+<h1>Flutter: Connect 3 Pages with push() and pop()</h1>
+<p class="sub">A beginner-friendly example using simple functions — no custom classes, no <code>extends</code>, and no <code>@override</code>.</p>
+
+<section class="panel">
+<h2>What you'll learn</h2>
+<p>By the end of this lesson you will be able to build a small app with three pages and move forward and backward between them.</p>
+<div class="toc">
+ <div class="tocgroup g1">
+  <div class="tochead">🧱 Part A · The basics</div>
+  <a href="#s1"><span>1</span>How the pages connect</a>
+  <a href="#s2"><span>2</span>Key words to know</a>
+  <a href="#scaffold"><span>2b</span>Understanding Scaffold</a>
+  <a href="#s3"><span>3</span>How the app starts</a>
+  <a href="#s4"><span>4</span>What a page is made of</a>
+ </div>
+ <div class="tocgroup g2">
+  <div class="tochead">🧭 Part B · Navigation</div>
+  <a href="#s5"><span>5</span>Click the demo</a>
+  <a href="#s6"><span>6</span>push() in detail</a>
+  <a href="#s7"><span>7</span>pop() in detail</a>
+  <a href="#s8"><span>8</span>The navigation stack</a>
+ </div>
+ <div class="tocgroup g3">
+  <div class="tochead">🚀 Part C · Build &amp; practice</div>
+  <a href="#s9"><span>9</span>Complete example &amp; how to run it</a>
+  <a href="#s9b"><span>9b</span>Alternate way: one file per page</a>
+  <a href="#s10"><span>10</span>Common mistakes</a>
+  <a href="#s11"><span>11</span>Practice &amp; quick check</a>
+  <a href="#s12"><span>12</span>Bonus: other button types</a>
+ </div>
+</div>
+</section>
+
+<section class="panel" id="s1">
+<h2>1. See how the pages connect</h2>
+<div class="flow">
+ <div class="page"><strong>Home Page</strong><small>Button: Open Details</small></div><div class="arrow">→ push()</div>
+ <div class="page"><strong>Details Page</strong><small>Button: Open About</small></div><div class="arrow">→ push()</div>
+ <div class="page"><strong>About Page</strong><small>Back button</small></div>
+</div>
+<div class="flow">
+ <div class="page" style="border-color:#475569;background:#f1f5f9"><strong>Home Page</strong></div><div class="arrow" style="color:#475569">← pop()</div>
+ <div class="page" style="border-color:#475569;background:#f1f5f9"><strong>Details Page</strong></div><div class="arrow" style="color:#475569">← pop()</div>
+ <div class="page" style="border-color:#475569;background:#f1f5f9"><strong>About Page</strong></div>
+</div>
+<p><b>push()</b> opens a new page on top. <b>pop()</b> closes the current page and returns to the previous one.</p>
+<p>Think of it like a web browser: clicking a link is <b>push</b> (go forward to a new page), and the Back button is <b>pop</b> (return to where you were).</p>
+</section>
+
+<section class="panel" id="s2">
+<h2>2. Key words to know</h2>
+<p>Learn these six words first. Every line of the example uses at least one of them.</p>
+<div class="cards">
+ <div class="card"><span class="icon">🧱</span><b>Widget</b>Everything you see in Flutter is a widget: text, buttons, layouts, even whole pages.<div class="like">Like a LEGO brick — small pieces snap together to build bigger things.</div></div>
+ <div class="card"><span class="icon">📄</span><b>Page (Screen)</b>One full screen of the app. Here, each page is a function that returns a <code>Scaffold</code>.<div class="like">Like one sheet of paper in a notebook.</div></div>
+ <div class="card"><span class="icon">🏗️</span><b>Scaffold</b>The empty frame of a page. It doesn't show much on its own. It just gives you labeled places to put things: a top bar (<code>appBar</code>) and a main area (<code>body</code>).<div class="like">Like a printed form with a header box and a big main box, ready to fill in. <a href="#scaffold">See the picture ↓</a></div></div>
+ <div class="card"><span class="icon">📍</span><b>BuildContext</b>The widget's "location" in the app. Flutter uses it to find the Navigator.<div class="like">Like your home address — needed so things can find you.</div></div>
+ <div class="card"><span class="icon">🧭</span><b>Navigator</b>The built-in manager that keeps track of open pages and moves between them.<div class="like">Like a librarian who stacks and removes books for you.</div></div>
+ <div class="card"><span class="icon">🛣️</span><b>Route</b>A page wrapped up so the Navigator can show it. <code>MaterialPageRoute</code> adds the slide animation.<div class="like">Like putting a letter in an envelope before mailing it.</div></div>
+</div>
+</section>
+
+<section class="panel" id="scaffold">
+<h2>2b. Understanding Scaffold</h2>
+<p>A <b>Scaffold</b> is the empty frame of a page. Think of a printed form: before anyone writes on it, it already has a <b>header box</b> at the top and a big <b>main box</b> below. You just fill in each box.</p>
+<div class="sgrid">
+ <div class="sphone">
+  <div class="sbar"><span>appBar</span><small>top bar: the page title goes here</small></div>
+  <div class="sbody"><span>body</span><small>main area: text, buttons, images</small></div>
+ </div>
+ <div>
+  <p>This is how it looks in code:</p>
+<pre>Scaffold(
+  appBar: AppBar(title: Text('Home Page')),  // fill the top box
+  body: Center(child: Text('Hello!')),       // fill the main box
+)</pre>
+  <div class="step"><span class="num">1</span><div><b><code>Scaffold</code></b> means "give me a blank page with a standard layout."</div></div>
+  <div class="step"><span class="num">2</span><div><b><code>appBar:</code></b> is what goes in the top bar.</div></div>
+  <div class="step"><span class="num">3</span><div><b><code>body:</code></b> is what goes in the main area.</div></div>
+ </div>
+</div>
+<h3>Same frame, different content</h3>
+<p>Every page needs the same basic frame, so <code>homePage</code>, <code>detailsPage</code> and <code>aboutPage</code> each return a Scaffold. Only the title and the body change:</p>
+<div class="flow">
+ <div class="sphone small"><div class="sbar"><span>Home Page</span></div><div class="sbody"><span class="fakebtn">Open Details</span></div></div>
+ <div class="sphone small"><div class="sbar"><span>Details Page</span></div><div class="sbody"><small>This is the Details Page</small><span class="fakebtn">Open About</span><span class="fakebtn grey">Go Back</span></div></div>
+ <div class="sphone small"><div class="sbar"><span>About Page</span></div><div class="sbody"><span class="fakebtn grey">Go Back</span></div></div>
+</div>
+<div class="note"><b>Where the name comes from:</b> a building scaffold is the frame workers put up before the walls go in. Flutter's Scaffold is the same idea: a frame you build your page inside.</div>
+</section>
+
+<section class="panel" id="s3">
+<h2>3. How the app starts</h2>
+<p>When you press Run, Flutter follows this chain from left to right until the Home page appears:</p>
+<div class="chain">
+ <div class="link"><code>main()</code>The starting point of every Dart program. Runs first.</div><div class="arrow">→</div>
+ <div class="link"><code>runApp(...)</code>Tells Flutter: "draw this widget on the screen."</div><div class="arrow">→</div>
+ <div class="link"><code>MaterialApp</code>Sets up the app, including the <b>Navigator</b> we'll use for push/pop.</div><div class="arrow">→</div>
+ <div class="link"><code>home: Builder</code>Creates a fresh <code>context</code> that sits <i>inside</i> MaterialApp.</div><div class="arrow">→</div>
+ <div class="link"><code>homePage(context)</code>Our first page is drawn. This is the bottom of the stack.</div>
+</div>
+<pre>void main() {
+  runApp(
+    MaterialApp(
+      home: Builder(
+        builder: (context) => homePage(context),
+      ),
+    ),
+  );
+}</pre>
+<div class="note"><b>Why do we need <code>Builder</code>?</b> <code>Navigator.push(context, ...)</code> searches <i>upward</i> from <code>context</code> to find a Navigator. The Navigator is created by <code>MaterialApp</code>, so our context must be <i>below</i> MaterialApp. <code>Builder</code> gives us exactly that context, so the buttons on Home can find the Navigator.</div>
+</section>
+
+<section class="panel" id="s4">
+<h2>4. What a page is made of</h2>
+<p>A page is a set of widgets placed inside each other. Here is each page of our app drawn as boxes inside boxes. Each box is one widget.</p>
+
+<h3>Page 1: Home Page</h3>
+<div class="tree">
+ <div class="box b1"><div class="lbl">Scaffold <small>— the whole page</small></div>
+  <div class="box b2"><div class="lbl">appBar: AppBar <small>— the top bar</small></div>
+   <div class="box b5"><div class="lbl">title: Text('Home Page')</div></div>
+  </div>
+  <div class="box b2"><div class="lbl">body: Center <small>— puts its child in the middle</small></div>
+   <div class="box b4"><div class="lbl">child: ElevatedButton</div><small>'Open Details' → push() to Details Page</small></div>
+  </div>
+ </div>
+</div>
+<p class="sub">Home has only <b>one</b> button, so <code>Center</code> can hold it directly with <code>child</code>. No Column is needed.</p>
+
+<h3>Page 2: Details Page</h3>
+<div class="tree">
+ <div class="box b1"><div class="lbl">Scaffold <small>— the whole page</small></div>
+  <div class="box b2"><div class="lbl">appBar: AppBar <small>— the top bar</small></div>
+   <div class="box b5"><div class="lbl">title: Text('Details Page')</div></div>
+  </div>
+  <div class="box b2"><div class="lbl">body: Center <small>— puts its child in the middle</small></div>
+   <div class="box b3"><div class="lbl">child: Column <small>— stacks children top-to-bottom</small></div>
+    <div class="lbl" style="font-size:14px;margin-top:4px">children: [</div>
+    <div class="box b5"><div class="lbl">Text</div><small>'This is the Details Page'</small></div>
+    <div class="box b4"><div class="lbl">ElevatedButton</div><small>'Open About' → push() to About Page</small></div>
+    <div class="box b4"><div class="lbl">ElevatedButton</div><small>'Go Back' → pop() to Home Page</small></div>
+    <div class="lbl" style="font-size:14px">]</div>
+   </div>
+  </div>
+ </div>
+</div>
+<p class="sub">Details has <b>three</b> things to show, so it needs a <code>Column</code> with a <code>children</code> list. They appear top to bottom, in the same order as the list.</p>
+
+<h3>Page 3: About Page</h3>
+<div class="tree">
+ <div class="box b1"><div class="lbl">Scaffold <small>— the whole page</small></div>
+  <div class="box b2"><div class="lbl">appBar: AppBar <small>— the top bar (shows a ← back arrow automatically)</small></div>
+   <div class="box b5"><div class="lbl">title: Text('About Page')</div></div>
+  </div>
+  <div class="box b2"><div class="lbl">body: Center <small>— puts its child in the middle</small></div>
+   <div class="box b4"><div class="lbl">child: ElevatedButton</div><small>'Go Back' → pop() to Details Page</small></div>
+  </div>
+ </div>
+</div>
+<p class="sub">About is like Home: one button, so <code>Center</code> holds it directly with <code>child</code>.</p>
+
+<h3>Compare the three pages</h3>
+<table>
+<tr><th>Page</th><th>AppBar title</th><th>Body</th><th>Buttons</th></tr>
+<tr><td>Home</td><td>Home Page</td><td>Center → ElevatedButton</td><td>Open Details (push)</td></tr>
+<tr><td>Details</td><td>Details Page</td><td>Center → Column → [Text, 2 buttons]</td><td>Open About (push), Go Back (pop)</td></tr>
+<tr><td>About</td><td>About Page</td><td>Center → ElevatedButton</td><td>Go Back (pop)</td></tr>
+</table>
+<div class="note"><b>Notice:</b> all three pages share the same frame (Scaffold → AppBar + body). Only what's inside the body changes.</div>
+<table style="margin-top:12px">
+<tr><th>Widget</th><th>What it does</th><th>Key property</th></tr>
+<tr><td><code>Scaffold</code></td><td>Basic page layout</td><td><code>appBar</code>, <code>body</code></td></tr>
+<tr><td><code>AppBar</code></td><td>Top bar with a title; shows a ← back arrow automatically when there's a page to go back to</td><td><code>title</code></td></tr>
+<tr><td><code>Center</code></td><td>Centers one child</td><td><code>child</code></td></tr>
+<tr><td><code>Column</code></td><td>Places several widgets vertically. <code>mainAxisSize: MainAxisSize.min</code> makes it only as tall as needed, so it stays centered</td><td><code>children</code> (a list)</td></tr>
+<tr><td><code>ElevatedButton</code></td><td>A clickable button</td><td><code>child</code> (label), <code>onPressed</code> (what happens on tap)</td></tr>
+</table>
+<div class="note"><b>Remember:</b> <code>child</code> = exactly one widget inside. <code>children</code> = a list <code>[ ... ]</code> of widgets inside.</div>
+</section>
+
+<section class="panel" id="s5">
+<h2>5. Click the demo</h2>
+<p>Use the buttons in the phone. Watch the <b>stack</b> on the right grow when you push and shrink when you pop.</p>
+<div class="demo">
+ <div>
+  <div class="phone">
+   <div class="phonehead"><span class="backarrow" id="backArrow" onclick="back()" style="cursor:pointer">←</span><span id="phoneTitle">Home Page</span></div>
+   <div class="phonebody">
+    <div id="phoneText">Welcome! This is the first page.</div>
+    <div style="margin-top:18px" id="phoneButtons"><button onclick="go('details')">Open Details</button></div>
+    <div class="status" id="status">Current page: Home</div>
+   </div>
+  </div>
+  <p class="sub" style="text-align:center">Try opening Details, then About, then use Back. The ← arrow in the top bar also works.</p>
+ </div>
+ <div>
+  <b>Navigation stack</b> <small class="sub">(top = what you see)</small>
+  <div class="stackbox" id="stackViz"></div>
+  <b style="display:block;margin-top:10px">Code that ran</b>
+  <div class="log" id="log">// app started: Home</div>
+ </div>
+</div>
+</section>
+
+<section class="panel" id="s6">
+<h2>6. push() in detail — go forward</h2>
+<div class="step"><span class="num">1</span><div><b>Open another page:</b> call <code>Navigator.push()</code> and provide the page function inside <code>MaterialPageRoute</code>.</div></div>
+<p>Here is the same code with each part labeled:</p>
+<div class="anat"><span class="tag t1">Navigator.push</span>(<span class="badge" style="background:#1d4ed8">1</span>
+  <span class="tag t2">context</span>,<span class="badge" style="background:#7c3aed">2</span>
+  <span class="tag t3">MaterialPageRoute</span>(<span class="badge" style="background:#0e7490">3</span>
+    <span class="tag t4">builder: (context) =></span> <span class="tag t5">detailsPage(context)</span>,<span class="badge" style="background:#15803d">4</span><span class="badge" style="background:#c2410c">5</span>
+  ),
+);</div>
+<div class="legend">
+ <div class="step"><span class="num n1">1</span><div><b>Navigator.push</b> — "Put a new page on top of the stack."</div></div>
+ <div class="step"><span class="num n2">2</span><div><b>context</b> — the current page's location, so Flutter can find the Navigator.</div></div>
+ <div class="step"><span class="num n3">3</span><div><b>MaterialPageRoute</b> — wraps the page and gives it the standard slide-in animation.</div></div>
+ <div class="step"><span class="num n4">4</span><div><b>builder: (context) =&gt;</b> — a small function. The <code>=&gt;</code> means "return this." Flutter calls it when it is ready to draw the new page.</div></div>
+ <div class="step"><span class="num n5">5</span><div><b>detailsPage(context)</b> — our page function that returns the Scaffold for the new page.</div></div>
+</div>
+<h3>Where does push() go?</h3>
+<p>Put it inside a button's <code>onPressed</code>, so it only runs when the user taps:</p>
+<pre>ElevatedButton(
+  child: Text('Open Details'),
+  onPressed: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => detailsPage(context),
+      ),
+    );
+  },
+),</pre>
+<div class="note"><b>Read it out loud:</b> "When pressed, ask the Navigator to push a new Material route that builds the Details page."</div>
+</section>
+
+<section class="panel" id="s7">
+<h2>7. pop() in detail — go back</h2>
+<div class="step"><span class="num">2</span><div><b>Go back:</b> call <code>Navigator.pop(context)</code>.</div></div>
+<pre>Navigator.pop(context);</pre>
+<p><code>pop</code> needs only one thing: <code>context</code>. It doesn't need to know which page to go to, because the previous page is already waiting underneath in the stack.</p>
+<h3>Two ways to go back</h3>
+<div class="cards">
+ <div class="card"><b>① Your own button</b>A "Go Back" button whose <code>onPressed</code> calls <code>Navigator.pop(context)</code>.</div>
+ <div class="card"><b>② The automatic ← arrow</b>When a page is pushed, <code>AppBar</code> adds a back arrow for you. Tapping it calls pop. The Android system Back button does the same.</div>
+</div>
+<div class="note"><b>Explain to students:</b> push = go forward to a new page; pop = remove the current page and go back.</div>
+</section>
+
+<section class="panel" id="s8">
+<h2>8. What happens to the navigation stack?</h2>
+<p>When students move forward and backward, describe the stack like a pile of pages:</p>
+<h3>Going forward (push)</h3>
+<div class="flow">
+ <div class="page"><strong>Home</strong><small>First page</small></div><div class="arrow">push</div>
+ <div class="page"><strong>Home</strong><strong>Details</strong><small>Details is on top</small></div><div class="arrow">push</div>
+ <div class="page"><strong>Home</strong><strong>Details</strong><strong>About</strong><small>About is on top</small></div>
+</div>
+<h3>Going back (pop)</h3>
+<div class="flow">
+ <div class="frame"><div class="mini"><div>Home</div><div>Details</div><div class="top">About</div></div><p>Start: on About</p></div><div class="arrow">pop</div>
+ <div class="frame"><div class="mini"><div>Home</div><div class="top">Details</div><div class="gone">About</div></div><p>About removed</p></div><div class="arrow">pop</div>
+ <div class="frame"><div class="mini"><div class="top">Home</div><div class="gone">Details</div></div><p>Back to Home</p></div>
+</div>
+<p>Pressing Back on About runs <code>pop()</code>: About is removed, so Details appears again. Another <code>pop()</code> returns to Home.</p>
+<div class="note"><b>Rule:</b> Last page in is the first page out — like a stack of plates. You always add and remove from the top.</div>
+</section>
+
+<section class="panel" id="s9">
+<h2>9. Complete simple Flutter example</h2>
+<h3>How to run it</h3>
+<div class="step"><span class="num">1</span><div><b>Quickest (no install):</b> open <code>dartpad.dev</code> in a browser and make sure it is set to Flutter. Delete the sample code.</div></div>
+<div class="step"><span class="num">2</span><div><b>Or on your computer:</b> in a terminal run <code>flutter create nav_demo</code>, then open the <code>nav_demo</code> folder in VS Code or Android Studio.</div></div>
+<div class="step"><span class="num">3</span><div>Open <code>lib/main.dart</code>, delete everything inside, and paste the code below.</div></div>
+<div class="step"><span class="num">4</span><div>Press <b>Run</b> (DartPad) or press <b>F5</b> / run <code>flutter run</code> with an emulator, phone, or Chrome selected.</div></div>
+<div class="step"><span class="num">5</span><div>Test it: Home → Open Details → Open About → Go Back → Go Back. You should end on Home.</div></div>
+<p>Paste this into <code>main.dart</code>. Each page is just a function that returns a <code>Scaffold</code>.</p>
+<pre>import 'package:flutter/material.dart';
+
+void main() {
+  runApp(
+    MaterialApp(
+      home: Builder(
+        builder: (context) => homePage(context),
+      ),
+    ),
+  );
+}
+
+// PAGE 1: HOME
+Widget homePage(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(title: Text('Home Page')),
+    body: Center(
+      child: ElevatedButton(
+        child: Text('Open Details'),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => detailsPage(context),
+            ),
+          );
+        },
+      ),
+    ),
+  );
+}
+
+// PAGE 2: DETAILS
+Widget detailsPage(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(title: Text('Details Page')),
+    body: Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text('This is the Details Page'),
+          ElevatedButton(
+            child: Text('Open About'),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => aboutPage(context),
+                ),
+              );
+            },
+          ),
+          ElevatedButton(
+            child: Text('Go Back'),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+// PAGE 3: ABOUT
+Widget aboutPage(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(title: Text('About Page')),
+    body: Center(
+      child: ElevatedButton(
+        child: Text('Go Back'),
+        onPressed: () {
+          Navigator.pop(context);
+        },
+      ),
+    ),
+  );
+}</pre>
+<h3>Line-by-line summary</h3>
+<table>
+<tr><th>Code</th><th>Meaning</th></tr>
+<tr><td><code>import 'package:flutter/material.dart';</code></td><td>Loads Flutter's Material widgets (Scaffold, AppBar, buttons…).</td></tr>
+<tr><td><code>Widget homePage(BuildContext context)</code></td><td>A function named <code>homePage</code> that takes a context and returns a Widget (the page).</td></tr>
+<tr><td><code>return Scaffold(...)</code></td><td>The page itself: top bar + body.</td></tr>
+<tr><td><code>onPressed: () { ... }</code></td><td>Code inside the braces runs only when the button is tapped.</td></tr>
+<tr><td><code>Navigator.push(...)</code></td><td>Go forward to a new page.</td></tr>
+<tr><td><code>Navigator.pop(context)</code></td><td>Go back to the previous page.</td></tr>
+</table>
+</section>
+
+<section class="panel" id="s9b">
+<h2>9b. Alternate way: one file per page</h2>
+<p>Section 9 puts everything in <code>main.dart</code>. That's fine for a small app, but as apps grow, it's easier to give <b>each page its own file</b>. The app works exactly the same; the code is just better organized.</p>
+
+<h3>The folder structure</h3>
+<div class="sgrid" style="grid-template-columns:300px 1fr">
+ <div class="ftree">
+  <div class="fdir">📁 lib</div>
+  <div class="ffile f0">📄 main.dart <small>starts the app</small></div>
+  <div class="ffile f1">📄 home_page.dart <small>Page 1</small></div>
+  <div class="ffile f2">📄 details_page.dart <small>Page 2</small></div>
+  <div class="ffile f3">📄 about_page.dart <small>Page 3</small></div>
+ </div>
+ <div>
+  <div class="step"><span class="num">1</span><div>In VS Code, right-click the <code>lib</code> folder and choose <b>New File</b>.</div></div>
+  <div class="step"><span class="num">2</span><div>Create <code>home_page.dart</code>, <code>details_page.dart</code> and <code>about_page.dart</code>.</div></div>
+  <div class="step"><span class="num">3</span><div>Use <b>lowercase with underscores</b> for file names. That's the Dart naming rule.</div></div>
+ </div>
+</div>
+
+<h3>How the files connect: import</h3>
+<p>If a file <b>uses</b> a function from another file, it must <b>import</b> that file:</p>
+<div class="chain">
+ <div class="link fl0"><code>main.dart</code>uses <b>homePage()</b></div><div class="arrow">→ imports</div>
+ <div class="link fl1"><code>home_page.dart</code>uses <b>detailsPage()</b></div><div class="arrow">→ imports</div>
+ <div class="link fl2"><code>details_page.dart</code>uses <b>aboutPage()</b></div><div class="arrow">→ imports</div>
+ <div class="link fl3"><code>about_page.dart</code>imports no page files</div>
+</div>
+<div class="note"><b>Also remember:</b> every file needs <code>import 'package:flutter/material.dart';</code> at the top, because every file uses Flutter widgets.</div>
+
+<h3>The code for each file</h3>
+<p class="sub">Click a tab to see that file. The new <code>import</code> lines are highlighted.</p>
+<div class="tabs">
+ <button class="tabbtn active" onclick="showTab(this,'t-main')">main.dart</button>
+ <button class="tabbtn" onclick="showTab(this,'t-home')">home_page.dart</button>
+ <button class="tabbtn" onclick="showTab(this,'t-details')">details_page.dart</button>
+ <button class="tabbtn" onclick="showTab(this,'t-about')">about_page.dart</button>
+</div>
+<pre class="tabpane" id="t-main">import 'package:flutter/material.dart';
+<mark>import 'home_page.dart';   // so we can use homePage()</mark>
+
+void main() {
+  runApp(
+    MaterialApp(
+      home: Builder(
+        builder: (context) => homePage(context),
+      ),
+    ),
+  );
+}</pre>
+<pre class="tabpane" id="t-home" hidden>import 'package:flutter/material.dart';
+<mark>import 'details_page.dart';   // so we can use detailsPage()</mark>
+
+Widget homePage(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(title: Text('Home Page')),
+    body: Center(
+      child: ElevatedButton(
+        child: Text('Open Details'),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => detailsPage(context),
+            ),
+          );
+        },
+      ),
+    ),
+  );
+}</pre>
+<pre class="tabpane" id="t-details" hidden>import 'package:flutter/material.dart';
+<mark>import 'about_page.dart';   // so we can use aboutPage()</mark>
+
+Widget detailsPage(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(title: Text('Details Page')),
+    body: Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text('This is the Details Page'),
+          ElevatedButton(
+            child: Text('Open About'),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => aboutPage(context),
+                ),
+              );
+            },
+          ),
+          ElevatedButton(
+            child: Text('Go Back'),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      ),
+    ),
+  );
+}</pre>
+<pre class="tabpane" id="t-about" hidden>import 'package:flutter/material.dart';
+// No page imports needed: About doesn't open any other page.
+
+Widget aboutPage(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(title: Text('About Page')),
+    body: Center(
+      child: ElevatedButton(
+        child: Text('Go Back'),
+        onPressed: () {
+          Navigator.pop(context);
+        },
+      ),
+    ),
+  );
+}</pre>
+
+<h3>One file vs. many files</h3>
+<table>
+<tr><th></th><th>One file (Section 9)</th><th>One file per page (this section)</th></tr>
+<tr><td>Best for</td><td>Tiny demos, first lessons, DartPad</td><td>Real apps and growing projects</td></tr>
+<tr><td>Finding a page</td><td>Scroll through one long file</td><td>Open the file with the page's name</td></tr>
+<tr><td>Extra work</td><td>None</td><td>Add <code>import</code> lines</td></tr>
+<tr><td>Works in DartPad?</td><td>✅ Yes</td><td>⚠️ Needs a real project (VS Code / Android Studio)</td></tr>
+</table>
+
+<h3>If you see an error</h3>
+<table>
+<tr><th>Error message</th><th>Fix</th></tr>
+<tr><td><code>The function 'detailsPage' isn't defined</code></td><td>Add the missing <code>import 'details_page.dart';</code> line.</td></tr>
+<tr><td><code>Target of URI doesn't exist</code></td><td>The file name in the import doesn't exactly match the real file name. Check spelling and underscores.</td></tr>
+<tr><td>Errors on <code>Scaffold</code>, <code>Text</code>, etc.</td><td>That file is missing <code>import 'package:flutter/material.dart';</code></td></tr>
+</table>
+</section>
+
+<section class="panel" id="s10">
+<h2>10. Common mistakes and how to fix them</h2>
+<table>
+<tr><th>Mistake</th><th>What happens</th><th>Fix</th></tr>
+<tr><td><span class="bad">✗</span> <code>builder: detailsPage(context),</code></td><td>Error: the builder must be a <i>function</i>, not a page.</td><td><span class="good">✓</span> <code>builder: (context) =&gt; detailsPage(context),</code></td></tr>
+<tr><td><span class="bad">✗</span> <code>Navigator.push(context, detailsPage(context));</code></td><td>Error: push needs a Route, not a Widget.</td><td><span class="good">✓</span> Wrap the page in <code>MaterialPageRoute(...)</code>.</td></tr>
+<tr><td><span class="bad">✗</span> Putting push directly in the page instead of inside <code>onPressed</code></td><td>The page opens by itself the moment it is drawn, or the app throws an error.</td><td><span class="good">✓</span> Always put push/pop inside <code>onPressed: () { ... }</code>.</td></tr>
+<tr><td><span class="bad">✗</span> <code>home: homePage(context)</code> directly in main</td><td>There's no <code>context</code> available in <code>main()</code>.</td><td><span class="good">✓</span> Use <code>Builder(builder: (context) =&gt; homePage(context))</code>.</td></tr>
+<tr><td><span class="bad">✗</span> A "Go Back" button on Home</td><td>There's no page below Home, so pop can leave a black screen or close the app.</td><td><span class="good">✓</span> Only use pop on pages that were pushed.</td></tr>
+<tr><td><span class="bad">✗</span> Missing <code>,</code> or <code>)</code></td><td>Red error lines; the app won't run.</td><td><span class="good">✓</span> Add trailing commas and let the editor auto-format (right-click → Format Document).</td></tr>
+</table>
+</section>
+
+<section class="panel" id="s11">
+<h2>11. Practice and quick check</h2>
+<h3>Practice tasks</h3>
+<div class="step"><span class="num">1</span><div><b>Easy:</b> Change the text on each page, e.g. add your name to the About page.</div></div>
+<div class="step"><span class="num">2</span><div><b>Medium:</b> Add a button on Home that opens the About page directly (skipping Details).</div></div>
+<div class="step"><span class="num">3</span><div><b>Challenge:</b> Add a fourth page called <code>contactPage</code> and open it from About. Draw the stack before and after.</div></div>
+<h3>Quick check (click to see the answer)</h3>
+<details><summary>Q1. Which command opens a new page?</summary><p><code>Navigator.push()</code> — it puts a new page on top of the stack.</p></details>
+<details><summary>Q2. You are on About. The stack is Home → Details → About. You press Back once. Which page do you see?</summary><p><b>Details.</b> pop removes About from the top, so Details is now on top.</p></details>
+<details><summary>Q3. Why do we write <code>builder: (context) =&gt; ...</code> instead of just the page?</summary><p>The builder must be a function. Flutter calls it later, when it is ready to draw the new page.</p></details>
+<details><summary>Q4. What does <code>context</code> help Flutter find?</summary><p>The <b>Navigator</b>, so push and pop know which stack of pages to change.</p></details>
+<details><summary>Q5. Why doesn't the Home page have a ← back arrow?</summary><p>Home is the bottom of the stack. There's no page underneath to go back to, so AppBar doesn't show one.</p></details>
+</section>
+<section class="panel" id="s12">
+<h2>12. Bonus: Other button types</h2>
+<p>Flutter has several kinds of buttons. They all follow the same pattern as <code>ElevatedButton</code>: something to <b>show</b>, plus <code>onPressed</code> for what it <b>does</b>. Here's how each one looks in a default Flutter app:</p>
+<div class="btngrid">
+ <div class="btncard">
+  <div class="preview"><span class="m3 m3-elevated">Elevated</span></div>
+  <b>ElevatedButton</b><p>Raised and filled, with a light shadow. Use it for general actions.</p>
+  <pre>ElevatedButton(
+  child: Text('Elevated'),
+  onPressed: () {},
+)</pre>
+ </div>
+ <div class="btncard">
+  <div class="preview"><span class="m3 m3-filled">Filled</span></div>
+  <b>FilledButton</b><p>A solid color with no shadow. Use it for the <b>most important</b> action on a page (e.g. "Save").</p>
+  <pre>FilledButton(
+  child: Text('Filled'),
+  onPressed: () {},
+)</pre>
+ </div>
+ <div class="btncard">
+  <div class="preview"><span class="m3 m3-outlined">Outlined</span></div>
+  <b>OutlinedButton</b><p>Just a border, no fill. Use it for secondary actions (e.g. "Cancel").</p>
+  <pre>OutlinedButton(
+  child: Text('Outlined'),
+  onPressed: () {},
+)</pre>
+ </div>
+ <div class="btncard">
+  <div class="preview"><span class="m3 m3-text">Text</span></div>
+  <b>TextButton</b><p>Plain colored text with no border. Use it for small, low-priority actions (e.g. "Skip").</p>
+  <pre>TextButton(
+  child: Text('Text'),
+  onPressed: () {},
+)</pre>
+ </div>
+ <div class="btncard">
+  <div class="preview"><span class="m3-icon">♥</span></div>
+  <b>IconButton</b><p>Only an icon, no text. Use it for toolbar actions (favorite, search, settings). Note that it uses <code>icon:</code>, not <code>child:</code>.</p>
+  <pre>IconButton(
+  icon: Icon(Icons.favorite),
+  onPressed: () {},
+)</pre>
+ </div>
+ <div class="btncard">
+  <div class="preview"><span class="m3-fab">+</span></div>
+  <b>FloatingActionButton</b><p>A button that floats at the bottom-right. Use it for the page's main action (e.g. ➕ Add).</p>
+  <pre>FloatingActionButton(
+  child: Icon(Icons.add),
+  onPressed: () {},
+)</pre>
+ </div>
+</div>
+
+<h3>Where the FloatingActionButton goes</h3>
+<p>It doesn't go in the <code>body</code>. Scaffold has its own slot for it, called <code>floatingActionButton:</code>.</p>
+<div class="sgrid">
+ <div class="sphone" style="position:relative">
+  <div class="sbar"><span>appBar</span></div>
+  <div class="sbody"><span>body</span></div>
+  <span class="m3-fab" style="position:absolute;right:18px;bottom:18px">+</span>
+  <span class="fablbl">floatingActionButton</span>
+ </div>
+<pre>Scaffold(
+  appBar: AppBar(title: Text('Home Page')),
+  body: Center(...),
+  floatingActionButton: FloatingActionButton(
+    child: Icon(Icons.add),
+    onPressed: () {},
+  ),
+)</pre>
+</div>
+
+<h3>Buttons with an icon and text</h3>
+<p>Add <code>.icon</code> to the button name, then use <code>icon:</code> and <code>label:</code> instead of <code>child:</code>.</p>
+<div class="preview" style="margin:10px 0"><span class="m3 m3-elevated">➜&nbsp; Open Details</span></div>
+<pre>ElevatedButton.icon(
+  icon: Icon(Icons.arrow_forward),
+  label: Text('Open Details'),
+  onPressed: () { ... },
+)</pre>
+
+<h3>Which one should I use?</h3>
+<p>Use the strongest-looking button for the most important action:</p>
+<div class="preview" style="gap:10px;flex-wrap:wrap;padding:18px">
+ <span class="m3 m3-filled">Save</span><span class="m3 m3-elevated">Preview</span><span class="m3 m3-outlined">Cancel</span><span class="m3 m3-text">Skip</span>
+</div>
+<p class="sub" style="text-align:center">Most important → least important</p>
+
+<h3>Try it in our app</h3>
+<p>You can swap any button in the tutorial and push/pop still works. Only the look changes. For example, make Details' "Go Back" an <code>OutlinedButton</code>:</p>
+<div class="sgrid">
+ <div class="sphone small" style="width:auto">
+  <div class="sbar"><span>Details Page</span></div>
+  <div class="sbody"><small>This is the Details Page</small><span class="m3 m3-elevated">Open About</span><span class="m3 m3-outlined">Go Back</span></div>
+ </div>
+<pre>OutlinedButton(
+  child: Text('Go Back'),
+  onPressed: () {
+    Navigator.pop(context);
+  },
+),</pre>
+</div>
+<div class="note"><b>Good to know:</b> if <code>onPressed</code> is <code>null</code>, any button turns grey and can't be tapped. <span class="m3 m3-disabled">Disabled</span></div>
+</section>
+
+<p class="sub">Teaching tip: focus today on the two navigation commands. The page layout is intentionally kept basic.</p>
+</main>
+<script>
+const stack=['home'];
+const names={home:'Home',details:'Details',about:'About'};
+const info={
+ home:{title:'Home Page',text:'Welcome! This is the first page.',buttons:[['Open Details',()=>go('details')]]},
+ details:{title:'Details Page',text:'You are now on the second page.',buttons:[['Open About',()=>go('about')],['Go Back',back,'secondary']]},
+ about:{title:'About Page',text:'You are now on the third page.',buttons:[['Go Back',back,'secondary']]}
+};
+function log(msg){const l=document.getElementById('log');l.textContent+='\n'+msg;l.scrollTop=l.scrollHeight}
+function render(){
+ const p=info[stack[stack.length-1]];
+ document.getElementById('phoneTitle').textContent=p.title;
+ document.getElementById('phoneText').textContent=p.text;
+ document.getElementById('backArrow').style.visibility=stack.length>1?'visible':'hidden';
+ const area=document.getElementById('phoneButtons');area.innerHTML='';
+ p.buttons.forEach(([label,fn,cls])=>{const b=document.createElement('button');b.textContent=label;if(cls)b.className=cls;b.onclick=fn;area.appendChild(b)});
+ document.getElementById('status').textContent='Current page: '+p.title.replace(' Page','')+' | Stack: '+stack.map(s=>names[s]).join(' → ');
+ const viz=document.getElementById('stackViz');viz.innerHTML='';
+ stack.forEach((s,i)=>{const d=document.createElement('div');d.className='stackitem'+(i===stack.length-1?' top':'');d.textContent=names[s]+(i===stack.length-1?'  ← top':'');viz.appendChild(d)});
+}
+function go(page){stack.push(page);log('Navigator.push(... '+page+'Page(context))');render()}
+function back(){if(stack.length>1){log('Navigator.pop(context)  // removed '+names[stack.pop()])}render()}
+render();
+function showTab(btn,id){
+ document.querySelectorAll('.tabbtn').forEach(b=>b.classList.remove('active'));
+ document.querySelectorAll('.tabpane').forEach(p=>p.hidden=true);
+ btn.classList.add('active');document.getElementById(id).hidden=false;
+}
+</script>
+</body></html>
